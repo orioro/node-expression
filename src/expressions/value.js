@@ -7,7 +7,7 @@ import {
 import {
   evaluateString,
   evaluateStringOrRegExp
-} from '../'
+} from '../expression-util'
 
 import {
   evaluate,

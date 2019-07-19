@@ -1,5 +1,5 @@
 {
-  "name": "@orioro/data-transform",
+  "name": "@orioro/data-expressions",
   "version": "0.0.0",
   "description": "",
   "main": "dist/index.js",
