@@ -3,8 +3,7 @@ import {
   isArray,
   isString,
   isBoolean,
-  isRegExp,
-  curry
+  isRegExp
 } from 'lodash'
 
 export const isValidNumber = value => {
