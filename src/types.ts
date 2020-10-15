@@ -12,8 +12,12 @@ export type EvaluationContext = {
   }
 }
 
+export type ISODate = string
+
+export type AnyExpression = Expression | any
 export type NumberExpression = Expression | number
 export type ArrayExpression = Expression | any[]
 export type StringExpression = Expression | string
 export type PlainObjectExpression = Expression | { [key:string]: any }
 export type BooleanExpression = Expression | boolean
+export type ISODateExpression = Expression | ISODate

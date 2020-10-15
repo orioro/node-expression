@@ -54,7 +54,7 @@ export const $objectMatches = (
   })
 }
 
-export const $objectValue = (
+export const $objectKeyValue = (
   context:EvaluationContext,
   objectExp:PlainObjectExpression,
   pathExp:StringExpression = $$VALUE

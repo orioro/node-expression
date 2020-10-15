@@ -2,11 +2,21 @@ import { validateArray } from '../util/validate'
 
 import {
   evaluate,
+  evaluateArray,
+  evaluatePlainObject,
   evaluateBoolean,
   evaluateString
 } from '../expression'
 
 import {
+  $$VALUE,
+  $value
+} from './value'
+
+import {
+  ArrayExpression,
+  PlainObjectExpression,
+  AnyExpression,
   Expression,
   EvaluationContext,
   StringExpression,
@@ -15,18 +25,18 @@ import {
 
 export const $and = (
   context:EvaluationContext,
-  expressions:Expression[]
+  expressionsExp:ArrayExpression = $$VALUE
 ):boolean => {
-  validateArray(expressions)
+  const expressions = evaluateArray(context, expressionsExp)
 
   return expressions.every(exp => evaluateBoolean(context, exp))
 }
 
 export const $or = (
   context:EvaluationContext,
-  expressions:Expression[]
+  expressionsExp:ArrayExpression = $$VALUE
 ):boolean => {
-  validateArray(expressions)
+  const expressions = evaluateArray(context, expressionsExp)
 
   return expressions.some(exp => evaluateBoolean(context, exp))
 }
@@ -53,20 +63,23 @@ export const $xor = (
 
 export const $if = (
   context:EvaluationContext,
-  conditionExp,
-  thenExp,
-  elseExp
+  conditionExp:BooleanExpression,
+  thenExp:Expression,
+  elseExp:Expression
 ) => {
   return evaluateBoolean(context, conditionExp) ?
     evaluate(context, thenExp) :
     evaluate(context, elseExp)
 }
 
+type Case = [BooleanExpression, Expression]
+
 export const $switch = (
   context:EvaluationContext,
-  cases:[Expression, Expression][],
+  casesExp:ArrayExpression | Case[],
   defaultExp:Expression = ['$error', 'No default defined', true]
 ) => {
+  const cases = evaluateArray(context, casesExp)
   const correspondingCase = cases.find(([condition]) => (
     evaluateBoolean(context, condition)
   ))
@@ -76,23 +89,20 @@ export const $switch = (
     : evaluate(context, defaultExp)
 }
 
-export const $error = (
+export const $switchKey = (
   context:EvaluationContext,
-  nameExp:StringExpression,
-  messageExp:StringExpression,
-  silentExp:BooleanExpression = true
+  casesExp:PlainObjectExpression | { [key: string]: AnyExpression },
+  defaultExp:AnyExpression = ['$error', 'No default defined', true],
+  valueExp:StringExpression = $$VALUE
 ) => {
-  const name = evaluateString(context, nameExp)
-  const message = evaluateString.allowUndefined(context, messageExp) || name
-  const silent = evaluateBoolean(context, silentExp)
+  const cases = evaluatePlainObject(context, casesExp)
+  const correspondingCase = cases[evaluateString(context, valueExp)]
 
-  const error = new Error(message)
+  return correspondingCase
+    ? evaluate(context, correspondingCase)
+    : evaluate(context, defaultExp)
+}
 
-  error.name = name
-
-  if (silent) {
-    return error
-  } else {
-    throw error
-  }
+export {
+  $value
 }

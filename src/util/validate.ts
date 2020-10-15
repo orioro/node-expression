@@ -3,7 +3,8 @@ import {
   isArray,
   isString,
   isBoolean,
-  isRegExp
+  isRegExp,
+  isDate
 } from 'lodash'
 
 export const isValidNumber = value => {
@@ -41,3 +42,4 @@ export const validatePlainObjectOrArray = validateType('plan object or array', v
 export const validateStringOrRegExp = validateType('string or regexp', value => {
   return isString(value) || isRegExp(value)
 })
+export const validateDate = validateType('date', isDate)

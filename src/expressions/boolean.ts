@@ -9,7 +9,7 @@ import {
 
 import { $$VALUE, $value } from './value'
 
-export const boolean = (
+export const $boolean = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
 ) => Boolean(evaluate(context, valueExp))

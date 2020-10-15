@@ -7,7 +7,8 @@ import {
   validatePlainObject,
   validateBoolean,
   validateNotObject,
-  validatePlainObjectOrArray
+  validatePlainObjectOrArray,
+  validateDate
 } from './util/validate'
 
 import {
@@ -65,3 +66,4 @@ export const evaluateBoolean = _prepEvAndValidate(validateBoolean)
 export const evaluateNotObject = _prepEvAndValidate(validateNotObject)
 export const evaluatePlainObjectOrArray = _prepEvAndValidate(validatePlainObjectOrArray)
 export const evaluateStringOrRegExp = _prepEvAndValidate(validateStringOrRegExp)
+export const evaluateDate = _prepEvAndValidate(validateDate)
