@@ -3,7 +3,8 @@ import { get, set, isPlainObject } from 'lodash'
 import {
   evaluate,
   evaluatePlainObject,
-  evaluateString
+  evaluateString,
+  evaluateArray
 } from '../expression'
 
 import {
@@ -78,6 +79,34 @@ export const $objectFormat = (
 
     return acc
   }, {})
+}
+
+export const $objectDefault = (
+  context:EvaluationContext,
+  defaultExp:PlainObjectExpression,
+  sourceExp:PlainObjectExpression = $$VALUE
+):{ [key: string]: any } => {
+  const defaultValue = evaluatePlainObject(context, defaultExp)
+  const source = evaluatePlainObject(context, sourceExp)
+
+  return {
+    ...defaultValue,
+    ...source
+  }
+}
+
+export const $objectExtend = (
+  context:EvaluationContext,
+  extensionExp:PlainObjectExpression,
+  sourceExp:PlainObjectExpression = $$VALUE
+):{ [key: string]: any } => {
+  const extension = evaluatePlainObject(context, extensionExp)
+  const source = evaluatePlainObject(context, sourceExp)
+
+  return {
+    ...source,
+    ...extension
+  }
 }
 
 export {

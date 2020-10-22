@@ -1,7 +1,9 @@
 import {
   evaluate,
   evaluateString,
-  evaluateNumber
+  evaluateNumber,
+
+  interpreter
 } from '../expression'
 import { $$VALUE, $value } from './value'
 import {
@@ -20,10 +22,19 @@ export const $string = (
   return typeof value === 'string' ? value : value.toString()
 }
 
-export const $stringLength = (
-  context:EvaluationContext,
-  valueExp:StringExpression = $$VALUE
-):number => evaluateString(context, valueExp).length
+export const $stringStartsWith = interpreter((
+  start:string,
+  str:string
+):boolean => str.startsWith(start), [
+  evaluateString,
+  evaluateString
+])
+
+export const $stringLength = interpreter((
+  str:string
+):number => str.length, [
+  evaluateString
+])
 
 export const $stringSubstr = (
   context:EvaluationContext,

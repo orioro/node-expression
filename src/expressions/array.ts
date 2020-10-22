@@ -3,6 +3,7 @@ import {
 } from 'lodash'
 
 import {
+  interpreter,
   evaluate,
   evaluateArray,
   evaluateNumber,
@@ -59,10 +60,11 @@ export const $arrayIncludesAny = (
   return values.some(value => array.includes(value))
 }
 
-export const $arrayLength = (
-  context:EvaluationContext,
-  arrayExp:any = $$VALUE
-):number => evaluateArray(context, arrayExp).length
+export const $arrayLength = interpreter((
+  array:any[]
+):number => array.length, [
+  evaluateArray
+])
 
 export const $arrayReduce = (
   context:EvaluationContext,
@@ -92,8 +94,8 @@ const _arrayIterator = (method:string) => (
   })
 )
 export const $arrayMap = _arrayIterator('map')
-export const $arrayEvery = _arrayIterator('every')
-export const $arraySome = _arrayIterator('some')
+// export const $arrayEvery = _arrayIterator('every') remove in favor of logical $and
+// export const $arraySome = _arrayIterator('some') remove in favor of logical $or
 export const $arrayFilter = _arrayIterator('filter')
 export const $arrayIndexOf = _arrayIterator('findIndex')
 export const $arrayFind = _arrayIterator('find')

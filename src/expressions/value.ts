@@ -19,7 +19,6 @@ export const $value = (
 ) => {
   const path = evaluate(context, pathExp) || '$$VALUE'
 
-
   if (typeof path !== 'string') {
     throw new TypeError(`${JSON.stringify(path)} is not a valid path - must be string`)
   }

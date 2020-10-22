@@ -13,6 +13,33 @@ describe('$and', () => {
     $and
   }
 
+  test('error situations', () => {
+    expect(() => evaluate({
+      interpreters,
+      data: { $$VALUE: undefined }
+    }, ['$and'])).toThrow(TypeError)
+
+    expect(() => evaluate({
+      interpreters,
+      data: { $$VALUE: null }
+    }, ['$and'])).toThrow(TypeError)
+
+    expect(() => evaluate({
+      interpreters,
+      data: { $$VALUE: true }
+    }, ['$and'])).toThrow(TypeError)
+
+    expect(() => evaluate({
+      interpreters,
+      data: { $$VALUE: 8 }
+    }, ['$and'])).toThrow(TypeError)
+
+    expect(() => evaluate({
+      interpreters,
+      data: { $$VALUE: {} }
+    }, ['$and'])).toThrow(TypeError)
+  })
+
   test('', () => {
     expect(evaluate({
       interpreters,
