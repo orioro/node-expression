@@ -9,7 +9,7 @@ import {
   Expression,
 } from '../types'
 
-import { $$VALUE, $value } from './value'
+import { $$VALUE } from './value'
 
 export const numberInt = (
   context:EvaluationContext,
@@ -40,8 +40,4 @@ export const numberFloat = (
   } else {
     throw new TypeError(`Invalid valueExp ${JSON.stringify(valueExp)}`)
   }
-}
-
-export {
-  $value
 }

@@ -8,10 +8,7 @@ import {
   NumberExpression
 } from '../types'
 
-import {
-  $$VALUE,
-  $value
-} from './value'
+import { $$VALUE } from './value'
 
 const mathOperation = (op:(base:number, operator:number) => number) => (
   context:EvaluationContext,
@@ -66,7 +63,3 @@ export const $mathCeil = (
   context:EvaluationContext,
   valueExp:NumberExpression = $$VALUE
 ) => Math.ceil(evaluateNumber(context, valueExp))
-
-export {
-  $value
-}

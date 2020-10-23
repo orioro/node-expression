@@ -68,8 +68,11 @@ export const evaluatePlainObjectOrArray = _prepEvAndValidate(validatePlainObject
 export const evaluateStringOrRegExp = _prepEvAndValidate(validateStringOrRegExp)
 export const evaluateDate = _prepEvAndValidate(validateDate)
 
-export const interpreter = (fn, argResolvers = null) => (
-  argResolvers && Array.isArray(argResolvers)
+export const interpreter = (
+  fn:(...args:any[]) => any,
+  argResolvers:((context:EvaluationContext, input:any) => any)[] | null = null
+) => (
+  argResolvers !== null && Array.isArray(argResolvers)
     ? (context:EvaluationContext, ...args) => (
         fn(...argResolvers.map((resolver, index) => {
           // Last arg defaults to $$VALUE

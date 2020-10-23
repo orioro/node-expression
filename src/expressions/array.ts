@@ -17,8 +17,7 @@ import {
 } from '../types'
 
 import {
-  $$VALUE,
-  $value
+  $$VALUE
 } from './value'
 
 export const $$INDEX = ['$value', '$$INDEX']
@@ -227,7 +226,7 @@ export const $arrayRemoveAt = (
 
 export const $arrayJoin = (
   context:EvaluationContext,
-  separatorExp:any = ', ',
+  separatorExp:any = '',
   arrayExp:any = $$VALUE
 ) => (
   evaluateArray(context, arrayExp)
@@ -253,8 +252,4 @@ export const $arrayFormat = (
   const source = evaluate(context, sourceExp)
 
   return format.map(sourcePath => get(source, sourcePath))
-}
-
-export {
-  $value
 }

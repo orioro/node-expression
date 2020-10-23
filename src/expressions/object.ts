@@ -15,10 +15,7 @@ import {
   StringExpression
 } from '../types'
 
-import {
-  $$VALUE,
-  $value
-} from './value'
+import { $$VALUE } from './value'
 
 import {
   $matches
@@ -107,8 +104,4 @@ export const $objectExtend = (
     ...source,
     ...extension
   }
-}
-
-export {
-  $value
 }

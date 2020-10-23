@@ -5,7 +5,7 @@ import {
 
   interpreter
 } from '../expression'
-import { $$VALUE, $value } from './value'
+import { $$VALUE } from './value'
 import {
   EvaluationContext,
   Expression,
@@ -64,7 +64,3 @@ export const $stringTrim = (
 ):string => (
   evaluateString(context, baseExp).trim()
 )
-
-export {
-  $value
-}

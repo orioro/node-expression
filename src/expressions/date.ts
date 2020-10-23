@@ -16,10 +16,7 @@ import {
   evaluatePlainObject
 } from '../expression'
 
-import {
-  $$VALUE,
-  $value
-} from './value'
+import { $$VALUE } from './value'
 
 export const DATE_ISO = 'ISO'
 export const DATE_ISO_DATE = 'ISODate'

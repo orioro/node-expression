@@ -8,10 +8,7 @@ import {
   evaluateString
 } from '../expression'
 
-import {
-  $$VALUE,
-  $value
-} from './value'
+import { $$VALUE } from './value'
 
 import {
   ArrayExpression,
@@ -101,8 +98,4 @@ export const $switchKey = (
   return correspondingCase
     ? evaluate(context, correspondingCase)
     : evaluate(context, defaultExp)
-}
-
-export {
-  $value
 }

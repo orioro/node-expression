@@ -7,13 +7,9 @@ import {
   Expression,
 } from '../types'
 
-import { $$VALUE, $value } from './value'
+import { $$VALUE } from './value'
 
 export const $boolean = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
 ) => Boolean(evaluate(context, valueExp))
-
-export {
-  $value
-}

@@ -10,7 +10,12 @@ import * as OBJECT_EXPRESSIONS from './expressions/object'
 import * as REGEXP_EXPRESSIONS from './expressions/regexp'
 import * as STRING_EXPRESSIONS from './expressions/string'
 import * as TYPE_EXPRESSIONS from './expressions/type'
-import * as VALUE_EXPRESSIONS from './expressions/value'
+import * as valueModule from './expressions/value'
+
+const {
+  $$VALUE,
+  ...VALUE_EXPRESSIONS
+} = valueModule
 
 export const ALL_EXPRESSIONS = {
   ...ARRAY_EXPRESSIONS,

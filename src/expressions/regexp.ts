@@ -8,7 +8,7 @@ import {
   Expression,
 } from '../types'
 
-import { $$VALUE, $value } from './value'
+import { $$VALUE } from './value'
 
 export const $regExp = (
   context:EvaluationContext,
@@ -43,8 +43,4 @@ export const $regExpTest = (
   const value = evaluateString(context, valueExp)
 
   return regExp.test(value)
-}
-
-export {
-  $value
 }

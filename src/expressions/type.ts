@@ -7,13 +7,9 @@ import {
   Expression
 } from '../types'
 
-import { $$VALUE, $value } from './value'
+import { $$VALUE } from './value'
 
-export const $typeOf = (
+export const $type = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
 ) => typeof (evaluate(context, valueExp))
-
-export {
-  $value
-}
