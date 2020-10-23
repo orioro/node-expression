@@ -1,6 +1,6 @@
 {
   "name": "@orioro/expression",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -15,6 +15,9 @@
   },
   "author": "",
   "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@babel/core": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
