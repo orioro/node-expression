@@ -13,3 +13,7 @@ export const $boolean = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
 ) => Boolean(evaluate(context, valueExp))
+
+export const BOOLEAN_EXPRESSIONS = {
+  $boolean
+}

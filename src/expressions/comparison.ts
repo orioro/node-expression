@@ -110,3 +110,15 @@ export const $matches = (
     )
   })
 }
+
+export const COMPARISON_EXPRESSIONS = {
+  $eq,
+  $notEq,
+  $in,
+  $notIn,
+  $gt,
+  $gte,
+  $lt,
+  $lte,
+  $matches
+}

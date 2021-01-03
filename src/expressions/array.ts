@@ -253,3 +253,28 @@ export const $arrayFormat = (
 
   return format.map(sourcePath => get(source, sourcePath))
 }
+
+export const ARRAY_EXPRESSIONS = {
+  $arrayIncludes,
+  $arrayIncludesAll,
+  $arrayIncludesAny,
+  $arrayLength,
+  $arrayReduce,
+  $arrayMap,
+  $arrayFilter,
+  $arrayIndexOf,
+  $arrayFind,
+  $arrayReverse,
+  $arraySort,
+  $arrayPush,
+  $arrayPop,
+  $arrayUnshift,
+  $arrayShift,
+  $arraySlice,
+  $arraySubstitute,
+  $arrayAddAt,
+  $arrayRemoveAt,
+  $arrayJoin,
+  $arrayAt,
+  $arrayFormat
+}

@@ -13,3 +13,7 @@ export const $type = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
 ) => typeof (evaluate(context, valueExp))
+
+export const TYPE_EXPRESSIONS = {
+  $type
+}

@@ -11,7 +11,7 @@ import {
 
 import { $$VALUE } from './value'
 
-export const numberInt = (
+export const $numberInt = (
   context:EvaluationContext,
   radixExp:NumberExpression = 10,
   valueExp:Expression = $$VALUE
@@ -27,7 +27,7 @@ export const numberInt = (
   }
 }
 
-export const numberFloat = (
+export const $numberFloat = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
 ) => {
@@ -40,4 +40,9 @@ export const numberFloat = (
   } else {
     throw new TypeError(`Invalid valueExp ${JSON.stringify(valueExp)}`)
   }
+}
+
+export const NUMBER_EXPRESSIONS = {
+  $numberInt,
+  $numberFloat
 }

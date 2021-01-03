@@ -105,3 +105,11 @@ export const $objectExtend = (
     ...extension
   }
 }
+
+export const OBJECT_EXPRESSIONS = {
+  $objectMatches,
+  $objectKeyValue,
+  $objectFormat,
+  $objectDefault,
+  $objectExtend
+}

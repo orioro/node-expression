@@ -99,3 +99,14 @@ export const $switchKey = (
     ? evaluate(context, correspondingCase)
     : evaluate(context, defaultExp)
 }
+
+export const LOGICAL_EXPRESSIONS = {
+  $and,
+  $or,
+  $not,
+  $nor,
+  $xor,
+  $if,
+  $switch,
+  $switchKey
+}

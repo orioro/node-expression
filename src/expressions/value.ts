@@ -38,3 +38,8 @@ export const $literal = (
   context:EvaluationContext,
   value:any
 ) => value
+
+export const VALUE_EXPRESSIONS = {
+  $value,
+  $literal
+}

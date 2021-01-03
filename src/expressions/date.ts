@@ -246,3 +246,20 @@ export const $dateMoveBack = (
 
   return date.minus(moveBack).toISO()
 }
+
+export const DATE_EXPRESSIONS = {
+  $date,
+  $dateNow,
+  $dateIsValid,
+  $dateStartOf,
+  $dateEndOf,
+  $dateSet,
+  $dateConfig,
+  $dateGt,
+  $dateGte,
+  $dateLt,
+  $dateLte,
+  $dateEq,
+  $dateMoveForward,
+  $dateMoveBack,
+}

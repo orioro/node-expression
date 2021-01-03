@@ -64,3 +64,12 @@ export const $stringTrim = (
 ):string => (
   evaluateString(context, baseExp).trim()
 )
+
+export const STRING_EXPRESSIONS = {
+  $string,
+  $stringStartsWith,
+  $stringLength,
+  $stringSubstr,
+  $stringConcat,
+  $stringTrim
+}

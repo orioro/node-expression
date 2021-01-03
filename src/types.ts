@@ -1,8 +1,10 @@
 export type Expression = any[]
 
+export type ExpressionInterpreter = (context:EvaluationContext, ...args:any[]) => any
+
 export type EvaluationContext = {
   interpreters: {
-    [key: string]: (context:EvaluationContext, ...args:any[]) => any,
+    [key: string]: ExpressionInterpreter
   },
   data: {
     $$VALUE: any,

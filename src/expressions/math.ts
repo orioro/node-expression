@@ -63,3 +63,18 @@ export const $mathCeil = (
   context:EvaluationContext,
   valueExp:NumberExpression = $$VALUE
 ) => Math.ceil(evaluateNumber(context, valueExp))
+
+export const MATH_EXPRESSIONS = {
+  $mathSum,
+  $mathSub,
+  $mathMult,
+  $mathDiv,
+  $mathMod,
+  $mathPow,
+  $mathAbs,
+  $mathMax,
+  $mathMin,
+  $mathRound,
+  $mathFloor,
+  $mathCeil
+}

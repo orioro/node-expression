@@ -44,3 +44,9 @@ export const $regExpTest = (
 
   return regExp.test(value)
 }
+
+export const REGEXP_EXPRESSIONS = {
+  $regExp,
+  $regExpMatch,
+  $regExpTest
+}
