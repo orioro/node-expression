@@ -178,33 +178,35 @@ export const $arraySubstitute = (
   context:EvaluationContext,
   startExp:any,
   endExp:any,
-  valueExps:any[],
+  valuesExp:any,
   arrayExp:any = $$VALUE
 ) => {
   const array = evaluateArray(context, arrayExp)
   const start = evaluateNumber(context, startExp)
   const end = evaluateNumber(context, endExp)
+  const values = evaluateArray(context, valuesExp)
 
   return [
     ...array.slice(0, start),
-    ...valueExps.map(exp => evaluate(context, exp)),
-    ...array.slice(end + 1)
+    ...values,
+    ...array.slice(end)
   ]
 }
 
 export const $arrayAddAt = (
   context:EvaluationContext,
-  startExp:any,
-  valueExps:any[],
+  indexExp:any,
+  valuesExp:any,
   arrayExp:any = $$VALUE
 ) => {
   const array = evaluateArray(context, arrayExp)
-  const index = evaluateNumber(context, startExp)
+  const index = evaluateNumber(context, indexExp)
+  const values = evaluateArray(context, valuesExp)
 
   return [
     ...array.slice(0, index),
-    ...valueExps.map(exp => evaluate(context, exp)),
-    ...array.slice(index + 1)
+    ...values,
+    ...array.slice(index)
   ]
 }
 
@@ -220,7 +222,7 @@ export const $arrayRemoveAt = (
 
   return [
     ...array.slice(0, position),
-    ...array.slice(position + 1)
+    ...array.slice(position + count)
   ]
 }
 
