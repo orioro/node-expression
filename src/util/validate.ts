@@ -20,13 +20,13 @@ const mightBeExpression = (value:any) => (
 const validateType = (typeName, test) => {
   const validate = value => {
     if (!test(value)) {
-      throw new TypeError(`Invalid ${typeName}: ${JSON.stringify(value)}`)
+      throw new TypeError(`Evaluated invalid ${typeName}: ${JSON.stringify(value)}`)
     }
   }
 
   validate.allowUndefined = value => {
     if (value !== undefined && !test(value)) {
-      throw new TypeError(`Invalid ${typeName}: ${JSON.stringify(value)}`)
+      throw new TypeError(`Evaluated invalid ${typeName}: ${JSON.stringify(value)}`)
     }
   }
 
@@ -42,10 +42,10 @@ export const validateRegExp = validateType('regexp', isRegExp)
 export const validateNotObject = validateType('not object', value => {
   return typeof value !== 'object' || isArray(value)
 })
-export const validatePlainObjectOrArray = validateType('plan object or array', value => {
+export const validatePlainObjectOrArray = validateType('plain_object_or_array', value => {
   return isPlainObject(value) || isArray(value)
 })
-export const validateStringOrRegExp = validateType('string or regexp', value => {
+export const validateStringOrRegExp = validateType('string_or_regexp', value => {
   return isString(value) || isRegExp(value)
 })
 export const validateDate = validateType('date', isDate)
