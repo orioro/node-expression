@@ -10,9 +10,8 @@ import {
   evaluateString
 } from '../expression'
 
-import {
-  formatParseItem
-} from '../util/formatParseItem'
+import { formatParseItem } from '../util/formatParseItem'
+import { arrayDeepApplyDefaults } from '../util/deepApplyDefaults'
 
 import {
   EvaluationContext,
@@ -263,6 +262,17 @@ export const $arrayFormat = (
       formatParseItem(context.interpreters, targetValue)
     )
   })
+}
+
+export const $arrayDefaults = (
+  context:EvaluationContext,
+  defaultValuesExp:ArrayExpression,
+  sourceExp:ArrayExpression = $$VALUE
+):any[] => {
+  const defaultValues = evaluateArray(defaultValuesExp)
+  const source = evaluateArray(sourceExp)
+
+  return arrayDeepApplyDefaults(source, defaultValues)
 }
 
 export const ARRAY_EXPRESSIONS = {

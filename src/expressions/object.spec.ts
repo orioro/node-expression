@@ -105,3 +105,148 @@ describe('$objectFormat', () => {
     })
   })
 })
+
+describe('$objectDefaults', () => {
+  test('simple', () => {
+    expect(evaluate({
+      interpreters,
+      data: {
+        $$VALUE: {
+          propA: 'valueA',
+          propB: 'valueB'
+        }
+      }
+    }, ['$objectDefaults', {
+      propA: 'defaultA',
+      propB: 'defaultB',
+      propC: 'defaultC'
+    }]))
+    .toEqual({
+      propA: 'valueA',
+      propB: 'valueB',
+      propC: 'defaultC'
+    })
+  })
+
+  test('nested object', () => {
+    expect(evaluate({
+      interpreters,
+      data: {
+        $$VALUE: {
+          propA: 'valueA',
+          propB: 'valueB',
+          propC: {
+            propCA: 'valueCA'
+          }
+        }
+      }
+    }, ['$objectDefaults', {
+      propA: 'defaultValueA',
+      propB: 'defaultValueB',
+      propC: {
+        propCA: 'defaultValueCA',
+        propCB: 'defaultValueCB'
+      },
+      propD: 'defaultValueD',
+    }]))
+    .toEqual({
+      propA: 'valueA',
+      propB: 'valueB',
+      propC: {
+        propCA: 'valueCA',
+        propCB: 'defaultValueCB'
+      },
+      propD: 'defaultValueD'
+    })
+  })
+
+  test('nested array', () => {
+    const context = {
+      interpreters,
+      data: {
+        $$VALUE: {
+          propA: 'valueA',
+          propB: [
+            { id: 'B0' },
+            { id: 'B1' },
+            undefined,
+            { id: 'B3' }
+          ]
+        }
+      }
+    }
+
+    const expression = ['$objectDefaults', {
+      propA: 'defaultA',
+      propB: [
+        { id: 'defaultB0', foo: 0 },
+        { id: 'defaultB1', foo: 1 },
+        { id: 'defaultB2', foo: 2 },
+        { id: 'defaultB3', foo: 3 },
+      ],
+      propC: 'defaultC',
+    }]
+
+    expect(evaluate(context, expression)).toEqual({
+      propA: 'valueA',
+      propB: [
+        { id: 'B0', foo: 0 },
+        { id: 'B1', foo: 1 },
+        { id: 'defaultB2', foo: 2 },
+        { id: 'B3', foo: 3 }
+      ],
+      propC: 'defaultC'
+    })
+  })
+})
+
+describe('$objectAssign', () => {
+  test('simple', () => {
+    expect(evaluate({
+      interpreters,
+      data: {
+        $$VALUE: {
+          propA: 'valueA',
+          propB: 'valueB'
+        }
+      }
+    }, ['$objectAssign', {
+      propA: 'assignA',
+      propC: 'assignC'
+    }]))
+    .toEqual({
+      propA: 'assignA',
+      propB: 'valueB',
+      propC: 'assignC'
+    })
+  })
+
+  test('nested', () => {
+    expect(evaluate({
+      interpreters,
+      data: {
+        $$VALUE: {
+          propA: 'valueA',
+          propB: {
+            propBA: 'valueBA',
+            propBB: 'valueBB',
+          },
+          propC: 'valueC'
+        }
+      }
+    }, ['$objectAssign', {
+      propA: 'assignA',
+      propB: {
+        propBB: 'assignBB'
+      }
+    }]))
+    .toEqual({
+      propA: 'assignA',
+      propB: {
+        propBA: 'valueBA',
+        propBB: 'assignBB'
+      },
+      propC: 'valueC'
+    })
+  })
+})

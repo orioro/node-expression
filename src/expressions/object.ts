@@ -8,9 +8,9 @@ import {
   isExpression
 } from '../expression'
 
-import {
-  formatParseItem
-} from '../util/formatParseItem'
+import { formatParseItem } from '../util/formatParseItem'
+import { objectDeepApplyDefaults } from '../util/deepApplyDefaults'
+import { objectDeepAssign } from '../util/deepAssign'
 
 import {
   Expression,
@@ -81,21 +81,18 @@ export const $objectFormat = (
   }, {})
 }
 
-export const $objectDefault = (
+export const $objectDefaults = (
   context:EvaluationContext,
-  defaultExp:PlainObjectExpression,
+  defaultValuesExp:PlainObjectExpression,
   sourceExp:PlainObjectExpression = $$VALUE
 ):{ [key: string]: any } => {
-  const defaultValue = evaluatePlainObject(context, defaultExp)
+  const defaultValues = evaluatePlainObject(context, defaultValuesExp)
   const source = evaluatePlainObject(context, sourceExp)
 
-  return {
-    ...defaultValue,
-    ...source
-  }
+  return objectDeepApplyDefaults(source, defaultValues)
 }
 
-export const $objectExtend = (
+export const $objectAssign = (
   context:EvaluationContext,
   extensionExp:PlainObjectExpression,
   sourceExp:PlainObjectExpression = $$VALUE
@@ -103,15 +100,12 @@ export const $objectExtend = (
   const extension = evaluatePlainObject(context, extensionExp)
   const source = evaluatePlainObject(context, sourceExp)
 
-  return {
-    ...source,
-    ...extension
-  }
+  return objectDeepAssign(source, extension)
 }
 
 export const OBJECT_EXPRESSIONS = {
   $objectMatches,
   $objectFormat,
-  $objectDefault,
-  $objectExtend
+  $objectDefaults,
+  $objectAssign
 }
