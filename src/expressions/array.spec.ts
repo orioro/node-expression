@@ -1,26 +1,8 @@
 import { evaluate } from '../expression'
 import { $value } from './value'
-import {
-  $arrayLength,
-  $arrayIncludes,
-  $arrayIncludesAll,
-  $arrayIncludesAny,
-  $arrayMap,
-  $arrayReduce,
-  $arrayReverse,
-  $arraySort,
-  $arrayPush,
-  $arrayPop,
-  $arrayUnshift,
-  $arrayShift,
-  $arraySlice,
-  $arraySubstitute,
-  $arrayAddAt,
-  $arrayRemoveAt,
-  $arrayJoin,
-  $arrayAt,
-  $arrayFormat,
-} from './array'
+import { ARRAY_EXPRESSIONS } from './array'
+import { OBJECT_EXPRESSIONS } from './object'
+import { STRING_EXPRESSIONS } from './string'
 
 import {
   $mathSum,
@@ -31,12 +13,17 @@ import {
   $numberInt
 } from './number'
 
-describe('$arrayIncludes', () => {
-  const interpreters = {
-    $value,
-    $arrayIncludes
-  }
+const interpreters = {
+  $value,
+  $mathSum,
+  $mathSub,
+  $numberInt,
+  ...OBJECT_EXPRESSIONS,
+  ...STRING_EXPRESSIONS,
+  ...ARRAY_EXPRESSIONS
+}
 
+describe('$arrayIncludes', () => {
   test('', () => {
     const context = {
       interpreters,
@@ -51,11 +38,6 @@ describe('$arrayIncludes', () => {
 })
 
 describe('$arrayIncludesAll', () => {
-  const interpreters = {
-    $value,
-    $arrayIncludesAll
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -70,11 +52,6 @@ describe('$arrayIncludesAll', () => {
 })
 
 describe('$arrayIncludesAny', () => {
-  const interpreters = {
-    $value,
-    $arrayIncludesAny
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -90,11 +67,6 @@ describe('$arrayIncludesAny', () => {
 })
 
 describe('$arrayLength', () => {
-  const interpreters = {
-    $value,
-    $arrayLength
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -108,13 +80,6 @@ describe('$arrayLength', () => {
 })
 
 describe('$arrayMap', () => {
-  const interpreters = {
-    $value,
-    $mathSum,
-    $arrayMap,
-    $arrayLength
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -165,12 +130,6 @@ describe('$arrayMap', () => {
 })
 
 describe('$arrayReduce', () => {
-  const interpreters = {
-    $value,
-    $mathSum,
-    $arrayReduce
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -183,11 +142,6 @@ describe('$arrayReduce', () => {
 })
 
 describe('$arrayReverse', () => {
-  const interpreters = {
-    $value,
-    $arrayReverse
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -200,13 +154,6 @@ describe('$arrayReverse', () => {
 })
 
 describe('$arraySort', () => {
-  const interpreters = {
-    $value,
-    $mathSub,
-    $numberInt,
-    $arraySort
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -236,11 +183,6 @@ describe('$arraySort', () => {
 })
 
 describe('$arrayPush', () => {
-  const interpreters = {
-    $value,
-    $arrayPush
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -253,11 +195,6 @@ describe('$arrayPush', () => {
 })
 
 describe('$arrayPop', () => {
-  const interpreters = {
-    $value,
-    $arrayPop
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -270,11 +207,6 @@ describe('$arrayPop', () => {
 })
 
 describe('$arrayUnshift', () => {
-  const interpreters = {
-    $value,
-    $arrayUnshift
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -287,11 +219,6 @@ describe('$arrayUnshift', () => {
 })
 
 describe('$arrayShift', () => {
-  const interpreters = {
-    $value,
-    $arrayShift
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -304,11 +231,6 @@ describe('$arrayShift', () => {
 })
 
 describe('$arraySlice', () => {
-  const interpreters = {
-    $value,
-    $arraySlice
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -321,13 +243,6 @@ describe('$arraySlice', () => {
 })
 
 describe('$arraySubstitute', () => {
-  const interpreters = {
-    $value,
-    $arraySlice,
-
-    $arraySubstitute
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -340,13 +255,6 @@ describe('$arraySubstitute', () => {
 })
 
 describe('$arrayAddAt', () => {
-  const interpreters = {
-    $value,
-    $arraySlice,
-
-    $arrayAddAt
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -359,11 +267,6 @@ describe('$arrayAddAt', () => {
 })
 
 describe('$arrayRemoveAt', () => {
-  const interpreters = {
-    $value,
-    $arrayRemoveAt
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -379,11 +282,6 @@ describe('$arrayRemoveAt', () => {
 })
 
 describe('$arrayJoin', () => {
-  const interpreters = {
-    $value,
-    $arrayJoin
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -399,11 +297,6 @@ describe('$arrayJoin', () => {
 })
 
 describe('$arrayAt', () => {
-  const interpreters = {
-    $value,
-    $arrayAt
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -422,38 +315,52 @@ describe('$arrayAt', () => {
 })
 
 describe('$arrayFormat', () => {
-  const interpreters = {
-    $value,
-    $arrayJoin,
-    $arrayAt,
-    $arraySlice,
-
-    $arrayFormat
-  }
-
-  test('', () => {
-    const context = {
-      interpreters,
-      data: {
-        $$VALUE: {
-          name: 'João',
-          lastName: 'Silva Souza',
-          father: {
-            name: 'Raimundo',
-            lastName: 'Silva'
-          },
-          mother: {
-            name: 'Maria',
-            lastName: 'do Carmo'
-          }
+  const context = {
+    interpreters,
+    data: {
+      $$VALUE: {
+        name: 'João',
+        lastName: 'Silva Souza',
+        father: {
+          name: 'Raimundo',
+          lastName: 'Silva'
+        },
+        mother: {
+          name: 'Maria',
+          lastName: 'do Carmo'
         }
       }
     }
+  }
 
+  test('', () => {
     expect(evaluate(context, ['$arrayFormat', [
       'name',
       'father.name',
       'mother.lastName'
     ]])).toEqual(['João', 'Raimundo', 'do Carmo'])
+  })
+
+  test('expression items', () => {
+
+    expect(evaluate(context, ['$arrayFormat', [
+      ['$stringConcat', ['$value', 'father.name'], ['$value', 'mother.name']],
+      'name',
+      'father.name',
+      'mother.lastName'
+    ]])).toEqual(['MariaRaimundo', 'João', 'Raimundo', 'do Carmo'])
+  })
+
+  test('with object items', () => {
+    expect(evaluate(context, ['$arrayFormat', [
+      'father.name',
+      {
+        fatherName: 'father.name'
+      }
+    ]]))
+    .toEqual([
+      'Raimundo',
+      { fatherName: 'Raimundo' }
+    ])
   })
 })

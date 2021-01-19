@@ -11,6 +11,10 @@ import {
 } from '../expression'
 
 import {
+  formatParseItem
+} from '../util/formatParseItem'
+
+import {
   EvaluationContext,
   Expression,
   ArrayExpression
@@ -253,7 +257,12 @@ export const $arrayFormat = (
   const format = evaluateArray(context, formatExp)
   const source = evaluate(context, sourceExp)
 
-  return format.map(sourcePath => get(source, sourcePath))
+  return format.map(targetValue => {
+    return evaluate(
+      context,
+      formatParseItem(context.interpreters, targetValue)
+    )
+  })
 }
 
 export const ARRAY_EXPRESSIONS = {

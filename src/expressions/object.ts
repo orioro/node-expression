@@ -4,8 +4,13 @@ import {
   evaluate,
   evaluatePlainObject,
   evaluateString,
-  evaluateArray
+  evaluateArray,
+  isExpression
 } from '../expression'
+
+import {
+  formatParseItem
+} from '../util/formatParseItem'
 
 import {
   Expression,
@@ -52,15 +57,6 @@ export const $objectMatches = (
   })
 }
 
-export const $objectKeyValue = (
-  context:EvaluationContext,
-  objectExp:PlainObjectExpression,
-  pathExp:StringExpression = $$VALUE
-):any => get(
-  evaluatePlainObject(context, objectExp),
-  evaluateString(context, pathExp)
-)
-
 export const $objectFormat = (
   context:EvaluationContext,
   formatExp:PlainObjectExpression,
@@ -72,7 +68,14 @@ export const $objectFormat = (
   const targetPaths = Object.keys(format)
 
   return targetPaths.reduce((acc, targetPath) => {
-    set(acc, targetPath, get(source, format[targetPath]))
+    set(
+      acc,
+      targetPath,
+      evaluate({
+        ...context,
+        data: { $$VALUE: source }
+      }, formatParseItem(context.interpreters, format[targetPath]))
+    )
 
     return acc
   }, {})
@@ -108,7 +111,6 @@ export const $objectExtend = (
 
 export const OBJECT_EXPRESSIONS = {
   $objectMatches,
-  $objectKeyValue,
   $objectFormat,
   $objectDefault,
   $objectExtend
