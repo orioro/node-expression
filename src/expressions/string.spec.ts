@@ -78,3 +78,33 @@ test('$stringPadEnd', () => {
 
   expect(evaluate(context, ['$stringPadEnd', 3, '*'])).toEqual('1**')
 })
+
+test('$stringMatch', () => {
+  const context = {
+    interpreters,
+    data: { $$VALUE: 'abc_adc_acdc' }
+  }
+
+  expect(evaluate(context, ['$stringMatch', 'a.*?c', 'g']))
+    .toEqual([
+      'abc',
+      'adc',
+      'ac'
+    ])
+
+  expect(evaluate(context, ['$stringMatch', 'u']))
+    .toEqual([])
+})
+
+test('$stringTest', () => {
+  const context = {
+    interpreters,
+    data: { $$VALUE: 'abc_adc_acdc' }
+  }
+
+  expect(evaluate(context, ['$stringTest', 'a.*?c', 'g']))
+    .toEqual(true)
+
+  expect(evaluate(context, ['$stringTest', 'u']))
+    .toEqual(false)
+})

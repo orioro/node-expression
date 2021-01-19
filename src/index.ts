@@ -6,7 +6,6 @@ import { LOGICAL_EXPRESSIONS } from './expressions/logical'
 import { MATH_EXPRESSIONS } from './expressions/math'
 import { NUMBER_EXPRESSIONS } from './expressions/number'
 import { OBJECT_EXPRESSIONS } from './expressions/object'
-import { REGEXP_EXPRESSIONS } from './expressions/regexp'
 import { STRING_EXPRESSIONS } from './expressions/string'
 import { TYPE_EXPRESSIONS } from './expressions/type'
 import { VALUE_EXPRESSIONS } from './expressions/value'
@@ -20,7 +19,6 @@ export const ALL_EXPRESSIONS = {
   ...MATH_EXPRESSIONS,
   ...NUMBER_EXPRESSIONS,
   ...OBJECT_EXPRESSIONS,
-  ...REGEXP_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...TYPE_EXPRESSIONS,
   ...VALUE_EXPRESSIONS,
@@ -36,7 +34,6 @@ export * from './expressions/logical'
 export * from './expressions/math'
 export * from './expressions/number'
 export * from './expressions/object'
-export * from './expressions/regexp'
 export * from './expressions/string'
 export * from './expressions/type'
 export * from './expressions/value'

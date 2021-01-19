@@ -1,6 +1,7 @@
 import {
   evaluate,
   evaluateString,
+  evaluateStringOrRegExp,
   evaluateNumber,
 
   interpreter
@@ -89,6 +90,44 @@ export const $stringPadEnd = (
   )
 )
 
+const _regExp = (
+  context:EvaluationContext,
+  regExpExp:Expression | RegExp,
+  regExpOptionsExp:Expression | String
+) => {
+  const regExp = evaluateStringOrRegExp(context, regExpExp)
+  const regExpOptions = evaluateString.allowUndefined(context, regExpOptionsExp)
+
+  return new RegExp(regExp, regExpOptions)
+}
+
+
+export const $stringMatch = (
+  context:EvaluationContext,
+  regExpExp:Expression | RegExp,
+  regExpOptionsExp:Expression | String,
+  valueExp:Expression = $$VALUE
+) => {
+  const regExp = _regExp(context, regExpExp, regExpOptionsExp)
+  const value = evaluateString(context, valueExp)
+
+  const match = value.match(regExp)
+
+  return match === null ? [] : [...match]
+}
+
+export const $stringTest = (
+  context:EvaluationContext,
+  regExpExp:Expression | RegExp,
+  regExpOptionsExp:Expression | String,
+  valueExp:Expression = $$VALUE
+) => {
+  const regExp = _regExp(context, regExpExp, regExpOptionsExp)
+  const value = evaluateString(context, valueExp)
+
+  return regExp.test(value)
+}
+
 export const STRING_EXPRESSIONS = {
   $string,
   $stringStartsWith,
@@ -97,5 +136,7 @@ export const STRING_EXPRESSIONS = {
   $stringConcat,
   $stringTrim,
   $stringPadStart,
-  $stringPadEnd
+  $stringPadEnd,
+  $stringMatch,
+  $stringTest
 }
