@@ -14,6 +14,18 @@ test('$numberInt', () => {
     interpreters,
     data: { $$VALUE: '10.50' }
   }, ['$numberInt'])).toEqual(10)
+
+  expect(evaluate({
+    interpreters,
+    data: { $$VALUE: 10.5 }
+  }, ['$numberInt'])).toEqual(10.5)
+
+  expect(() => {
+    expect(evaluate({
+      interpreters,
+      data: { $$VALUE: true }
+    }, ['$numberInt']))
+  }).toThrow(TypeError)
 })
 
 test('$numberFloat', () => {
@@ -21,4 +33,16 @@ test('$numberFloat', () => {
     interpreters,
     data: { $$VALUE: '10.50' }
   }, ['$numberFloat'])).toEqual(10.5)
+
+  expect(evaluate({
+    interpreters,
+    data: { $$VALUE: 10.5 }
+  }, ['$numberInt'])).toEqual(10.5)
+
+  expect(() => {
+    expect(evaluate({
+      interpreters,
+      data: { $$VALUE: true }
+    }, ['$numberInt']))
+  }).toThrow(TypeError)
 })
