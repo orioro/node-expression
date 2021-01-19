@@ -65,11 +65,37 @@ export const $stringTrim = (
   evaluateString(context, baseExp).trim()
 )
 
+export const $stringPadStart = (
+  context:EvaluationContext,
+  targetLengthExp:NumberExpression,
+  padStringExp:StringExpression = ' ',
+  baseExp:StringExpression = $$VALUE
+):string => (
+  evaluateString(context, baseExp).padStart(
+    evaluateNumber(context, targetLengthExp),
+    evaluateString(context, padStringExp)
+  )
+)
+
+export const $stringPadEnd = (
+  context:EvaluationContext,
+  targetLengthExp:NumberExpression,
+  padStringExp:StringExpression = ' ',
+  baseExp:StringExpression = $$VALUE
+):string => (
+  evaluateString(context, baseExp).padEnd(
+    evaluateNumber(context, targetLengthExp),
+    evaluateString(context, padStringExp)
+  )
+)
+
 export const STRING_EXPRESSIONS = {
   $string,
   $stringStartsWith,
   $stringLength,
   $stringSubstr,
   $stringConcat,
-  $stringTrim
+  $stringTrim,
+  $stringPadStart,
+  $stringPadEnd
 }

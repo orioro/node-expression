@@ -60,3 +60,21 @@ test('$stringTrim', () => {
 
   expect(evaluate(context, ['$stringTrim'])).toEqual('some string')
 })
+
+test('$stringPadStart', () => {
+  const context = {
+    interpreters,
+    data: { $$VALUE: '1' }
+  }
+
+  expect(evaluate(context, ['$stringPadStart', 3, '0'])).toEqual('001')
+})
+
+test('$stringPadEnd', () => {
+  const context = {
+    interpreters,
+    data: { $$VALUE: '1' }
+  }
+
+  expect(evaluate(context, ['$stringPadEnd', 3, '*'])).toEqual('1**')
+})
