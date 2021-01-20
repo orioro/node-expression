@@ -264,17 +264,6 @@ export const $arrayFormat = (
   })
 }
 
-export const $arrayDefaults = (
-  context:EvaluationContext,
-  defaultValuesExp:ArrayExpression,
-  sourceExp:ArrayExpression = $$VALUE
-):any[] => {
-  const defaultValues = evaluateArray(defaultValuesExp)
-  const source = evaluateArray(sourceExp)
-
-  return arrayDeepApplyDefaults(source, defaultValues)
-}
-
 export const ARRAY_EXPRESSIONS = {
   $arrayIncludes,
   $arrayIncludesAll,
