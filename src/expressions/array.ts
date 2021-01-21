@@ -92,7 +92,7 @@ const _arrayIterator = (method:string) => (
     return evaluate({
       ...context,
       scope: {
-        $$PARENT: context.scope,
+        $$PARENT_SCOPE: context.scope,
         $$VALUE,
         $$INDEX,
         $$ARRAY

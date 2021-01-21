@@ -1,5 +1,5 @@
 import { evaluate } from '../expression'
-import { $value } from './value'
+import { VALUE_EXPRESSIONS } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { LOGICAL_EXPRESSIONS } from './logical'
 import { ARRAY_EXPRESSIONS } from './array'
@@ -9,7 +9,7 @@ import { MATH_EXPRESSIONS } from './math'
 import { NUMBER_EXPRESSIONS } from './number'
 
 const interpreters = {
-  $value,
+  ...VALUE_EXPRESSIONS,
   ...LOGICAL_EXPRESSIONS,
   ...NUMBER_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
@@ -135,10 +135,54 @@ describe('$arrayFilter', () => {
       },
       [
         '$arrayFilter',
-        ['$eq', 0, ['$mathMod', ['$value', '$$PARENT.$$VALUE']]],
+        ['$eq', 0, ['$mathMod', ['$value', '$$PARENT_SCOPE.$$VALUE']]],
         [1, 2, 3, 4, 5, 6]
       ]
     )).toEqual([2, 4, 6])
+  })
+
+  test.only('with meta evaluation', () => {
+    const OUT_OF_RANGE_COND = ['$and', [
+      ['$gte', 1],
+      ['$lte', 10]
+    ]]
+    const OUT_OF_RANGE_ERR = {
+      code: 'OUT_OF_RANGE_ERR',
+      message: 'Must be a number between 1 and 10'
+    }
+
+    const NOT_EVEN_COND = ['$eq', 0, ['$mathMod', 2]]
+    const NOT_EVEN_ERR = {
+      code: 'NOT_EVEN_ERR',
+      message: 'Must be an even number'
+    }
+
+    const CASES = [
+      [OUT_OF_RANGE_COND, OUT_OF_RANGE_ERR],
+      [NOT_EVEN_COND, NOT_EVEN_ERR]
+    ]
+
+    const check = (value) => evaluate({
+      interpreters,
+      scope: { $$VALUE: value }
+    }, [
+      '$arrayFilter',
+      ['$notEq', null],
+      [
+        '$arrayMap',
+        [
+          '$if',
+          ['$evaluate', ['$value', '0'], ['$value', '$$PARENT_SCOPE']],
+          null,
+          ['$value', '1']
+        ],
+        CASES
+      ]
+    ])
+
+    expect(check(9)).toEqual([NOT_EVEN_ERR])
+    expect(check(10)).toEqual([])
+    expect(check(11)).toEqual([OUT_OF_RANGE_ERR, NOT_EVEN_ERR])
   })
 })
 

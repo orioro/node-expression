@@ -3,7 +3,7 @@ export type Expression = any[]
 export type ExpressionInterpreter = (context:EvaluationContext, ...args:any[]) => any
 
 export type EvaluationScope = {
-  $$PARENT?: EvaluationScope,
+  $$PARENT_SCOPE?: EvaluationScope,
   $$VALUE: any,
   $$ARRAY?: any[],
   $$INDEX?: number,

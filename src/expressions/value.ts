@@ -5,13 +5,13 @@ import { evaluate } from '../expression'
 import {
   Expression,
   EvaluationContext,
-  StringExpression
+  StringExpression,
+  PlainObjectExpression
 } from '../types'
 
 const PATH_VARIABLE_RE = /^\$\$.+/
 
 export const $$VALUE = ['$value', '$$VALUE']
-export const $$PARENT_VALUE = ['$value', '$$PARENT.$$VALUE']
 
 export const $value = (
   context:EvaluationContext,
@@ -40,7 +40,24 @@ export const $literal = (
   value:any
 ) => value
 
+export const $evaluate = (
+  context:EvaluationContext,
+  expExp:Expression,
+  scopeExp:(PlainObjectExpression | null) = null
+) => {
+  const exp = evaluate(context, expExp)
+  const scope = scopeExp === null
+    ? context.scope
+    : evaluate(context, scopeExp)
+
+  return evaluate({
+    ...context,
+    scope
+  }, exp)
+}
+
 export const VALUE_EXPRESSIONS = {
   $value,
-  $literal
+  $literal,
+  $evaluate
 }
