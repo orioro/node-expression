@@ -13,21 +13,21 @@ describe('$type', () => {
   test('string', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 'some string' }
+      scope: { $$VALUE: 'some string' }
     }, ['$type'])).toEqual('string')
   })
 
   test('number', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 10 }
+      scope: { $$VALUE: 10 }
     }, ['$type'])).toEqual('number')
   })
 
   test('boolean', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: true }
+      scope: { $$VALUE: true }
     }, ['$type'])).toEqual('boolean')
   })
 })

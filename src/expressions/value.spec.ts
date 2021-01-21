@@ -20,7 +20,7 @@ describe('$value', () => {
 
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: data
       }
     }

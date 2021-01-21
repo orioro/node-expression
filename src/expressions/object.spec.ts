@@ -20,7 +20,7 @@ const interpreters = {
 
 const context = {
   interpreters,
-  data: {
+  scope: {
     $$VALUE: {
       name: 'João Silva',
       age: 50,
@@ -110,7 +110,7 @@ describe('$objectDefaults', () => {
   test('simple', () => {
     expect(evaluate({
       interpreters,
-      data: {
+      scope: {
         $$VALUE: {
           propA: 'valueA',
           propB: 'valueB'
@@ -131,7 +131,7 @@ describe('$objectDefaults', () => {
   test('nested object', () => {
     expect(evaluate({
       interpreters,
-      data: {
+      scope: {
         $$VALUE: {
           propA: 'valueA',
           propB: 'valueB',
@@ -163,7 +163,7 @@ describe('$objectDefaults', () => {
   test('nested array', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: {
           propA: 'valueA',
           propB: [
@@ -204,7 +204,7 @@ describe('$objectAssign', () => {
   test('simple', () => {
     expect(evaluate({
       interpreters,
-      data: {
+      scope: {
         $$VALUE: {
           propA: 'valueA',
           propB: 'valueB'
@@ -224,7 +224,7 @@ describe('$objectAssign', () => {
   test('nested', () => {
     expect(evaluate({
       interpreters,
-      data: {
+      scope: {
         $$VALUE: {
           propA: 'valueA',
           propB: {

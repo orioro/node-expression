@@ -16,45 +16,45 @@ describe('$and', () => {
   test('error situations', () => {
     expect(() => evaluate({
       interpreters,
-      data: { $$VALUE: undefined }
+      scope: { $$VALUE: undefined }
     }, ['$and'])).toThrow(TypeError)
 
     expect(() => evaluate({
       interpreters,
-      data: { $$VALUE: null }
+      scope: { $$VALUE: null }
     }, ['$and'])).toThrow(TypeError)
 
     expect(() => evaluate({
       interpreters,
-      data: { $$VALUE: true }
+      scope: { $$VALUE: true }
     }, ['$and'])).toThrow(TypeError)
 
     expect(() => evaluate({
       interpreters,
-      data: { $$VALUE: 8 }
+      scope: { $$VALUE: 8 }
     }, ['$and'])).toThrow(TypeError)
 
     expect(() => evaluate({
       interpreters,
-      data: { $$VALUE: {} }
+      scope: { $$VALUE: {} }
     }, ['$and'])).toThrow(TypeError)
   })
 
   test('', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: [true, true, true] }
+      scope: { $$VALUE: [true, true, true] }
     }, ['$and'])).toEqual(true)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: [true, false, true] }
+      scope: { $$VALUE: [true, false, true] }
     }, ['$and'])).toEqual(false)
 
     expect(() => {
       evaluate({
         interpreters,
-        data: { $$VALUE: [1, false, true] }
+        scope: { $$VALUE: [1, false, true] }
       }, ['$and'])
     }).toThrow(TypeError)
 
@@ -64,7 +64,7 @@ describe('$and', () => {
         $arrayMap,
         $boolean
       },
-      data: { $$VALUE: [1, 'string', true] }
+      scope: { $$VALUE: [1, 'string', true] }
     }, ['$and', ['$arrayMap', ['$boolean']]])).toEqual(true)
 
     expect(evaluate({
@@ -73,7 +73,7 @@ describe('$and', () => {
         $arrayMap,
         $boolean
       },
-      data: { $$VALUE: [1, '', true] }
+      scope: { $$VALUE: [1, '', true] }
     }, ['$and', ['$arrayMap', ['$boolean']]])).toEqual(false)
   })
 
@@ -86,7 +86,7 @@ describe('$and', () => {
         $lt,
         $stringSubstr
       },
-      data: {
+      scope: {
         $$VALUE: {
           name: 'João Maranhão',
           age: 25
@@ -127,12 +127,12 @@ describe('$or', () => {
   test('', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: [false, true, false] }
+      scope: { $$VALUE: [false, true, false] }
     }, ['$or'])).toEqual(true)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: [false, false, false] }
+      scope: { $$VALUE: [false, false, false] }
     }, ['$or'])).toEqual(false)
   })
 })
@@ -147,12 +147,12 @@ describe('$if', () => {
   test('', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 15 }
+      scope: { $$VALUE: 15 }
     }, ['$if', ['$gt', 10], 100, 0])).toEqual(100)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 8 }
+      scope: { $$VALUE: 8 }
     }, ['$if', ['$gt', 10], 100, 0])).toEqual(0)
   })
 })
@@ -189,7 +189,7 @@ describe('$switch', () => {
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 'CASE_B' }
+      scope: { $$VALUE: 'CASE_B' }
     }, $expr)).toEqual('VALUE_B')
   })
 
@@ -224,22 +224,22 @@ describe('$switch', () => {
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 5 }
+      scope: { $$VALUE: 5 }
     }, $expr)).toEqual(0)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 15 }
+      scope: { $$VALUE: 15 }
     }, $expr)).toEqual(150)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 25 }
+      scope: { $$VALUE: 25 }
     }, $expr)).toEqual(500)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 30 }
+      scope: { $$VALUE: 30 }
     }, $expr)).toEqual(-30)
   })
 })

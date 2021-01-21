@@ -52,7 +52,7 @@ export const $objectMatches = (
 
     return $matches({
       ...context,
-      data: { $$VALUE: get(value, path) }
+      scope: { $$VALUE: get(value, path) }
     }, pathCriteria)
   })
 }
@@ -73,7 +73,7 @@ export const $objectFormat = (
       targetPath,
       evaluate({
         ...context,
-        data: { $$VALUE: source }
+        scope: { $$VALUE: source }
       }, formatParseItem(context.interpreters, format[targetPath]))
     )
 

@@ -14,7 +14,7 @@ export type EvaluationContext = {
   interpreters: {
     [key: string]: ExpressionInterpreter
   },
-  data: EvaluationScope
+  scope: EvaluationScope
 }
 
 export type ISODate = string

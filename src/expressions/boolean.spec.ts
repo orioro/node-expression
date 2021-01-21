@@ -11,29 +11,29 @@ describe('$boolean', () => {
   test('numbers', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 1 }
+      scope: { $$VALUE: 1 }
     }, ['$boolean'])).toEqual(true)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 0 }
+      scope: { $$VALUE: 0 }
     }, ['$boolean'])).toEqual(false)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: -1 }
+      scope: { $$VALUE: -1 }
     }, ['$boolean'])).toEqual(true)
   })
 
   test('string', () => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: 'some string' }
+      scope: { $$VALUE: 'some string' }
     }, ['$boolean'])).toEqual(true)
 
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: '' }
+      scope: { $$VALUE: '' }
     }, ['$boolean'])).toEqual(false)
   })
 })

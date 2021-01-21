@@ -23,7 +23,7 @@ describe('$arrayIncludes', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: ['A', 'B', 'C', 'D']
       }
     }
@@ -37,7 +37,7 @@ describe('$arrayIncludesAll', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: ['A', 'B', 'C', 'D']
       }
     }
@@ -51,7 +51,7 @@ describe('$arrayIncludesAny', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: ['A', 'B', 'C', 'D']
       }
     }
@@ -66,7 +66,7 @@ describe('$arrayLength', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: ['A', 'B', 'C', 'D']
       }
     }
@@ -79,7 +79,7 @@ describe('$arrayMap', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: [-10, 0, 10, 20]
       }
     }
@@ -100,7 +100,7 @@ describe('$arrayMap', () => {
     expect(evaluate(
       {
         interpreters,
-        data: { $$VALUE: [-10, 0, 10, 20] }
+        scope: { $$VALUE: [-10, 0, 10, 20] }
       },
       ['$arrayMap',
         ['$mathSum',
@@ -114,7 +114,7 @@ describe('$arrayMap', () => {
     expect(evaluate(
       {
         interpreters,
-        data: { $$VALUE: [-10, 0, 10, 20] }
+        scope: { $$VALUE: [-10, 0, 10, 20] }
       },
       ['$arrayMap',
         ['$mathSum',
@@ -131,7 +131,7 @@ describe('$arrayFilter', () => {
     expect(evaluate(
       {
         interpreters,
-        data: { $$VALUE: 2 }
+        scope: { $$VALUE: 2 }
       },
       [
         '$arrayFilter',
@@ -146,7 +146,7 @@ describe('$arrayReduce', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: [0, 10, 20, 40] }
+      scope: { $$VALUE: [0, 10, 20, 40] }
     }
 
     expect(evaluate(context, ['$arrayReduce', ['$mathSum', ['$value', '$$ACC']], 0]))
@@ -158,7 +158,7 @@ describe('$arrayReverse', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
 
     expect(evaluate(context, ['$arrayReverse']))
@@ -170,7 +170,7 @@ describe('$arraySort', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['B', 'D', 'C', 'A'] }
+      scope: { $$VALUE: ['B', 'D', 'C', 'A'] }
     }
 
     expect(evaluate(context, ['$arraySort']))
@@ -180,7 +180,7 @@ describe('$arraySort', () => {
   test('with custom comparator', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['9', '1', '12', '11'] }
+      scope: { $$VALUE: ['9', '1', '12', '11'] }
     }
 
     expect(evaluate(context, ['$arraySort']))
@@ -199,7 +199,7 @@ describe('$arrayPush', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
 
     expect(evaluate(context, ['$arrayPush', 'E']))
@@ -211,7 +211,7 @@ describe('$arrayPop', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
 
     expect(evaluate(context, ['$arrayPop']))
@@ -223,7 +223,7 @@ describe('$arrayUnshift', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
 
     expect(evaluate(context, ['$arrayUnshift', 'Z']))
@@ -235,7 +235,7 @@ describe('$arrayShift', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
 
     expect(evaluate(context, ['$arrayShift']))
@@ -247,7 +247,7 @@ describe('$arraySlice', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
 
     expect(evaluate(context, ['$arraySlice', 1, 3]))
@@ -259,7 +259,7 @@ describe('$arraySubstitute', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
     
     expect(evaluate(context, ['$arraySubstitute', 1, 3, ['$arraySlice', 0, 4]]))
@@ -271,7 +271,7 @@ describe('$arrayAddAt', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
     
     expect(evaluate(context, ['$arrayAddAt', 1, ['$arraySlice', 0, 4]]))
@@ -283,7 +283,7 @@ describe('$arrayRemoveAt', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
     
     expect(evaluate(context, ['$arrayRemoveAt', 1, 2]))
@@ -298,7 +298,7 @@ describe('$arrayJoin', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
     
     expect(evaluate(context, ['$arrayJoin', '_']))
@@ -313,7 +313,7 @@ describe('$arrayAt', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: ['A', 'B', 'C', 'D'] }
+      scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
     
     expect(evaluate(context, ['$arrayAt', 0]))
@@ -330,7 +330,7 @@ describe('$arrayAt', () => {
 describe('$arrayFormat', () => {
   const context = {
     interpreters,
-    data: {
+    scope: {
       $$VALUE: {
         name: 'João',
         lastName: 'Silva Souza',

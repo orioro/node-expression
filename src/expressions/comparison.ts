@@ -101,7 +101,7 @@ export const $matches = (
     return evaluateBoolean(
       {
         ...context,
-        data: {
+        scope: {
           ...context.data,
           $$VALUE: value
         }

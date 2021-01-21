@@ -24,7 +24,7 @@ describe('$eq / $notEq', () => {
   test('string', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: 'SOME_STRING'
       }
     }
@@ -49,7 +49,7 @@ describe('$in / $notIn', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: 'C'
       }
     }
@@ -73,7 +73,7 @@ describe('$gt / $gte / $lt / $lte', () => {
 
   const context = {
     interpreters,
-    data: {
+    scope: {
       $$VALUE: 20
     }
   }
@@ -119,7 +119,7 @@ describe('$matches', () => {
 
   const context = {
     interpreters,
-    data: {
+    scope: {
       $$VALUE: {
         name: 'João Silva',
         age: 54,
@@ -138,7 +138,7 @@ describe('$matches', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: {
+      scope: {
         $$VALUE: 24
       }
     }

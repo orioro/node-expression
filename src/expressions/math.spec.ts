@@ -34,7 +34,7 @@ const interpreters = {
 describe('operations', () => {
   const context = {
     interpreters,
-    data: {
+    scope: {
       $$VALUE: 10
     }
   }
@@ -50,53 +50,53 @@ describe('operations', () => {
 test('$mathAbs', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10 }
+    scope: { $$VALUE: 10 }
   }, ['$mathAbs'])).toEqual(10)
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: -10 }
+    scope: { $$VALUE: -10 }
   }, ['$mathAbs'])).toEqual(10)
 })
 
 test('$mathMax', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10 }
+    scope: { $$VALUE: 10 }
   }, ['$mathMax', 5])).toEqual(10)
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10 }
+    scope: { $$VALUE: 10 }
   }, ['$mathMax', 50])).toEqual(50)
 })
 
 test('$mathMin', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10 }
+    scope: { $$VALUE: 10 }
   }, ['$mathMin', 5])).toEqual(5)
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10 }
+    scope: { $$VALUE: 10 }
   }, ['$mathMin', 50])).toEqual(10)
 })
 
 test('$mathRound', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10.1 }
+    scope: { $$VALUE: 10.1 }
   }, ['$mathRound'])).toEqual(10)
 })
 
 test('$mathFloor', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10.1 }
+    scope: { $$VALUE: 10.1 }
   }, ['$mathFloor'])).toEqual(10)
 })
 
 test('$mathCeil', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10.1 }
+    scope: { $$VALUE: 10.1 }
   }, ['$mathCeil'])).toEqual(11)
 })

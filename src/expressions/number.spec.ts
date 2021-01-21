@@ -12,18 +12,18 @@ const interpreters = {
 test('$numberInt', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: '10.50' }
+    scope: { $$VALUE: '10.50' }
   }, ['$numberInt'])).toEqual(10)
 
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10.5 }
+    scope: { $$VALUE: 10.5 }
   }, ['$numberInt'])).toEqual(10.5)
 
   expect(() => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: true }
+      scope: { $$VALUE: true }
     }, ['$numberInt']))
   }).toThrow(TypeError)
 })
@@ -31,18 +31,18 @@ test('$numberInt', () => {
 test('$numberFloat', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: '10.50' }
+    scope: { $$VALUE: '10.50' }
   }, ['$numberFloat'])).toEqual(10.5)
 
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10.5 }
+    scope: { $$VALUE: 10.5 }
   }, ['$numberInt'])).toEqual(10.5)
 
   expect(() => {
     expect(evaluate({
       interpreters,
-      data: { $$VALUE: true }
+      scope: { $$VALUE: true }
     }, ['$numberInt']))
   }).toThrow(TypeError)
 })

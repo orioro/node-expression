@@ -12,7 +12,7 @@ describe('$date', () => {
   test('ISO', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: '2020-10-14T23:09:30.787Z' }
+      scope: { $$VALUE: '2020-10-14T23:09:30.787Z' }
     }
 
     expect(evaluate(context, ['$date', 'ISO', 'y'])).toEqual('2020')
@@ -23,7 +23,7 @@ describe('$date', () => {
     const ISODate = '2020-10-14T23:09:30.787Z'
     const context = {
       interpreters,
-      data: { $$VALUE: (new Date(ISODate)).getTime() }
+      scope: { $$VALUE: (new Date(ISODate)).getTime() }
     }
 
     expect(evaluate(context, ['$date', ['UnixEpochMs', { zone: 'utc' }]]))
@@ -41,7 +41,7 @@ describe('$dateNow', () => {
   test('', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: undefined }
+      scope: { $$VALUE: undefined }
     }
 
     const now = evaluate(context, ['$dateNow', 'UnixEpochMs'])
@@ -65,7 +65,7 @@ describe('date comparison', () => {
   test('with math operators', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: '2020-10-14T23:09:30.787Z' }
+      scope: { $$VALUE: '2020-10-14T23:09:30.787Z' }
     }
 
     expect(evaluate(context, ['$lt', Date.now(), ['$date', 'ISO', 'UnixEpochMs']])).toEqual(true)
@@ -74,7 +74,7 @@ describe('date comparison', () => {
   test('with date operators', () => {
     const context = {
       interpreters,
-      data: { $$VALUE: '2020-10-14T23:09:30.787Z' }
+      scope: { $$VALUE: '2020-10-14T23:09:30.787Z' }
     }
 
     expect(evaluate(context, [

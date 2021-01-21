@@ -12,14 +12,14 @@ const interpreters = {
 test('$string', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 10.5 }
+    scope: { $$VALUE: 10.5 }
   }, ['$string'])).toEqual('10.5')
 })
 
 test('$stringStartsWith', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: 'some_string' }
+    scope: { $$VALUE: 'some_string' }
   }
 
   expect(evaluate(context, ['$stringStartsWith', 'some'])).toEqual(true)
@@ -29,14 +29,14 @@ test('$stringStartsWith', () => {
 test('$stringLength', () => {
   expect(evaluate({
     interpreters,
-    data: { $$VALUE: 'some_string' }
+    scope: { $$VALUE: 'some_string' }
   }, ['$stringLength'])).toEqual(11)
 })
 
 test('$stringSubstr', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: 'some_string' }
+    scope: { $$VALUE: 'some_string' }
   }
 
   expect(evaluate(context, ['$stringSubstr', 0, 4])).toEqual('some')
@@ -46,7 +46,7 @@ test('$stringSubstr', () => {
 test('$stringConcat', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: 'some_string' }
+    scope: { $$VALUE: 'some_string' }
   }
 
   expect(evaluate(context, ['$stringConcat', '_another_string'])).toEqual('some_string_another_string')
@@ -55,7 +55,7 @@ test('$stringConcat', () => {
 test('$stringTrim', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: ' some string  ' }
+    scope: { $$VALUE: ' some string  ' }
   }
 
   expect(evaluate(context, ['$stringTrim'])).toEqual('some string')
@@ -64,7 +64,7 @@ test('$stringTrim', () => {
 test('$stringPadStart', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: '1' }
+    scope: { $$VALUE: '1' }
   }
 
   expect(evaluate(context, ['$stringPadStart', 3, '0'])).toEqual('001')
@@ -73,7 +73,7 @@ test('$stringPadStart', () => {
 test('$stringPadEnd', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: '1' }
+    scope: { $$VALUE: '1' }
   }
 
   expect(evaluate(context, ['$stringPadEnd', 3, '*'])).toEqual('1**')
@@ -82,7 +82,7 @@ test('$stringPadEnd', () => {
 test('$stringMatch', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: 'abc_adc_acdc' }
+    scope: { $$VALUE: 'abc_adc_acdc' }
   }
 
   expect(evaluate(context, ['$stringMatch', 'a.*?c', 'g']))
@@ -99,7 +99,7 @@ test('$stringMatch', () => {
 test('$stringTest', () => {
   const context = {
     interpreters,
-    data: { $$VALUE: 'abc_adc_acdc' }
+    scope: { $$VALUE: 'abc_adc_acdc' }
   }
 
   expect(evaluate(context, ['$stringTest', 'a.*?c', 'g']))

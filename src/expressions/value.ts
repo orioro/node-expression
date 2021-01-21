@@ -25,8 +25,8 @@ export const $value = (
   }
 
   const value = PATH_VARIABLE_RE.test(path)
-    ? get(context.data, path)
-    : get(context.data, `$$VALUE.${path}`)
+    ? get(context.scope, path)
+    : get(context.scope, `$$VALUE.${path}`)
 
   return value !== undefined
     ? value

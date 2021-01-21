@@ -78,7 +78,7 @@ export const $arrayReduce = (
     .reduce(($$ACC, $$VALUE, $$INDEX, $$ARRAY) => {
       return evaluate({
         ...context,
-        data: { $$VALUE, $$INDEX, $$ARRAY, $$ACC }
+        scope: { $$VALUE, $$INDEX, $$ARRAY, $$ACC }
       }, reduceExp)
     }, evaluate(context, startExp))
 )
@@ -91,8 +91,8 @@ const _arrayIterator = (method:string) => (
   evaluateArray(context, arrayExp)[method](($$VALUE, $$INDEX, $$ARRAY) => {
     return evaluate({
       ...context,
-      data: {
-        $$PARENT: context.data,
+      scope: {
+        $$PARENT: context.scope,
         $$VALUE,
         $$INDEX,
         $$ARRAY
@@ -128,7 +128,7 @@ export const $arraySort = (
   } else {
     arr.sort(($$SORT_A, $$SORT_B) => evaluateNumber({
       ...context,
-      data: { $$SORT_A, $$SORT_B }
+      scope: { $$SORT_A, $$SORT_B }
     }, sortExp))
   }
 
