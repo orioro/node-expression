@@ -102,7 +102,7 @@ export const $matches = (
       {
         ...context,
         scope: {
-          ...context.data,
+          ...context.scope,
           $$VALUE: value
         }
       },
