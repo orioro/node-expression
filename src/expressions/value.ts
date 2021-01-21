@@ -11,6 +11,7 @@ import {
 const PATH_VARIABLE_RE = /^\$\$.+/
 
 export const $$VALUE = ['$value', '$$VALUE']
+export const $$PARENT_VALUE = ['$value', '$$PARENT.$$VALUE']
 
 export const $value = (
   context:EvaluationContext,

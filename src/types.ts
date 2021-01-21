@@ -2,16 +2,19 @@ export type Expression = any[]
 
 export type ExpressionInterpreter = (context:EvaluationContext, ...args:any[]) => any
 
+export type EvaluationScope = {
+  $$PARENT?: EvaluationScope,
+  $$VALUE: any,
+  $$ARRAY?: any[],
+  $$INDEX?: number,
+  $$ACC?: any
+}
+
 export type EvaluationContext = {
   interpreters: {
     [key: string]: ExpressionInterpreter
   },
-  data: {
-    $$VALUE: any,
-    $$ARRAY?: any[],
-    $$INDEX?: number,
-    $$ACC?: any
-  }
+  data: EvaluationScope
 }
 
 export type ISODate = string

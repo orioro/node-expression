@@ -1,23 +1,19 @@
 import { evaluate } from '../expression'
 import { $value } from './value'
+import { COMPARISON_EXPRESSIONS } from './comparison'
+import { LOGICAL_EXPRESSIONS } from './logical'
 import { ARRAY_EXPRESSIONS } from './array'
 import { OBJECT_EXPRESSIONS } from './object'
 import { STRING_EXPRESSIONS } from './string'
-
-import {
-  $mathSum,
-  $mathSub
-} from './math'
-
-import {
-  $numberInt
-} from './number'
+import { MATH_EXPRESSIONS } from './math'
+import { NUMBER_EXPRESSIONS } from './number'
 
 const interpreters = {
   $value,
-  $mathSum,
-  $mathSub,
-  $numberInt,
+  ...LOGICAL_EXPRESSIONS,
+  ...NUMBER_EXPRESSIONS,
+  ...MATH_EXPRESSIONS,
+  ...COMPARISON_EXPRESSIONS,
   ...OBJECT_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS
@@ -126,6 +122,23 @@ describe('$arrayMap', () => {
         ]
       ]
     )).toEqual([-10, 1, 12, 23])
+  })
+})
+
+describe('$arrayFilter', () => {
+
+  test('testing against parent scope value', () => {
+    expect(evaluate(
+      {
+        interpreters,
+        data: { $$VALUE: 2 }
+      },
+      [
+        '$arrayFilter',
+        ['$eq', 0, ['$mathMod', ['$value', '$$PARENT.$$VALUE']]],
+        [1, 2, 3, 4, 5, 6]
+      ]
+    )).toEqual([2, 4, 6])
   })
 })
 

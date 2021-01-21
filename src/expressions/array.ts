@@ -85,14 +85,19 @@ export const $arrayReduce = (
 
 const _arrayIterator = (method:string) => (
   context:EvaluationContext,
-  mapExp:any,
+  iteratorExp:any,
   arrayExp:any = $$VALUE
 ) => (
   evaluateArray(context, arrayExp)[method](($$VALUE, $$INDEX, $$ARRAY) => {
     return evaluate({
       ...context,
-      data: { $$VALUE, $$INDEX, $$ARRAY }
-    }, mapExp)
+      data: {
+        $$PARENT: context.data,
+        $$VALUE,
+        $$INDEX,
+        $$ARRAY
+      }
+    }, iteratorExp)
   })
 )
 export const $arrayMap = _arrayIterator('map')
