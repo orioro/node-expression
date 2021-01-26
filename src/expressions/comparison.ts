@@ -22,7 +22,9 @@ import {
 import {
   Expression,
   EvaluationContext,
-  NumberExpression
+  NumberExpression,
+  ArrayExpression,
+  PlainObjectExpression
 } from '../types'
 
 import {
@@ -31,54 +33,123 @@ import {
 
 const _negation = fn => (...args):boolean => !fn(...args)
 
+/**
+ * @name $eq
+ * @param {Expression} targetValueExp Value to be compared to.
+ * @param {Expression} valueExp Value being compared.
+ * @return {boolean}
+ */
 export const $eq = (
   context:EvaluationContext,
-  criteriaExp:Expression,
+  targetValueExp:Expression,
   valueExp:Expression = $$VALUE
 ) => isEqual(
-  evaluate(context, criteriaExp),
+  evaluate(context, targetValueExp),
   evaluate(context, valueExp)
 )
 
+/**
+ * @name $notEq
+ * @param {Expression} targetValueExp Value to be compared to.
+ * @param {Expression} valueExp Value being compared.
+ * @return {boolean}
+ */
 export const $notEq = _negation($eq)
 
+/**
+ * Checks whether the value is in the given array.
+ * 
+ * @name $in
+ * @param {ArrayExpression} arrayExp
+ * @param {Expression} valueExp
+ * @return {boolean}
+ */
 export const $in = (
   context:EvaluationContext,
-  arrayExp:Expression,
+  arrayExp:ArrayExpression,
   valueExp:Expression = $$VALUE
 ) => {
   const value = evaluate(context, valueExp)
   return evaluateArray(context, arrayExp).some(item => isEqual(item, value))
 }
+
+/**
+ * Checks whether the value is **not** in the given array.
+ * 
+ * @name $notIn
+ * @param {ArrayExpression} arrayExp
+ * @param {Expression} valueExp
+ * @return {boolean}
+ */
 export const $notIn = _negation($in)
 
+/**
+ * Greater than `value > threshold`
+ * 
+ * @name $gt
+ * @param {NumberExpression} thresholdExp
+ * @param {NumberExpression} valueExp
+ * @return {boolean}
+ */
 export const $gt = (
   context:EvaluationContext,
   thresholdExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
 ) => evaluateNumber(context, valueExp) > evaluateNumber(context, thresholdExp)
 
+/**
+ * Greater than or equal `value >= threshold`
+ * 
+ * @name $gte
+ * @param {NumberExpression} thresholdExp
+ * @param {NumberExpression} valueExp
+ * @return {boolean}
+ */
 export const $gte = (
   context:EvaluationContext,
   thresholdExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
 ) => evaluateNumber(context, valueExp) >= evaluateNumber(context, thresholdExp)
 
+/**
+ * Lesser than `value < threshold`
+ * 
+ * @name $lt
+ * @param {NumberExpression} thresholdExp
+ * @param {NumberExpression} valueExp
+ * @return {boolean}
+ */
 export const $lt = (
   context:EvaluationContext,
   thresholdExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
 ) => evaluateNumber(context, valueExp) < evaluateNumber(context, thresholdExp)
 
+/**
+ * Lesser than or equal `value <= threshold`
+ * 
+ * @name $lte
+ * @param {NumberExpression} thresholdExp
+ * @param {NumberExpression} valueExp
+ * @return {boolean}
+ */
 export const $lte = (
   context:EvaluationContext,
   thresholdExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
 ) => evaluateNumber(context, valueExp) <= evaluateNumber(context, thresholdExp)
 
+/**
+ * Checks if the value matches the set of criteria.
+ * 
+ * @name $lte
+ * @param {PlainObjectExpression} criteriaExp
+ * @param {NumberExpression} valueExp
+ * @return {boolean}
+ */
 export const $matches = (
   context:EvaluationContext,
-  criteriaExp:Expression,
+  criteriaExp:PlainObjectExpression,
   valueExp:Expression = $$VALUE
 ) => {
   const criteria = evaluatePlainObject(context, criteriaExp)

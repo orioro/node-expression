@@ -1076,11 +1076,12 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@orioro/readme@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@orioro/readme/-/readme-0.0.2.tgz#34c140341245ece4a4485938e49de4c890deb042"
-  integrity sha512-fzMnsOScZMLCbcVVazuYV9L4wiLyExcef3MDphdHUMTDWd4Hr3JfBbAiPQjKg9G+xt9tH4lBeTjhPEAOEl/XPA==
+"@orioro/readme@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@orioro/readme/-/readme-0.0.4.tgz#72500c1ff2b3de6a6a20d00b4080881125c60217"
+  integrity sha512-g4wugRWrxG4982R35yoUC4S7AZjmQ7D7BbIOX4KxqMCkh7tMbgSzOoTkZoUVptLwuknYpGfG2CJaQiPB3AcmBA==
   dependencies:
+    chokidar "^3.5.1"
     comment-parser "^1.1.1"
     gulp-rename "^2.0.0"
     lodash "^4.17.20"
@@ -1676,7 +1677,7 @@ char-regex@^1.0.2:
   resolved "https://registry.yarnpkg.com/char-regex/-/char-regex-1.0.2.tgz#d744358226217f981ed58f479b1d6bcc29545dcf"
   integrity sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==
 
-chokidar@^3.3.0:
+chokidar@^3.3.0, chokidar@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.1.tgz#ee9ce7bbebd2b79f49f304799d5468e31e14e68a"
   integrity sha512-9+s+Od+W0VJJzawDma/gvBNQqkTiqYTWLuZoyAsivsI4AaWTCzHG06/TMjsf1cYe9Cb97UCEhjz7HvnPk2p/tw==

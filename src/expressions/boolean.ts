@@ -9,6 +9,11 @@ import {
 
 import { $$VALUE } from './value'
 
+/**
+ * @name $boolean
+ * @param {*} valueExp
+ * @return {boolean}
+ */
 export const $boolean = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
