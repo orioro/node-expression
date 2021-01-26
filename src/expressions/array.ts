@@ -29,6 +29,14 @@ export const $$ACC = ['$value', '$$ACC']
 export const $$SORT_A = ['$value', '$$SORT_A']
 export const $$SORT_B = ['$value', '$$SORT_B']
 
+/**
+ * Equivalent of `Array.prototype.includes`.
+ * 
+ * @name $arrayIncludes
+ * @param {AnyValueExpression} valueExp
+ * @param {ArrayExpression} [arrayExp=$$VALUE]
+ * @return {boolean} includes
+ */
 export const $arrayIncludes = (
   context:EvaluationContext,
   valueExp:any,
@@ -40,6 +48,16 @@ export const $arrayIncludes = (
   return array.includes(value)
 }
 
+/**
+ * Similar to `$arrayIncludes`, but receives an array
+ * of values to be searched for and returns whether the
+ * context array contains all of the searched values.
+ *
+ * @name $arrayIncludesAll
+ * @param {ArrayExpression} valuesExp
+ * @param {ArrayExpression} [arrayExp=$$VALUE]
+ * @return {boolean} includes
+ */
 export const $arrayIncludesAll = (
   context:EvaluationContext,
   valuesExp:any,
