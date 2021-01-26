@@ -20,6 +20,11 @@ import {
   BooleanExpression
 } from '../types'
 
+/**
+ * @name $and
+ * @param {ArrayExpression} expressionsExp
+ * @return {boolean}
+ */
 export const $and = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression = $$VALUE
@@ -29,6 +34,11 @@ export const $and = (
   return expressions.every(exp => evaluateBoolean(context, exp))
 }
 
+/**
+ * @name $or
+ * @param {ArrayExpression} expressionsExp
+ * @return {boolean}
+ */
 export const $or = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression = $$VALUE
@@ -38,6 +48,11 @@ export const $or = (
   return expressions.some(exp => evaluateBoolean(context, exp))
 }
 
+/**
+ * @name $not
+ * @param {ArrayExpression} expressionsExp
+ * @return {boolean}
+ */
 export const $not = (
   context:EvaluationContext,
   expression
@@ -45,11 +60,22 @@ export const $not = (
   return !evaluateBoolean(context, expression)
 }
 
+/**
+ * @name $nor
+ * @param {ArrayExpression} expressionsExp
+ * @return {boolean}
+ */
 export const $nor = (
   context:EvaluationContext,
-  expressions:any[]
-):boolean => !$or(context, expressions)
+  expressionsExp:ArrayExpression = $$VALUE
+):boolean => !$or(context, expressionsExp)
 
+/**
+ * @name $xor
+ * @param {BooleanExpression} expressionA
+ * @param {BooleanExpression} expressionB
+ * @return {boolean}
+ */
 export const $xor = (
   context:EvaluationContext,
   expressionA:BooleanExpression,
@@ -58,6 +84,13 @@ export const $xor = (
   evaluateBoolean(context, expressionA) !== evaluateBoolean(context, expressionB)
 )
 
+/**
+ * @name $if
+ * @param {BooleanExpression} conditionExp
+ * @param {Expression} thenExp
+ * @param {Expression} elseExp
+ * @return {*} result
+ */
 export const $if = (
   context:EvaluationContext,
   conditionExp:BooleanExpression,
@@ -71,6 +104,12 @@ export const $if = (
 
 type Case = [BooleanExpression, Expression]
 
+/**
+ * @name $switch
+ * @param {ArrayExpression} casesExp
+ * @param {Expression} defaultExp
+ * @return {*} result
+ */
 export const $switch = (
   context:EvaluationContext,
   casesExp:ArrayExpression | Case[],
@@ -86,6 +125,15 @@ export const $switch = (
     : evaluate(context, defaultExp)
 }
 
+/**
+ * @name $switchKey
+ * @param {Cases[]} casesExp
+ * @param {string} casesExp[].0 Case key
+ * @param {*} casesExp[].1 Case value
+ * @param {*} defaultExp
+ * @param {String} ValueExp
+ * @return {*}
+ */
 export const $switchKey = (
   context:EvaluationContext,
   casesExp:PlainObjectExpression | { [key: string]: AnyExpression },

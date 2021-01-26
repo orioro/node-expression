@@ -26,6 +26,12 @@ import {
   $matches
 } from './comparison'
 
+/**
+ * @name $objectMatches
+ * @param {Object} criteriaByPathExp
+ * @param {Object} [valueExp=$$VALUE]
+ * @return {boolean} matches
+ */
 export const $objectMatches = (
   context:EvaluationContext,
   criteriaByPathExp:PlainObjectExpression,
@@ -57,6 +63,12 @@ export const $objectMatches = (
   })
 }
 
+/**
+ * @name $objectFormat
+ * @param {Object} formatExp
+ * @param {*} [sourceExp=$$VALUE]
+ * @return {Object} object
+ */
 export const $objectFormat = (
   context:EvaluationContext,
   formatExp:PlainObjectExpression,
@@ -81,26 +93,38 @@ export const $objectFormat = (
   }, {})
 }
 
+/**
+ * @name $objectDefaults
+ * @param {Object} defaultValuesExp
+ * @param {Object} [baseExp=$$VALUE]
+ * @return {Object}
+ */
 export const $objectDefaults = (
   context:EvaluationContext,
   defaultValuesExp:PlainObjectExpression,
-  sourceExp:PlainObjectExpression = $$VALUE
+  baseExp:PlainObjectExpression = $$VALUE
 ):{ [key: string]: any } => {
   const defaultValues = evaluatePlainObject(context, defaultValuesExp)
-  const source = evaluatePlainObject(context, sourceExp)
+  const base = evaluatePlainObject(context, baseExp)
 
-  return objectDeepApplyDefaults(source, defaultValues)
+  return objectDeepApplyDefaults(base, defaultValues)
 }
 
+/**
+ * @name $objectAssign
+ * @param {Object} valuesExp
+ * @param {Object} [baseExp=$$VALUE]
+ * @return {Object}
+ */
 export const $objectAssign = (
   context:EvaluationContext,
-  extensionExp:PlainObjectExpression,
-  sourceExp:PlainObjectExpression = $$VALUE
+  valuesExp:PlainObjectExpression,
+  baseExp:PlainObjectExpression = $$VALUE
 ):{ [key: string]: any } => {
-  const extension = evaluatePlainObject(context, extensionExp)
-  const source = evaluatePlainObject(context, sourceExp)
+  const values = evaluatePlainObject(context, valuesExp)
+  const base = evaluatePlainObject(context, baseExp)
 
-  return objectDeepAssign(source, extension)
+  return objectDeepAssign(base, values)
 }
 
 export const OBJECT_EXPRESSIONS = {

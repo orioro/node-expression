@@ -11,6 +11,12 @@ import {
 
 import { $$VALUE } from './value'
 
+/**
+ * @name $numberInt
+ * @param {number} radix
+ * @param {*} value
+ * @return {number}
+ */
 export const $numberInt = (
   context:EvaluationContext,
   radixExp:NumberExpression = 10,
@@ -27,6 +33,11 @@ export const $numberInt = (
   }
 }
 
+/**
+ * @name $numberFloat
+ * @param {*} value
+ * @return {number}
+ */
 export const $numberFloat = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE

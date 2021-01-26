@@ -215,26 +215,348 @@ Checks if the value matches the set of criteria.
 
 #### Date
 
+##### `$date(parseFmtArgsExp = 'ISO', serializeFmtArgsExp = 'ISO', dateExp = $$VALUE)`
+
+- `parseFmtArgsExp` {LuxonFmtArgsExpression} Default: `'ISO'`
+- `serializeFmtArgsExp` {LuxonFmtArgsExpression} Default: `'ISO'`
+- `dateExp` {*} Default: `$$VALUE`
+- Returns: `date` {string}
+
+##### `$dateNow(serializeFmtArgsExp = 'ISO')`
+
+- `serializeFmtArgsExp` {LuxonFmtArgsExpression} Default: `'ISO'`
+- Returns: `date` {string}
+
+##### `$dateIsValid()`
+
+- `` {ISODateExpression}
+- Returns: `isValid` {boolean}
+
+##### `$dateStartOf(unitExp, dateExp = $$VALUE)`
+
+- `unitExp` {StringExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: `date` {ISODateString}
+
+##### `$dateEndOf(unitExp, dateExp = $$VALUE)`
+
+- `unitExp` {StringExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: `date` {ISODateString}
+
+##### `$dateSet(valuesExp, dateExp)`
+
+- `valuesExp` {PlainObjectExpression}
+- `dateExp` {ISODateExpression}
+- Returns: `date` {ISODateString}
+
+##### `$dateConfig(configExp, dateExp = $$VALUE)`
+
+- `configExp` {PlainObjectExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: `date` {ISODateString}
+
+##### `$dateGt(referenceDateExp, dateExp = $$VALUE)`
+
+- `referenceDateExp` {ISODateExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: {boolean}
+
+##### `$dateGte(referenceDateExp, dateExp = $$VALUE)`
+
+- `referenceDateExp` {ISODateExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: {boolean}
+
+##### `$dateLt(referenceDateExp, dateExp = $$VALUE)`
+
+- `referenceDateExp` {ISODateExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: {boolean}
+
+##### `$dateLte(referenceDateExp, dateExp = $$VALUE)`
+
+- `referenceDateExp` {ISODateExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: {boolean}
+
+##### `$dateEq(referenceDateExp, dateExp = $$VALUE)`
+
+- `referenceDateExp` {ISODateExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: {boolean}
+
+##### `$dateMoveForward(moveForwardExp, dateExp = $$VALUE)`
+
+- `moveForwardExp` {PlainObjectExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: `date` {ISODateString}
+
+##### `$dateMoveBack(moveForwardExp, dateExp = $$VALUE)`
+
+- `moveForwardExp` {PlainObjectExpression}
+- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- Returns: `date` {ISODateString}
+
 
 #### Functional
+
+##### `$pipe(expressionsExp)`
+
+- `expressionsExp` {ArrayExpression}
+- Returns: `pipeResult` {*}
 
 
 #### Logical
 
+##### `$and(expressionsExp)`
+
+- `expressionsExp` {ArrayExpression}
+- Returns: {boolean}
+
+##### `$or(expressionsExp)`
+
+- `expressionsExp` {ArrayExpression}
+- Returns: {boolean}
+
+##### `$not(expressionsExp)`
+
+- `expressionsExp` {ArrayExpression}
+- Returns: {boolean}
+
+##### `$nor(expressionsExp)`
+
+- `expressionsExp` {ArrayExpression}
+- Returns: {boolean}
+
+##### `$xor(expressionA, expressionB)`
+
+- `expressionA` {BooleanExpression}
+- `expressionB` {BooleanExpression}
+- Returns: {boolean}
+
+##### `$if(conditionExp, thenExp, elseExp)`
+
+- `conditionExp` {BooleanExpression}
+- `thenExp` {Expression}
+- `elseExp` {Expression}
+- Returns: `result` {*}
+
+##### `$switch(casesExp, defaultExp)`
+
+- `casesExp` {ArrayExpression}
+- `defaultExp` {Expression}
+- Returns: `result` {*}
+
+##### `$switchKey(casesExp, defaultExp, ValueExp)`
+
+- `casesExp` {Cases[]}
+- `casesExp[].0` {string} Case key
+- `casesExp[].1` {*} Case value
+- `defaultExp` {*}
+- `ValueExp` {String}
+- Returns: {*}
+
 
 #### Math
+
+##### `$mathSum(sum, base = $$VALUE)`
+
+- `sum` {number}
+- `base` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathSub(subtract, base = $$VALUE)`
+
+- `subtract` {number}
+- `base` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathMult(multiplier, base = $$VALUE)`
+
+- `multiplier` {number}
+- `base` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathDiv(divisor, dividend)`
+
+- `divisor` {number}
+- `dividend` {number}
+- Returns: `result` {number}
+
+##### `$mathMod(divisor, dividend)`
+
+- `divisor` {number}
+- `dividend` {number}
+- Returns: `result` {number}
+
+##### `$mathPow(exponent, base = $$VALUE)`
+
+- `exponent` {number}
+- `base` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathAbs(value = $$VALUE)`
+
+- `value` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathMax(otherValue, value = $$VALUE)`
+
+- `otherValue` {number}
+- `value` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathMin(otherValue, value = $$VALUE)`
+
+- `otherValue` {number}
+- `value` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathRound(value = $$VALUE)`
+
+- `value` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathFloor(value = $$VALUE)`
+
+- `value` {number} Default: `$$VALUE`
+- Returns: `result` {number}
+
+##### `$mathCeil(value = $$VALUE)`
+
+- `value` {number} Default: `$$VALUE`
+- Returns: `result` {number}
 
 
 #### Number
 
+##### `$numberInt(radix, value)`
+
+- `radix` {number}
+- `value` {*}
+- Returns: {number}
+
+##### `$numberFloat(value)`
+
+- `value` {*}
+- Returns: {number}
+
 
 #### Object
+
+##### `$objectMatches(criteriaByPathExp, valueExp = $$VALUE)`
+
+- `criteriaByPathExp` {Object}
+- `valueExp` {Object} Default: `$$VALUE`
+- Returns: `matches` {boolean}
+
+##### `$objectFormat(formatExp, sourceExp = $$VALUE)`
+
+- `formatExp` {Object}
+- `sourceExp` {*} Default: `$$VALUE`
+- Returns: `object` {Object}
+
+##### `$objectDefaults(defaultValuesExp, baseExp = $$VALUE)`
+
+- `defaultValuesExp` {Object}
+- `baseExp` {Object} Default: `$$VALUE`
+- Returns: {Object}
+
+##### `$objectAssign(valuesExp, baseExp = $$VALUE)`
+
+- `valuesExp` {Object}
+- `baseExp` {Object} Default: `$$VALUE`
+- Returns: {Object}
 
 
 #### String
 
+##### `$string(valueExp = $$VALUE)`
+
+- `valueExp` {*} Default: `$$VALUE`
+- Returns: {string}
+
+##### `$stringStartsWith(query, strExp = $$VALUE)`
+
+- `query` {string}
+- `strExp` {string} Default: `$$VALUE`
+- Returns: {boolean}
+
+##### `$stringLength(strExp = $$VALUE)`
+
+- `strExp` {string} Default: `$$VALUE`
+- Returns: {number}
+
+##### `$stringSubstr(startExp, endExp, strExp = $$VALUE)`
+
+- `startExp` {number}
+- `endExp` {number}
+- `strExp` {string} Default: `$$VALUE`
+
+##### `$stringConcat(concatExp, baseExp = $$VALUE)`
+
+- `concatExp` {string}
+- `baseExp` {string} Default: `$$VALUE`
+- Returns: {string}
+
+##### `$stringTrim(strExp = $$VALUE)`
+
+- `strExp` {string} Default: `$$VALUE`
+- Returns: {string}
+
+##### `$stringPadStart(targetLengthExp, padStringExp, strExp = $$VALUE)`
+
+- `targetLengthExp` {number}
+- `padStringExp` {string}
+- `strExp` {string} Default: `$$VALUE`
+- Returns: {string}
+
+##### `$stringPadEnd(targetLengthExp, padStringExp, strExp = $$VALUE)`
+
+- `targetLengthExp` {number}
+- `padStringExp` {string}
+- `strExp` {string} Default: `$$VALUE`
+- Returns: {string}
+
+##### `$stringMatch(regExpExp, regExpOptionsExp, valueExp = $$VALUE)`
+
+- `regExpExp` {string}
+- `regExpOptionsExp` {string}
+- `valueExp` {string} Default: `$$VALUE`
+- Returns: {string[]}
+
+##### `$stringTest(regExpExp, regExpOptionsExp, valueExp = $$VALUE)`
+
+- `regExpExp` {string}
+- `regExpOptionsExp` {string}
+- `valueExp` {string} Default: `$$VALUE`
+- Returns: {boolean}
+
 
 #### Type
 
+##### `$type(valueExp)`
+
+- `valueExp` {*}
+- Returns: `type` {string}
+
 
 #### Value
+
+##### `$value(pathExp, defaultExp)`
+
+- `pathExp` {string}
+- `defaultExp` {*}
+- Returns: `value` {*}
+
+##### `$literal(value)`
+
+- `value` {*}
+- Returns: {*}
+
+##### `$evaluate(expExp, scopeExp)`
+
+- `expExp` {Expression}
+- `scopeExp` {Object | null}
+- Returns: {*}

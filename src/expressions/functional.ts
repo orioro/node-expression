@@ -8,6 +8,11 @@ import {
   evaluateArray
 } from '../expression'
 
+/**
+ * @name $pipe
+ * @param {ArrayExpression} expressionsExp
+ * @return {*} pipeResult
+ */
 export const $pipe = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression

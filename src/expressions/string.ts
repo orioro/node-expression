@@ -14,6 +14,11 @@ import {
   NumberExpression
 } from '../types'
 
+/**
+ * @name $string
+ * @param {*} [valueExp=$$VALUE]
+ * @return {string}
+ */
 export const $string = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
@@ -23,33 +28,56 @@ export const $string = (
   return typeof value === 'string' ? value : value.toString()
 }
 
+/**
+ * @name $stringStartsWith
+ * @param {string} query
+ * @param {string} [strExp=$$VALUE]
+ * @return {boolean}
+ */
 export const $stringStartsWith = interpreter((
-  start:string,
+  query:string,
   str:string
-):boolean => str.startsWith(start), [
+):boolean => str.startsWith(query), [
   evaluateString,
   evaluateString
 ])
 
+/**
+ * @name $stringLength
+ * @param {string} [strExp=$$VALUE]
+ * @return {number}
+ */
 export const $stringLength = interpreter((
   str:string
 ):number => str.length, [
   evaluateString
 ])
 
+/**
+ * @name $stringSubstr
+ * @param {number} startExp
+ * @param {number} endExp
+ * @param {string} [strExp=$$VALUE]
+ */
 export const $stringSubstr = (
   context:EvaluationContext,
   startExp:NumberExpression,
   endExp:NumberExpression,
-  valueExp:StringExpression = $$VALUE
+  strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, valueExp)
+  evaluateString(context, strExp)
     .substring(
       evaluateNumber(context, startExp),
       evaluateNumber.allowUndefined(context, endExp)
     )
 )
 
+/**
+ * @name $stringConcat
+ * @param {string} concatExp
+ * @param {string} [baseExp=$$VALUE]
+ * @return {string}
+ */
 export const $stringConcat = (
   context:EvaluationContext,
   concatExp:StringExpression,
@@ -59,32 +87,51 @@ export const $stringConcat = (
     .concat(evaluateString(context, concatExp))
 )
 
+/**
+ * @name $stringTrim
+ * @param {string} [strExp=$$VALUE]
+ * @return {string}
+ */
 export const $stringTrim = (
   context:EvaluationContext,
-  baseExp:StringExpression = $$VALUE
+  strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, baseExp).trim()
+  evaluateString(context, strExp).trim()
 )
 
+/**
+ * @name $stringPadStart
+ * @param {number} targetLengthExp
+ * @param {string} padStringExp
+ * @param {string} [strExp=$$VALUE]
+ * @return {string}
+ */
 export const $stringPadStart = (
   context:EvaluationContext,
   targetLengthExp:NumberExpression,
   padStringExp:StringExpression = ' ',
-  baseExp:StringExpression = $$VALUE
+  strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, baseExp).padStart(
+  evaluateString(context, strExp).padStart(
     evaluateNumber(context, targetLengthExp),
     evaluateString(context, padStringExp)
   )
 )
 
+/**
+ * @name $stringPadEnd
+ * @param {number} targetLengthExp
+ * @param {string} padStringExp
+ * @param {string} [strExp=$$VALUE]
+ * @return {string}
+ */
 export const $stringPadEnd = (
   context:EvaluationContext,
   targetLengthExp:NumberExpression,
   padStringExp:StringExpression = ' ',
-  baseExp:StringExpression = $$VALUE
+  strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, baseExp).padEnd(
+  evaluateString(context, strExp).padEnd(
     evaluateNumber(context, targetLengthExp),
     evaluateString(context, padStringExp)
   )
@@ -101,7 +148,13 @@ const _regExp = (
   return new RegExp(regExp, regExpOptions)
 }
 
-
+/**
+ * @name $stringMatch
+ * @param {string} regExpExp
+ * @param {string} regExpOptionsExp
+ * @param {string} [valueExp=$$VALUE]
+ * @return {string[]}
+ */
 export const $stringMatch = (
   context:EvaluationContext,
   regExpExp:Expression | RegExp,
@@ -116,6 +169,13 @@ export const $stringMatch = (
   return match === null ? [] : [...match]
 }
 
+/**
+ * @name $stringTest
+ * @param {string} regExpExp
+ * @param {string} regExpOptionsExp
+ * @param {string} [valueExp=$$VALUE]
+ * @return {boolean}
+ */
 export const $stringTest = (
   context:EvaluationContext,
   regExpExp:Expression | RegExp,

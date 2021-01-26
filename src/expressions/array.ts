@@ -398,6 +398,8 @@ export const $arrayAt = (
 }
 
 /**
+ * @todo deprecate and merge w/ $objectFormat
+ * 
  * @name $arrayFormat
  * @param {ArrayExpression} formatExp
  * @param {ArrayExpression} [arrayExp=$$VALUE]

@@ -108,6 +108,13 @@ const _luxonFmtArgs = args => (
 
 type LuxonFmtArgsExpression = StringExpression | [StringExpression, PlainObjectExpression]
 
+/**
+ * @name $date
+ * @param {LuxonFmtArgsExpression} [parseFmtArgsExp='ISO']
+ * @param {LuxonFmtArgsExpression} [serializeFmtArgsExp='ISO']
+ * @param {*} [dateExp=$$VALUE]
+ * @return {string} date
+ */
 export const $date = (
   context:EvaluationContext,
   parseFmtArgsExp:LuxonFmtArgsExpression = 'ISO',
@@ -127,6 +134,11 @@ export const $date = (
   )
 }
 
+/**
+ * @name $dateNow
+ * @param {LuxonFmtArgsExpression} [serializeFmtArgsExp='ISO']
+ * @return {string} date
+ */
 export const $dateNow = (
   context:EvaluationContext,
   serializeFmtArgsExp:LuxonFmtArgsExpression = 'ISO',
@@ -137,11 +149,22 @@ export const $dateNow = (
   )
 )
 
+/**
+ * @name $dateIsValid
+ * @param {ISODateExpression}
+ * @return {boolean} isValid
+ */
 export const $dateIsValid = (
   context:EvaluationContext,
   dateExp:ISODateExpression = $$VALUE
 ):boolean => DateTime.fromISO(evaluateString(context, dateExp)).isValid
 
+/**
+ * @name $dateStartOf
+ * @param {StringExpression} unitExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {ISODateString} date
+ */
 export const $dateStartOf = (
   context:EvaluationContext,
   unitExp:StringExpression,
@@ -152,6 +175,12 @@ export const $dateStartOf = (
     .toISO()
 )
 
+/**
+ * @name $dateEndOf
+ * @param {StringExpression} unitExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {ISODateString} date
+ */
 export const $dateEndOf = (
   context:EvaluationContext,
   unitExp:StringExpression,
@@ -162,6 +191,12 @@ export const $dateEndOf = (
     .toISO()
 )
 
+/**
+ * @name $dateSet
+ * @param {PlainObjectExpression} valuesExp
+ * @param {ISODateExpression} dateExp
+ * @return {ISODateString} date
+ */
 export const $dateSet = (
   context:EvaluationContext,
   valuesExp:PlainObjectExpression,
@@ -183,6 +218,12 @@ const _luxonConfigDate = (dt, config, value) => {
   }
 }
 
+/**
+ * @name $dateConfig
+ * @param {PlainObjectExpression} configExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {ISODateString} date
+ */
 export const $dateConfig = (
   context:EvaluationContext,
   configExp:PlainObjectExpression,
@@ -207,11 +248,44 @@ const _dateComparison = compare => (
   DateTime.fromISO(evaluateString(context, dateExp))
 )
 
+/**
+ * @name $dateGt
+ * @param {ISODateExpression} referenceDateExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {boolean}
+ */
 export const $dateGt = _dateComparison((threshold, date) => date > threshold)
+
+/**
+ * @name $dateGte
+ * @param {ISODateExpression} referenceDateExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {boolean}
+ */
 export const $dateGte = _dateComparison((threshold, date) => date >= threshold)
+
+/**
+ * @name $dateLt
+ * @param {ISODateExpression} referenceDateExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {boolean}
+ */
 export const $dateLt = _dateComparison((threshold, date) => date < threshold)
+
+/**
+ * @name $dateLte
+ * @param {ISODateExpression} referenceDateExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {boolean}
+ */
 export const $dateLte = _dateComparison((threshold, date) => date <= threshold)
 
+/**
+ * @name $dateEq
+ * @param {ISODateExpression} referenceDateExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {boolean}
+ */
 export const $dateEq = (
   context:EvaluationContext,
   referenceDateExp:ISODateExpression,
@@ -225,6 +299,12 @@ export const $dateEq = (
     )
 )
 
+/**
+ * @name $dateMoveForward
+ * @param {PlainObjectExpression} moveForwardExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {ISODateString} date
+ */
 export const $dateMoveForward = (
   context:EvaluationContext,
   moveForwardExp:PlainObjectExpression,
@@ -236,6 +316,12 @@ export const $dateMoveForward = (
   return date.plus(moveForward).toISO()
 }
 
+/**
+ * @name $dateMoveBack
+ * @param {PlainObjectExpression} moveForwardExp
+ * @param {ISODateExpression} [dateExp=$$VALUE]
+ * @return {ISODateString} date
+ */
 export const $dateMoveBack = (
   context:EvaluationContext,
   moveBackExp:PlainObjectExpression,

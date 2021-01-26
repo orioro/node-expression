@@ -13,6 +13,12 @@ const PATH_VARIABLE_RE = /^\$\$.+/
 
 export const $$VALUE = ['$value', '$$VALUE']
 
+/**
+ * @name $value
+ * @param {string} pathExp
+ * @param {*} defaultExp
+ * @return {*} value
+ */
 export const $value = (
   context:EvaluationContext,
   pathExp:StringExpression,
@@ -35,11 +41,22 @@ export const $value = (
       : value
 }
 
+/**
+ * @name $literal
+ * @param {*} value
+ * @return {*}
+ */
 export const $literal = (
   context:EvaluationContext,
   value:any
 ) => value
 
+/**
+ * @name $evaluate
+ * @param {Expression} expExp
+ * @param {Object | null} scopeExp
+ * @return {*}
+ */
 export const $evaluate = (
   context:EvaluationContext,
   expExp:Expression,
