@@ -5,111 +5,105 @@ npm install @orioro/expression
 ```
 
 - [node-expression](#node-expression)
-- [Usage](#usage)
-- [API](#api)
-      - [Array](#array)
-        * [`$arrayIncludes(searchValueExp, arrayExp)`](#arrayincludessearchvalueexp-arrayexp)
-        * [`$arrayIncludesAll(searchValuesExp, arrayExp)`](#arrayincludesallsearchvaluesexp-arrayexp)
-        * [`$arrayIncludesAny(searchValueExp, arrayExp)`](#arrayincludesanysearchvalueexp-arrayexp)
-        * [`$arrayLength(arrayExp)`](#arraylengtharrayexp)
-        * [`$arrayReduce(reduceExp, startExp, arrayExp)`](#arrayreducereduceexp-startexp-arrayexp)
-        * [`$arrayMap(mapExp, arrayExp)`](#arraymapmapexp-arrayexp)
-        * [`$arrayFilter(queryExp, arrayExp)`](#arrayfilterqueryexp-arrayexp)
-        * [`$arrayIndexOf(queryExp, arrayExp)`](#arrayindexofqueryexp-arrayexp)
-        * [`$arrayFind(queryExp, arrayExp)`](#arrayfindqueryexp-arrayexp)
-        * [`$arrayReverse(arrayExp)`](#arrayreversearrayexp)
-        * [`$arraySort(sortExp, arrayExp)`](#arraysortsortexp-arrayexp)
-        * [`$arrayPush(arrayExp)`](#arraypusharrayexp)
-        * [`$arrayUnshift(valueExp, arrayExp)`](#arrayunshiftvalueexp-arrayexp)
-        * [`$arrayShift(arrayExp)`](#arrayshiftarrayexp)
-        * [`$arraySlice(startExp, endExp, arrayExp)`](#arrayslicestartexp-endexp-arrayexp)
-        * [`$arraySubstitute(startExp, endExp, valuesExp, arrayExp)`](#arraysubstitutestartexp-endexp-valuesexp-arrayexp)
-        * [`$arrayAddAt(indexExp, valuesExp, arrayExp)`](#arrayaddatindexexp-valuesexp-arrayexp)
-        * [`$arrayRemoveAt(indexExp, countExp, arrayExp)`](#arrayremoveatindexexp-countexp-arrayexp)
-        * [`$arrayJoin(separatorExp, arrayExp)`](#arrayjoinseparatorexp-arrayexp)
-        * [`$arrayAt(indexExp, arrayExp)`](#arrayatindexexp-arrayexp)
-        * [`$arrayFormat(formatExp, arrayExp)`](#arrayformatformatexp-arrayexp)
-      - [Boolean](#boolean)
-        * [`$boolean(valueExp)`](#booleanvalueexp)
-      - [Comparison](#comparison)
-        * [`$eq(targetValueExp, valueExp)`](#eqtargetvalueexp-valueexp)
-        * [`$notEq(targetValueExp, valueExp)`](#noteqtargetvalueexp-valueexp)
-        * [`$in(arrayExp, valueExp)`](#inarrayexp-valueexp)
-        * [`$notIn(arrayExp, valueExp)`](#notinarrayexp-valueexp)
-        * [`$gt(thresholdExp, valueExp)`](#gtthresholdexp-valueexp)
-        * [`$gte(thresholdExp, valueExp)`](#gtethresholdexp-valueexp)
-        * [`$lt(thresholdExp, valueExp)`](#ltthresholdexp-valueexp)
-        * [`$lte(criteriaExp, valueExp)`](#ltecriteriaexp-valueexp)
-      - [Date](#date)
-        * [`$date(parseFmtArgsExp, serializeFmtArgsExp, dateExp)`](#dateparsefmtargsexp-serializefmtargsexp-dateexp)
-        * [`$dateNow(serializeFmtArgsExp)`](#datenowserializefmtargsexp)
-        * [`$dateIsValid()`](#dateisvalid)
-        * [`$dateStartOf(unitExp, dateExp)`](#datestartofunitexp-dateexp)
-        * [`$dateEndOf(unitExp, dateExp)`](#dateendofunitexp-dateexp)
-        * [`$dateSet(valuesExp, dateExp)`](#datesetvaluesexp-dateexp)
-        * [`$dateConfig(configExp, dateExp)`](#dateconfigconfigexp-dateexp)
-        * [`$dateGt(referenceDateExp, dateExp)`](#dategtreferencedateexp-dateexp)
-        * [`$dateGte(referenceDateExp, dateExp)`](#dategtereferencedateexp-dateexp)
-        * [`$dateLt(referenceDateExp, dateExp)`](#dateltreferencedateexp-dateexp)
-        * [`$dateLte(referenceDateExp, dateExp)`](#dateltereferencedateexp-dateexp)
-        * [`$dateEq(referenceDateExp, dateExp)`](#dateeqreferencedateexp-dateexp)
-        * [`$dateMoveForward(moveForwardExp, dateExp)`](#datemoveforwardmoveforwardexp-dateexp)
-        * [`$dateMoveBack(moveForwardExp, dateExp)`](#datemovebackmoveforwardexp-dateexp)
-      - [Functional](#functional)
-        * [`$pipe(expressionsExp)`](#pipeexpressionsexp)
-      - [Logical](#logical)
-        * [`$and(expressionsExp)`](#andexpressionsexp)
-        * [`$or(expressionsExp)`](#orexpressionsexp)
-        * [`$not(expressionsExp)`](#notexpressionsexp)
-        * [`$nor(expressionsExp)`](#norexpressionsexp)
-        * [`$xor(expressionA, expressionB)`](#xorexpressiona-expressionb)
-        * [`$if(conditionExp, thenExp, elseExp)`](#ifconditionexp-thenexp-elseexp)
-        * [`$switch(casesExp, defaultExp)`](#switchcasesexp-defaultexp)
-        * [`$switchKey(casesExp, defaultExp, ValueExp)`](#switchkeycasesexp-defaultexp-valueexp)
-      - [Math](#math)
-        * [`$mathSum(sum, base)`](#mathsumsum-base)
-        * [`$mathSub(subtract, base)`](#mathsubsubtract-base)
-        * [`$mathMult(multiplier, base)`](#mathmultmultiplier-base)
-        * [`$mathDiv(divisor, dividend)`](#mathdivdivisor-dividend)
-        * [`$mathMod(divisor, dividend)`](#mathmoddivisor-dividend)
-        * [`$mathPow(exponent, base)`](#mathpowexponent-base)
-        * [`$mathAbs(value)`](#mathabsvalue)
-        * [`$mathMax(otherValue, value)`](#mathmaxothervalue-value)
-        * [`$mathMin(otherValue, value)`](#mathminothervalue-value)
-        * [`$mathRound(value)`](#mathroundvalue)
-        * [`$mathFloor(value)`](#mathfloorvalue)
-        * [`$mathCeil(value)`](#mathceilvalue)
-      - [Number](#number)
-        * [`$numberInt(radix, value)`](#numberintradix-value)
-        * [`$numberFloat(value)`](#numberfloatvalue)
-      - [Object](#object)
-        * [`$objectMatches(criteriaByPathExp, valueExp)`](#objectmatchescriteriabypathexp-valueexp)
-        * [`$objectFormat(formatExp, sourceExp)`](#objectformatformatexp-sourceexp)
-        * [`$objectDefaults(defaultValuesExp, baseExp)`](#objectdefaultsdefaultvaluesexp-baseexp)
-        * [`$objectAssign(valuesExp, baseExp)`](#objectassignvaluesexp-baseexp)
-      - [String](#string)
-        * [`$string(valueExp)`](#stringvalueexp)
-        * [`$stringStartsWith(query, strExp)`](#stringstartswithquery-strexp)
-        * [`$stringLength(strExp)`](#stringlengthstrexp)
-        * [`$stringSubstr(startExp, endExp, strExp)`](#stringsubstrstartexp-endexp-strexp)
-        * [`$stringConcat(concatExp, baseExp)`](#stringconcatconcatexp-baseexp)
-        * [`$stringTrim(strExp)`](#stringtrimstrexp)
-        * [`$stringPadStart(targetLengthExp, padStringExp, strExp)`](#stringpadstarttargetlengthexp-padstringexp-strexp)
-        * [`$stringPadEnd(targetLengthExp, padStringExp, strExp)`](#stringpadendtargetlengthexp-padstringexp-strexp)
-        * [`$stringMatch(regExpExp, regExpOptionsExp, valueExp)`](#stringmatchregexpexp-regexpoptionsexp-valueexp)
-        * [`$stringTest(regExpExp, regExpOptionsExp, valueExp)`](#stringtestregexpexp-regexpoptionsexp-valueexp)
-      - [Type](#type)
-        * [`$type(valueExp)`](#typevalueexp)
-      - [Value](#value)
-        * [`$value(pathExp, defaultExp)`](#valuepathexp-defaultexp)
-        * [`$literal(value)`](#literalvalue)
-        * [`$evaluate(expExp, scopeExp)`](#evaluateexpexp-scopeexp)
+- [Array](#array)
+  * [`$arrayIncludes(searchValueExp, arrayExp)`](#arrayincludessearchvalueexp-arrayexp)
+  * [`$arrayIncludesAll(searchValuesExp, arrayExp)`](#arrayincludesallsearchvaluesexp-arrayexp)
+  * [`$arrayIncludesAny(searchValueExp, arrayExp)`](#arrayincludesanysearchvalueexp-arrayexp)
+  * [`$arrayLength(arrayExp)`](#arraylengtharrayexp)
+  * [`$arrayReduce(reduceExp, startExp, arrayExp)`](#arrayreducereduceexp-startexp-arrayexp)
+  * [`$arrayMap(mapExp, arrayExp)`](#arraymapmapexp-arrayexp)
+  * [`$arrayFilter(queryExp, arrayExp)`](#arrayfilterqueryexp-arrayexp)
+  * [`$arrayIndexOf(queryExp, arrayExp)`](#arrayindexofqueryexp-arrayexp)
+  * [`$arrayFind(queryExp, arrayExp)`](#arrayfindqueryexp-arrayexp)
+  * [`$arrayReverse(arrayExp)`](#arrayreversearrayexp)
+  * [`$arraySort(sortExp, arrayExp)`](#arraysortsortexp-arrayexp)
+  * [`$arrayPush(arrayExp)`](#arraypusharrayexp)
+  * [`$arrayUnshift(valueExp, arrayExp)`](#arrayunshiftvalueexp-arrayexp)
+  * [`$arrayShift(arrayExp)`](#arrayshiftarrayexp)
+  * [`$arraySlice(startExp, endExp, arrayExp)`](#arrayslicestartexp-endexp-arrayexp)
+  * [`$arraySubstitute(startExp, endExp, valuesExp, arrayExp)`](#arraysubstitutestartexp-endexp-valuesexp-arrayexp)
+  * [`$arrayAddAt(indexExp, valuesExp, arrayExp)`](#arrayaddatindexexp-valuesexp-arrayexp)
+  * [`$arrayRemoveAt(indexExp, countExp, arrayExp)`](#arrayremoveatindexexp-countexp-arrayexp)
+  * [`$arrayJoin(separatorExp, arrayExp)`](#arrayjoinseparatorexp-arrayexp)
+  * [`$arrayAt(indexExp, arrayExp)`](#arrayatindexexp-arrayexp)
+  * [`$arrayFormat(formatExp, arrayExp)`](#arrayformatformatexp-arrayexp)
+- [Boolean](#boolean)
+  * [`$boolean(valueExp)`](#booleanvalueexp)
+- [Comparison](#comparison)
+  * [`$eq(targetValueExp, valueExp)`](#eqtargetvalueexp-valueexp)
+  * [`$notEq(targetValueExp, valueExp)`](#noteqtargetvalueexp-valueexp)
+  * [`$in(arrayExp, valueExp)`](#inarrayexp-valueexp)
+  * [`$notIn(arrayExp, valueExp)`](#notinarrayexp-valueexp)
+  * [`$gt(thresholdExp, valueExp)`](#gtthresholdexp-valueexp)
+  * [`$gte(thresholdExp, valueExp)`](#gtethresholdexp-valueexp)
+  * [`$lt(thresholdExp, valueExp)`](#ltthresholdexp-valueexp)
+  * [`$lte(criteriaExp, valueExp)`](#ltecriteriaexp-valueexp)
+- [Date](#date)
+  * [`$date(parseFmtArgsExp, serializeFmtArgsExp, dateExp)`](#dateparsefmtargsexp-serializefmtargsexp-dateexp)
+  * [`$dateNow(serializeFmtArgsExp)`](#datenowserializefmtargsexp)
+  * [`$dateIsValid()`](#dateisvalid)
+  * [`$dateStartOf(unitExp, dateExp)`](#datestartofunitexp-dateexp)
+  * [`$dateEndOf(unitExp, dateExp)`](#dateendofunitexp-dateexp)
+  * [`$dateSet(valuesExp, dateExp)`](#datesetvaluesexp-dateexp)
+  * [`$dateConfig(configExp, dateExp)`](#dateconfigconfigexp-dateexp)
+  * [`$dateGt(referenceDateExp, dateExp)`](#dategtreferencedateexp-dateexp)
+  * [`$dateGte(referenceDateExp, dateExp)`](#dategtereferencedateexp-dateexp)
+  * [`$dateLt(referenceDateExp, dateExp)`](#dateltreferencedateexp-dateexp)
+  * [`$dateLte(referenceDateExp, dateExp)`](#dateltereferencedateexp-dateexp)
+  * [`$dateEq(referenceDateExp, dateExp)`](#dateeqreferencedateexp-dateexp)
+  * [`$dateMoveForward(moveForwardExp, dateExp)`](#datemoveforwardmoveforwardexp-dateexp)
+  * [`$dateMoveBack(moveForwardExp, dateExp)`](#datemovebackmoveforwardexp-dateexp)
+- [Functional](#functional)
+  * [`$pipe(expressionsExp)`](#pipeexpressionsexp)
+- [Logical](#logical)
+  * [`$and(expressionsExp)`](#andexpressionsexp)
+  * [`$or(expressionsExp)`](#orexpressionsexp)
+  * [`$not(expressionsExp)`](#notexpressionsexp)
+  * [`$nor(expressionsExp)`](#norexpressionsexp)
+  * [`$xor(expressionA, expressionB)`](#xorexpressiona-expressionb)
+  * [`$if(conditionExp, thenExp, elseExp)`](#ifconditionexp-thenexp-elseexp)
+  * [`$switch(casesExp, defaultExp)`](#switchcasesexp-defaultexp)
+  * [`$switchKey(casesExp, defaultExp, ValueExp)`](#switchkeycasesexp-defaultexp-valueexp)
+- [Math](#math)
+  * [`$mathSum(sum, base)`](#mathsumsum-base)
+  * [`$mathSub(subtract, base)`](#mathsubsubtract-base)
+  * [`$mathMult(multiplier, base)`](#mathmultmultiplier-base)
+  * [`$mathDiv(divisor, dividend)`](#mathdivdivisor-dividend)
+  * [`$mathMod(divisor, dividend)`](#mathmoddivisor-dividend)
+  * [`$mathPow(exponent, base)`](#mathpowexponent-base)
+  * [`$mathAbs(value)`](#mathabsvalue)
+  * [`$mathMax(otherValue, value)`](#mathmaxothervalue-value)
+  * [`$mathMin(otherValue, value)`](#mathminothervalue-value)
+  * [`$mathRound(value)`](#mathroundvalue)
+  * [`$mathFloor(value)`](#mathfloorvalue)
+  * [`$mathCeil(value)`](#mathceilvalue)
+- [Number](#number)
+  * [`$numberInt(radix, value)`](#numberintradix-value)
+  * [`$numberFloat(value)`](#numberfloatvalue)
+- [Object](#object)
+  * [`$objectMatches(criteriaByPathExp, valueExp)`](#objectmatchescriteriabypathexp-valueexp)
+  * [`$objectFormat(formatExp, sourceExp)`](#objectformatformatexp-sourceexp)
+  * [`$objectDefaults(defaultValuesExp, baseExp)`](#objectdefaultsdefaultvaluesexp-baseexp)
+  * [`$objectAssign(valuesExp, baseExp)`](#objectassignvaluesexp-baseexp)
+- [String](#string)
+  * [`$string(valueExp)`](#stringvalueexp)
+  * [`$stringStartsWith(query, strExp)`](#stringstartswithquery-strexp)
+  * [`$stringLength(strExp)`](#stringlengthstrexp)
+  * [`$stringSubstr(startExp, endExp, strExp)`](#stringsubstrstartexp-endexp-strexp)
+  * [`$stringConcat(concatExp, baseExp)`](#stringconcatconcatexp-baseexp)
+  * [`$stringTrim(strExp)`](#stringtrimstrexp)
+  * [`$stringPadStart(targetLengthExp, padStringExp, strExp)`](#stringpadstarttargetlengthexp-padstringexp-strexp)
+  * [`$stringPadEnd(targetLengthExp, padStringExp, strExp)`](#stringpadendtargetlengthexp-padstringexp-strexp)
+  * [`$stringMatch(regExpExp, regExpOptionsExp, valueExp)`](#stringmatchregexpexp-regexpoptionsexp-valueexp)
+  * [`$stringTest(regExpExp, regExpOptionsExp, valueExp)`](#stringtestregexpexp-regexpoptionsexp-valueexp)
+- [Type](#type)
+  * [`$type(valueExp)`](#typevalueexp)
+- [Value](#value)
+  * [`$value(pathExp, defaultExp)`](#valuepathexp-defaultexp)
+  * [`$literal(value)`](#literalvalue)
+  * [`$evaluate(expExp, scopeExp)`](#evaluateexpexp-scopeexp)
 
-# Usage
-
-# API
-
-#### Array
+# Array
 
 ##### `$arrayIncludes(searchValueExp, arrayExp)`
 
@@ -245,7 +239,7 @@ any of the searched values is in the array.
 - Returns: {Array}
 
 
-#### Boolean
+# Boolean
 
 ##### `$boolean(valueExp)`
 
@@ -253,7 +247,7 @@ any of the searched values is in the array.
 - Returns: {boolean}
 
 
-#### Comparison
+# Comparison
 
 ##### `$eq(targetValueExp, valueExp)`
 
@@ -316,7 +310,7 @@ Checks if the value matches the set of criteria.
 - Returns: {boolean}
 
 
-#### Date
+# Date
 
 ##### `$date(parseFmtArgsExp, serializeFmtArgsExp, dateExp)`
 
@@ -402,7 +396,7 @@ Checks if the value matches the set of criteria.
 - Returns: `date` {ISODateString}
 
 
-#### Functional
+# Functional
 
 ##### `$pipe(expressionsExp)`
 
@@ -410,7 +404,7 @@ Checks if the value matches the set of criteria.
 - Returns: `pipeResult` {*}
 
 
-#### Logical
+# Logical
 
 ##### `$and(expressionsExp)`
 
@@ -461,7 +455,7 @@ Checks if the value matches the set of criteria.
 - Returns: {*}
 
 
-#### Math
+# Math
 
 ##### `$mathSum(sum, base)`
 
@@ -532,7 +526,7 @@ Checks if the value matches the set of criteria.
 - Returns: `result` {number}
 
 
-#### Number
+# Number
 
 ##### `$numberInt(radix, value)`
 
@@ -546,7 +540,7 @@ Checks if the value matches the set of criteria.
 - Returns: {number}
 
 
-#### Object
+# Object
 
 ##### `$objectMatches(criteriaByPathExp, valueExp)`
 
@@ -573,7 +567,7 @@ Checks if the value matches the set of criteria.
 - Returns: {Object}
 
 
-#### String
+# String
 
 ##### `$string(valueExp)`
 
@@ -637,7 +631,7 @@ Checks if the value matches the set of criteria.
 - Returns: {boolean}
 
 
-#### Type
+# Type
 
 ##### `$type(valueExp)`
 
@@ -645,7 +639,7 @@ Checks if the value matches the set of criteria.
 - Returns: `type` {string}
 
 
-#### Value
+# Value
 
 ##### `$value(pathExp, defaultExp)`
 
