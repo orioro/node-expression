@@ -4,7 +4,82 @@
 npm install @orioro/expression
 ```
 
+# Use cases
+
+## Data querying
+
+Main modules: `comparison` and `object`
+
+```js
+const person = {
+  givenName: 'João',
+  middleName: 'Cruz',
+  familyName: 'Silva',
+  age: 32,
+  interests: ['sport', 'music', 'books'],
+  mother: {
+    givenName: 'Maria',
+    familyName: 'Cruz',
+    age: 57
+  },
+  father: {
+    givenName: 'Pedro',
+    familyName: 'Silva',
+    age: 56
+  }
+}
+
+const context = {
+  interpreters,
+  scope: { $$VALUE: person }
+}
+
+// Simple equality comparison
+evaluate(context, ['$objectMatches', { givenName: 'João' }]) // true
+evaluate(context, ['$objectMatches', { givenName: 'Maria' }]) // false
+
+// Use dot (.) path notation to access nested properties
+evaluate(context, ['$objectMatches', {
+  'mother.age': { $gte: 20, $lte: 50 },
+  'father.age': { $gte: 20, $lte: 50 }
+}]) // false
+```
+
+## Tree structure formatting
+
+```js
+TODO
+```
+
+## Conditional evaluation
+```js
+TODO
+// const context = {
+//   interpreters,
+//   scope: {
+//     $$VALUE: {
+//       name: 'João',
+//       interests: ['music', 'sports']
+//       age: 30
+//     }
+//   }
+// }
+
+// const cases = [
+//   [['$objectMatches', {
+//     interests: {
+//       $arrayIncludes: 'music'
+//     }
+//   }]]
+// ]
+
+```
+
 - [node-expression](#node-expression)
+- [Use cases](#use-cases)
+  * [Data querying](#data-querying)
+  * [Tree structure formatting](#tree-structure-formatting)
+  * [Conditional evaluation](#conditional-evaluation)
 - [Array](#array)
   * [`$arrayIncludes(searchValueExp, arrayExp)`](#arrayincludessearchvalueexp-arrayexp)
   * [`$arrayIncludesAll(searchValuesExp, arrayExp)`](#arrayincludesallsearchvaluesexp-arrayexp)
@@ -37,7 +112,8 @@ npm install @orioro/expression
   * [`$gt(thresholdExp, valueExp)`](#gtthresholdexp-valueexp)
   * [`$gte(thresholdExp, valueExp)`](#gtethresholdexp-valueexp)
   * [`$lt(thresholdExp, valueExp)`](#ltthresholdexp-valueexp)
-  * [`$lte(criteriaExp, valueExp)`](#ltecriteriaexp-valueexp)
+  * [`$lte(thresholdExp, valueExp)`](#ltethresholdexp-valueexp)
+  * [`$matches(criteriaExp, valueExp)`](#matchescriteriaexp-valueexp)
 - [Date](#date)
   * [`$date(parseFmtArgsExp, serializeFmtArgsExp, dateExp)`](#dateparsefmtargsexp-serializefmtargsexp-dateexp)
   * [`$dateNow(serializeFmtArgsExp)`](#datenowserializefmtargsexp)
@@ -109,8 +185,8 @@ npm install @orioro/expression
 
 Equivalent of `Array.prototype.includes`.
 
-- `searchValueExp` {AnyValueExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `searchValueExp` {*}
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: `includes` {boolean}
 
 ##### `$arrayIncludesAll(searchValuesExp, arrayExp)`
@@ -119,8 +195,8 @@ Similar to `$arrayIncludes`, but receives an array
 of values to be searched for and returns whether the
 context array contains all of the searched values.
 
-- `searchValuesExp` {ArrayExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `searchValuesExp` {Array}
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: `includesAll` {boolean}
 
 ##### `$arrayIncludesAny(searchValueExp, arrayExp)`
@@ -128,114 +204,117 @@ context array contains all of the searched values.
 Similar to `$arrayIncludes`, but returns true if
 any of the searched values is in the array.
 
-- `searchValueExp` {ArrayExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `searchValueExp` {Array}
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: `includesAny` {boolean}
 
 ##### `$arrayLength(arrayExp)`
 
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: `length` {number}
 
 ##### `$arrayReduce(reduceExp, startExp, arrayExp)`
 
 - `reduceExp` {Expression} An expression that returns the
                               result of reduction. Has access to:
-                              - $$PARENT_SCOPE
-                              - $$VALUE
-                              - $$INDEX
-                              - $$ARRAY
-                              - $$ACC
-- `startExp` {AnyExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+                              `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`,
+                              `$$ARRAY`, `$$ACC`
+- `startExp` {*}
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayMap(mapExp, arrayExp)`
 
-- `mapExp` {Expression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `mapExp` {Expression} Expression to be evaluated for each
+                           item and which return value will be
+                           available in the resulting array. Has
+                           access to: `$$PARENT_SCOPE`, `$$VALUE`,
+                           `$$INDEX`, `$$ARRAY`, `$$ACC`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayFilter(queryExp, arrayExp)`
 
 - `queryExp` {BooleanExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayIndexOf(queryExp, arrayExp)`
 
 - `queryExp` {BooleanExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayFind(queryExp, arrayExp)`
 
 - `queryExp` {BooleanExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayReverse(arrayExp)`
 
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arraySort(sortExp, arrayExp)`
 
-- `sortExp` {NumberExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `sortExp` {number}
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayPush(arrayExp)`
 
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayUnshift(valueExp, arrayExp)`
 
 - `valueExp` {*}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arrayShift(arrayExp)`
 
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 
 ##### `$arraySlice(startExp, endExp, arrayExp)`
 
-- `startExp` {NumberExpression}
-- `endExp` {NumberExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `startExp` {number}
+- `endExp` {number}
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: {Array}
 
 ##### `$arraySubstitute(startExp, endExp, valuesExp, arrayExp)`
 
-- `startExp` {NumberExpression}
-- `endExp` {NumberExpression}
-- `valuesExp` {ArrayExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `startExp` {number}
+- `endExp` {number}
+- `valuesExp` {Array}
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: {Array}
 
 ##### `$arrayAddAt(indexExp, valuesExp, arrayExp)`
 
-- `indexExp` {NumberExpression}
-- `valuesExp` {ArrayExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
-- Returns: {Array}
+Adds items at the given position.
+
+- `indexExp` {number}
+- `valuesExp` {Array}
+- `arrayExp` {Array} Default: `$$VALUE`
+- Returns: `resultingArray` {Array} The array with items added at position
 
 ##### `$arrayRemoveAt(indexExp, countExp, arrayExp)`
 
-- `indexExp` {NumberExpression}
-- `countExp` {NumberExpression} Default: `1`
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
-- Returns: {Array}
+- `indexExp` {number}
+- `countExp` {number} Default: `1`
+- `arrayExp` {Array} Default: `$$VALUE`
+- Returns: `resultingArray` {Array} The array without the removed item
 
 ##### `$arrayJoin(separatorExp, arrayExp)`
 
 - `separatorExp` {StringExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: {string}
 
 ##### `$arrayAt(indexExp, arrayExp)`
 
-- `indexExp` {NumberExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `indexExp` {number}
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: `value` {*}
 
 ##### `$arrayFormat(formatExp, arrayExp)`
 
-- `formatExp` {ArrayExpression}
-- `arrayExp` {ArrayExpression} Default: `$$VALUE`
+- `formatExp` {Array}
+- `arrayExp` {Array} Default: `$$VALUE`
 - Returns: {Array}
 
 
@@ -251,62 +330,72 @@ any of the searched values is in the array.
 
 ##### `$eq(targetValueExp, valueExp)`
 
-- `targetValueExp` {Expression} Value to be compared to.
-- `valueExp` {Expression} Value being compared.
+Checks if the two values
+
+- `targetValueExp` {*} Value to be compared to.
+- `valueExp` {*} Value being compared.
 - Returns: {boolean}
 
 ##### `$notEq(targetValueExp, valueExp)`
 
-- `targetValueExp` {Expression} Value to be compared to.
-- `valueExp` {Expression} Value being compared.
+- `targetValueExp` {*} Value to be compared to.
+- `valueExp` {*} Value being compared.
 - Returns: {boolean}
 
 ##### `$in(arrayExp, valueExp)`
 
 Checks whether the value is in the given array.
 
-- `arrayExp` {ArrayExpression}
-- `valueExp` {Expression}
+- `arrayExp` {Array}
+- `valueExp` {*}
 - Returns: {boolean}
 
 ##### `$notIn(arrayExp, valueExp)`
 
 Checks whether the value is **not** in the given array.
 
-- `arrayExp` {ArrayExpression}
-- `valueExp` {Expression}
+- `arrayExp` {Array}
+- `valueExp` {*}
 - Returns: {boolean}
 
 ##### `$gt(thresholdExp, valueExp)`
 
 Greater than `value > threshold`
 
-- `thresholdExp` {NumberExpression}
-- `valueExp` {NumberExpression}
+- `thresholdExp` {number}
+- `valueExp` {number}
 - Returns: {boolean}
 
 ##### `$gte(thresholdExp, valueExp)`
 
 Greater than or equal `value >= threshold`
 
-- `thresholdExp` {NumberExpression}
-- `valueExp` {NumberExpression}
+- `thresholdExp` {number}
+- `valueExp` {number}
 - Returns: {boolean}
 
 ##### `$lt(thresholdExp, valueExp)`
 
 Lesser than `value < threshold`
 
-- `thresholdExp` {NumberExpression}
-- `valueExp` {NumberExpression}
+- `thresholdExp` {number}
+- `valueExp` {number}
 - Returns: {boolean}
 
-##### `$lte(criteriaExp, valueExp)`
+##### `$lte(thresholdExp, valueExp)`
+
+Lesser than or equal `value <= threshold`
+
+- `thresholdExp` {number}
+- `valueExp` {number}
+- Returns: {boolean}
+
+##### `$matches(criteriaExp, valueExp)`
 
 Checks if the value matches the set of criteria.
 
-- `criteriaExp` {PlainObjectExpression}
-- `valueExp` {NumberExpression}
+- `criteriaExp` {Object}
+- `valueExp` {number}
 - Returns: {boolean}
 
 

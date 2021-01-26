@@ -34,9 +34,11 @@ import {
 const _negation = fn => (...args):boolean => !fn(...args)
 
 /**
+ * Checks if the two values
+ * 
  * @name $eq
- * @param {Expression} targetValueExp Value to be compared to.
- * @param {Expression} valueExp Value being compared.
+ * @param {*} targetValueExp Value to be compared to.
+ * @param {*} valueExp Value being compared.
  * @return {boolean}
  */
 export const $eq = (
@@ -50,8 +52,8 @@ export const $eq = (
 
 /**
  * @name $notEq
- * @param {Expression} targetValueExp Value to be compared to.
- * @param {Expression} valueExp Value being compared.
+ * @param {*} targetValueExp Value to be compared to.
+ * @param {*} valueExp Value being compared.
  * @return {boolean}
  */
 export const $notEq = _negation($eq)
@@ -60,8 +62,8 @@ export const $notEq = _negation($eq)
  * Checks whether the value is in the given array.
  * 
  * @name $in
- * @param {ArrayExpression} arrayExp
- * @param {Expression} valueExp
+ * @param {Array} arrayExp
+ * @param {*} valueExp
  * @return {boolean}
  */
 export const $in = (
@@ -77,8 +79,8 @@ export const $in = (
  * Checks whether the value is **not** in the given array.
  * 
  * @name $notIn
- * @param {ArrayExpression} arrayExp
- * @param {Expression} valueExp
+ * @param {Array} arrayExp
+ * @param {*} valueExp
  * @return {boolean}
  */
 export const $notIn = _negation($in)
@@ -87,8 +89,8 @@ export const $notIn = _negation($in)
  * Greater than `value > threshold`
  * 
  * @name $gt
- * @param {NumberExpression} thresholdExp
- * @param {NumberExpression} valueExp
+ * @param {number} thresholdExp
+ * @param {number} valueExp
  * @return {boolean}
  */
 export const $gt = (
@@ -101,8 +103,8 @@ export const $gt = (
  * Greater than or equal `value >= threshold`
  * 
  * @name $gte
- * @param {NumberExpression} thresholdExp
- * @param {NumberExpression} valueExp
+ * @param {number} thresholdExp
+ * @param {number} valueExp
  * @return {boolean}
  */
 export const $gte = (
@@ -115,8 +117,8 @@ export const $gte = (
  * Lesser than `value < threshold`
  * 
  * @name $lt
- * @param {NumberExpression} thresholdExp
- * @param {NumberExpression} valueExp
+ * @param {number} thresholdExp
+ * @param {number} valueExp
  * @return {boolean}
  */
 export const $lt = (
@@ -129,8 +131,8 @@ export const $lt = (
  * Lesser than or equal `value <= threshold`
  * 
  * @name $lte
- * @param {NumberExpression} thresholdExp
- * @param {NumberExpression} valueExp
+ * @param {number} thresholdExp
+ * @param {number} valueExp
  * @return {boolean}
  */
 export const $lte = (
@@ -142,9 +144,9 @@ export const $lte = (
 /**
  * Checks if the value matches the set of criteria.
  * 
- * @name $lte
- * @param {PlainObjectExpression} criteriaExp
- * @param {NumberExpression} valueExp
+ * @name $matches
+ * @param {Object} criteriaExp
+ * @param {number} valueExp
  * @return {boolean}
  */
 export const $matches = (
