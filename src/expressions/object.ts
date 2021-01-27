@@ -3,6 +3,7 @@ import { get, set, isPlainObject } from 'lodash'
 import {
   evaluate,
   evaluatePlainObject,
+  evaluatePlainObjectOrArray,
   evaluateString,
   evaluateArray,
   isExpression
@@ -63,34 +64,72 @@ export const $objectMatches = (
   })
 }
 
-/**
- * @name $objectFormat
- * @param {Object} formatExp
- * @param {*} [sourceExp=$$VALUE]
- * @return {Object} object
- */
-export const $objectFormat = (
-  context:EvaluationContext,
-  formatExp:PlainObjectExpression,
-  sourceExp:Expression = $$VALUE
-):{ [key: string]: any } => {
-  const format = evaluatePlainObject(context, formatExp)
-  const source = evaluate(context, sourceExp)
+const _formatEvaluate = (context, targetValue, source) => {
+  targetValue = typeof targetValue === 'string'
+    ? ['$value', targetValue]
+    : targetValue
 
+  if (isExpression(context.interpreters, targetValue)) {
+    return evaluate({
+      ...context,
+      scope: { $$VALUE: source }
+    }, targetValue)
+  } else if (Array.isArray(targetValue)) {
+    return _formatArray(context, targetValue, source)
+  } else if (isPlainObject(targetValue)) {
+    return _formatObject(context, targetValue, source)
+  } else {
+    throw `Invalid $objectFormat item: ${targetValue}`
+  }
+}
+
+const _formatArray = (
+  context:EvaluationContext,
+  format:any[],
+  source:any
+):any[] => format.map(targetValue => _formatEvaluate(
+  context,
+  targetValue,
+  source
+))
+
+type PlainObject = { [key:string]: any }
+
+const _formatObject = (
+  context:EvaluationContext,
+  format:PlainObject,
+  source:any
+):PlainObject => {
   const targetPaths = Object.keys(format)
 
   return targetPaths.reduce((acc, targetPath) => {
     set(
       acc,
       targetPath,
-      evaluate({
-        ...context,
-        scope: { $$VALUE: source }
-      }, formatParseItem(context.interpreters, format[targetPath]))
+      _formatEvaluate(context, format[targetPath], source)
     )
 
     return acc
   }, {})
+}
+
+/**
+ * @name $objectFormat
+ * @param {Object | Array} formatExp
+ * @param {*} [sourceExp=$$VALUE]
+ * @return {Object | Array} object
+ */
+export const $objectFormat = (
+  context:EvaluationContext,
+  formatExp:(PlainObjectExpression | ArrayExpression),
+  sourceExp:Expression = $$VALUE
+):(PlainObject | any[]) => {
+  const format = evaluatePlainObjectOrArray(context, formatExp)
+  const source = evaluate(context, sourceExp)
+
+  return Array.isArray(format)
+    ? _formatArray(context, format, source)
+    : _formatObject(context, format, source)
 }
 
 /**

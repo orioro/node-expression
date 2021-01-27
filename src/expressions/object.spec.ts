@@ -1,17 +1,13 @@
 import { evaluate } from '../expression'
 import { $value } from './value'
-import {
-  COMPARISON_EXPRESSIONS
-} from './comparison'
-import {
-  ARRAY_EXPRESSIONS
-} from './array'
-import {
-  OBJECT_EXPRESSIONS
-} from './object'
+import { COMPARISON_EXPRESSIONS } from './comparison'
+import { ARRAY_EXPRESSIONS } from './array'
+import { OBJECT_EXPRESSIONS } from './object'
+import { STRING_EXPRESSIONS } from './string'
 
 const interpreters = {
   $value,
+  ...STRING_EXPRESSIONS,
   ...COMPARISON_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
 
@@ -82,26 +78,69 @@ describe('$objectMatches', () => {
 })
 
 describe('$objectFormat', () => {
-  test('simple transformation', () => {
-    expect(evaluate(context, ['$objectFormat', {
-      fatherName: 'father.name',
-      motherName: 'mother.name'
-    }]))
+  describe('object root', () => {
+    test('simple transformation', () => {
+      expect(evaluate(context, ['$objectFormat', {
+        fatherName: 'father.name',
+        motherName: 'mother.name'
+      }]))
+    })
+
+    test('', () => {
+      expect(evaluate(context, ['$objectFormat', {
+        fatherName: 'father.name',
+        motherNameIsMariaDoCarmo: ['$eq', 'Maria do Carmo', ['$value', 'mother.name']],
+        parentNames: [
+          'father.name',
+          'mother.name'
+        ]
+      }]))
+      .toEqual({
+        fatherName: 'Galvão Queiroz',
+        motherNameIsMariaDoCarmo: true,
+        parentNames: ['Galvão Queiroz', 'Maria do Carmo']
+      })
+    })
   })
 
-  test('', () => {
-    expect(evaluate(context, ['$objectFormat', {
-      fatherName: 'father.name',
-      motherNameIsMariaDoCarmo: ['$eq', 'Maria do Carmo', ['$value', 'mother.name']],
-      parentNames: [
+  describe('array root', () => {
+    test('', () => {
+      expect(evaluate(context, ['$objectFormat', [
+        'name',
         'father.name',
         'mother.name'
-      ]
-    }]))
-    .toEqual({
-      fatherName: 'Galvão Queiroz',
-      motherNameIsMariaDoCarmo: true,
-      parentNames: ['Galvão Queiroz', 'Maria do Carmo']
+      ]])).toEqual([
+        'João Silva',
+        'Galvão Queiroz',
+        'Maria do Carmo'
+      ])
+    })
+
+    test('expression items', () => {
+      expect(evaluate(context, ['$objectFormat', [
+        ['$stringConcat', ['$value', 'father.name'], ['$value', 'mother.name']],
+        'name',
+        'father.name',
+        'mother.name'
+      ]])).toEqual([
+        'Maria do CarmoGalvão Queiroz',
+        'João Silva',
+        'Galvão Queiroz',
+        'Maria do Carmo'
+      ])
+    })
+
+    test('with object items', () => {
+      expect(evaluate(context, ['$objectFormat', [
+        'father.name',
+        {
+          fatherName: 'father.name'
+        }
+      ]]))
+      .toEqual([
+        'Galvão Queiroz',
+        { fatherName: 'Galvão Queiroz' }
+      ])
     })
   })
 })

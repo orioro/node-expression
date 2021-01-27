@@ -141,7 +141,7 @@ describe('$arrayFilter', () => {
     )).toEqual([2, 4, 6])
   })
 
-  test.only('with meta evaluation', () => {
+  test('with meta evaluation', () => {
     const OUT_OF_RANGE_COND = ['$and', [
       ['$gte', 1],
       ['$lte', 10]
@@ -368,56 +368,5 @@ describe('$arrayAt', () => {
 
     expect(evaluate(context, ['$arrayAt', 4]))
       .toEqual(undefined)
-  })
-})
-
-describe('$arrayFormat', () => {
-  const context = {
-    interpreters,
-    scope: {
-      $$VALUE: {
-        name: 'João',
-        lastName: 'Silva Souza',
-        father: {
-          name: 'Raimundo',
-          lastName: 'Silva'
-        },
-        mother: {
-          name: 'Maria',
-          lastName: 'do Carmo'
-        }
-      }
-    }
-  }
-
-  test('', () => {
-    expect(evaluate(context, ['$arrayFormat', [
-      'name',
-      'father.name',
-      'mother.lastName'
-    ]])).toEqual(['João', 'Raimundo', 'do Carmo'])
-  })
-
-  test('expression items', () => {
-
-    expect(evaluate(context, ['$arrayFormat', [
-      ['$stringConcat', ['$value', 'father.name'], ['$value', 'mother.name']],
-      'name',
-      'father.name',
-      'mother.lastName'
-    ]])).toEqual(['MariaRaimundo', 'João', 'Raimundo', 'do Carmo'])
-  })
-
-  test('with object items', () => {
-    expect(evaluate(context, ['$arrayFormat', [
-      'father.name',
-      {
-        fatherName: 'father.name'
-      }
-    ]]))
-    .toEqual([
-      'Raimundo',
-      { fatherName: 'Raimundo' }
-    ])
   })
 })

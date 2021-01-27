@@ -400,30 +400,6 @@ export const $arrayAt = (
   return array[evaluateNumber(context, indexExp)]
 }
 
-/**
- * @todo deprecate and merge w/ $objectFormat
- * 
- * @name $arrayFormat
- * @param {Array} formatExp
- * @param {Array} [arrayExp=$$VALUE]
- * @return {Array}
- */
-export const $arrayFormat = (
-  context:EvaluationContext,
-  formatExp:ArrayExpression,
-  sourceExp:Expression = $$VALUE
-):any[] => {
-  const format = evaluateArray(context, formatExp)
-  const source = evaluate(context, sourceExp)
-
-  return format.map(targetValue => {
-    return evaluate(
-      context,
-      formatParseItem(context.interpreters, targetValue)
-    )
-  })
-}
-
 export const ARRAY_EXPRESSIONS = {
   $arrayIncludes,
   $arrayIncludesAll,
@@ -445,6 +421,5 @@ export const ARRAY_EXPRESSIONS = {
   $arrayAddAt,
   $arrayRemoveAt,
   $arrayJoin,
-  $arrayAt,
-  $arrayFormat
+  $arrayAt
 }
