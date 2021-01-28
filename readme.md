@@ -72,7 +72,6 @@ TODO
 //     }
 //   }]]
 // ]
-
 ```
 
 - [node-expression](#node-expression)
@@ -80,106 +79,106 @@ TODO
   * [Data querying](#data-querying)
   * [Tree structure formatting](#tree-structure-formatting)
   * [Conditional evaluation](#conditional-evaluation)
-- [Array](#array)
-  * [`$arrayIncludes(searchValueExp, arrayExp)`](#arrayincludessearchvalueexp-arrayexp)
-  * [`$arrayIncludesAll(searchValuesExp, arrayExp)`](#arrayincludesallsearchvaluesexp-arrayexp)
-  * [`$arrayIncludesAny(searchValueExp, arrayExp)`](#arrayincludesanysearchvalueexp-arrayexp)
-  * [`$arrayLength(arrayExp)`](#arraylengtharrayexp)
-  * [`$arrayReduce(reduceExp, startExp, arrayExp)`](#arrayreducereduceexp-startexp-arrayexp)
-  * [`$arrayMap(mapExp, arrayExp)`](#arraymapmapexp-arrayexp)
-  * [`$arrayFilter(queryExp, arrayExp)`](#arrayfilterqueryexp-arrayexp)
-  * [`$arrayIndexOf(queryExp, arrayExp)`](#arrayindexofqueryexp-arrayexp)
-  * [`$arrayFind(queryExp, arrayExp)`](#arrayfindqueryexp-arrayexp)
-  * [`$arrayReverse(arrayExp)`](#arrayreversearrayexp)
-  * [`$arraySort(sortExp, arrayExp)`](#arraysortsortexp-arrayexp)
-  * [`$arrayPush(arrayExp)`](#arraypusharrayexp)
-  * [`$arrayUnshift(valueExp, arrayExp)`](#arrayunshiftvalueexp-arrayexp)
-  * [`$arrayShift(arrayExp)`](#arrayshiftarrayexp)
-  * [`$arraySlice(startExp, endExp, arrayExp)`](#arrayslicestartexp-endexp-arrayexp)
-  * [`$arraySubstitute(startExp, endExp, valuesExp, arrayExp)`](#arraysubstitutestartexp-endexp-valuesexp-arrayexp)
-  * [`$arrayAddAt(indexExp, valuesExp, arrayExp)`](#arrayaddatindexexp-valuesexp-arrayexp)
-  * [`$arrayRemoveAt(indexExp, countExp, arrayExp)`](#arrayremoveatindexexp-countexp-arrayexp)
-  * [`$arrayJoin(separatorExp, arrayExp)`](#arrayjoinseparatorexp-arrayexp)
-  * [`$arrayAt(indexExp, arrayExp)`](#arrayatindexexp-arrayexp)
-  * [`$arrayFormat(formatExp, arrayExp)`](#arrayformatformatexp-arrayexp)
-- [Boolean](#boolean)
-  * [`$boolean(valueExp)`](#booleanvalueexp)
-- [Comparison](#comparison)
-  * [`$eq(targetValueExp, valueExp)`](#eqtargetvalueexp-valueexp)
-  * [`$notEq(targetValueExp, valueExp)`](#noteqtargetvalueexp-valueexp)
-  * [`$in(arrayExp, valueExp)`](#inarrayexp-valueexp)
-  * [`$notIn(arrayExp, valueExp)`](#notinarrayexp-valueexp)
-  * [`$gt(thresholdExp, valueExp)`](#gtthresholdexp-valueexp)
-  * [`$gte(thresholdExp, valueExp)`](#gtethresholdexp-valueexp)
-  * [`$lt(thresholdExp, valueExp)`](#ltthresholdexp-valueexp)
-  * [`$lte(thresholdExp, valueExp)`](#ltethresholdexp-valueexp)
-  * [`$matches(criteriaExp, valueExp)`](#matchescriteriaexp-valueexp)
-- [Date](#date)
-  * [`$date(parseFmtArgsExp, serializeFmtArgsExp, dateExp)`](#dateparsefmtargsexp-serializefmtargsexp-dateexp)
-  * [`$dateNow(serializeFmtArgsExp)`](#datenowserializefmtargsexp)
-  * [`$dateIsValid()`](#dateisvalid)
-  * [`$dateStartOf(unitExp, dateExp)`](#datestartofunitexp-dateexp)
-  * [`$dateEndOf(unitExp, dateExp)`](#dateendofunitexp-dateexp)
-  * [`$dateSet(valuesExp, dateExp)`](#datesetvaluesexp-dateexp)
-  * [`$dateConfig(configExp, dateExp)`](#dateconfigconfigexp-dateexp)
-  * [`$dateGt(referenceDateExp, dateExp)`](#dategtreferencedateexp-dateexp)
-  * [`$dateGte(referenceDateExp, dateExp)`](#dategtereferencedateexp-dateexp)
-  * [`$dateLt(referenceDateExp, dateExp)`](#dateltreferencedateexp-dateexp)
-  * [`$dateLte(referenceDateExp, dateExp)`](#dateltereferencedateexp-dateexp)
-  * [`$dateEq(referenceDateExp, dateExp)`](#dateeqreferencedateexp-dateexp)
-  * [`$dateMoveForward(moveForwardExp, dateExp)`](#datemoveforwardmoveforwardexp-dateexp)
-  * [`$dateMoveBack(moveForwardExp, dateExp)`](#datemovebackmoveforwardexp-dateexp)
-- [Functional](#functional)
-  * [`$pipe(expressionsExp)`](#pipeexpressionsexp)
-- [Logical](#logical)
-  * [`$and(expressionsExp)`](#andexpressionsexp)
-  * [`$or(expressionsExp)`](#orexpressionsexp)
-  * [`$not(expressionsExp)`](#notexpressionsexp)
-  * [`$nor(expressionsExp)`](#norexpressionsexp)
-  * [`$xor(expressionA, expressionB)`](#xorexpressiona-expressionb)
-  * [`$if(conditionExp, thenExp, elseExp)`](#ifconditionexp-thenexp-elseexp)
-  * [`$switch(casesExp, defaultExp)`](#switchcasesexp-defaultexp)
-  * [`$switchKey(casesExp, defaultExp, ValueExp)`](#switchkeycasesexp-defaultexp-valueexp)
-- [Math](#math)
-  * [`$mathSum(sum, base)`](#mathsumsum-base)
-  * [`$mathSub(subtract, base)`](#mathsubsubtract-base)
-  * [`$mathMult(multiplier, base)`](#mathmultmultiplier-base)
-  * [`$mathDiv(divisor, dividend)`](#mathdivdivisor-dividend)
-  * [`$mathMod(divisor, dividend)`](#mathmoddivisor-dividend)
-  * [`$mathPow(exponent, base)`](#mathpowexponent-base)
-  * [`$mathAbs(value)`](#mathabsvalue)
-  * [`$mathMax(otherValue, value)`](#mathmaxothervalue-value)
-  * [`$mathMin(otherValue, value)`](#mathminothervalue-value)
-  * [`$mathRound(value)`](#mathroundvalue)
-  * [`$mathFloor(value)`](#mathfloorvalue)
-  * [`$mathCeil(value)`](#mathceilvalue)
-- [Number](#number)
-  * [`$numberInt(radix, value)`](#numberintradix-value)
-  * [`$numberFloat(value)`](#numberfloatvalue)
-- [Object](#object)
-  * [`$objectMatches(criteriaByPathExp, valueExp)`](#objectmatchescriteriabypathexp-valueexp)
-  * [`$objectFormat(formatExp, sourceExp)`](#objectformatformatexp-sourceexp)
-  * [`$objectDefaults(defaultValuesExp, baseExp)`](#objectdefaultsdefaultvaluesexp-baseexp)
-  * [`$objectAssign(valuesExp, baseExp)`](#objectassignvaluesexp-baseexp)
-- [String](#string)
-  * [`$string(valueExp)`](#stringvalueexp)
-  * [`$stringStartsWith(query, strExp)`](#stringstartswithquery-strexp)
-  * [`$stringLength(strExp)`](#stringlengthstrexp)
-  * [`$stringSubstr(startExp, endExp, strExp)`](#stringsubstrstartexp-endexp-strexp)
-  * [`$stringConcat(concatExp, baseExp)`](#stringconcatconcatexp-baseexp)
-  * [`$stringTrim(strExp)`](#stringtrimstrexp)
-  * [`$stringPadStart(targetLengthExp, padStringExp, strExp)`](#stringpadstarttargetlengthexp-padstringexp-strexp)
-  * [`$stringPadEnd(targetLengthExp, padStringExp, strExp)`](#stringpadendtargetlengthexp-padstringexp-strexp)
-  * [`$stringMatch(regExpExp, regExpOptionsExp, valueExp)`](#stringmatchregexpexp-regexpoptionsexp-valueexp)
-  * [`$stringTest(regExpExp, regExpOptionsExp, valueExp)`](#stringtestregexpexp-regexpoptionsexp-valueexp)
-- [Type](#type)
-  * [`$type(valueExp)`](#typevalueexp)
-- [Value](#value)
-  * [`$value(pathExp, defaultExp)`](#valuepathexp-defaultexp)
-  * [`$literal(value)`](#literalvalue)
-  * [`$evaluate(expExp, scopeExp)`](#evaluateexpexp-scopeexp)
+  * [Array](#array)
+        * [`$arrayIncludes(searchValueExp, arrayExp)`](#arrayincludessearchvalueexp-arrayexp)
+        * [`$arrayIncludesAll(searchValuesExp, arrayExp)`](#arrayincludesallsearchvaluesexp-arrayexp)
+        * [`$arrayIncludesAny(searchValueExp, arrayExp)`](#arrayincludesanysearchvalueexp-arrayexp)
+        * [`$arrayLength(arrayExp)`](#arraylengtharrayexp)
+        * [`$arrayReduce(reduceExp, startExp, arrayExp)`](#arrayreducereduceexp-startexp-arrayexp)
+        * [`$arrayMap(mapExp, arrayExp)`](#arraymapmapexp-arrayexp)
+        * [`$arrayFilter(queryExp, arrayExp)`](#arrayfilterqueryexp-arrayexp)
+        * [`$arrayIndexOf(queryExp, arrayExp)`](#arrayindexofqueryexp-arrayexp)
+        * [`$arrayFind(queryExp, arrayExp)`](#arrayfindqueryexp-arrayexp)
+        * [`$arrayReverse(arrayExp)`](#arrayreversearrayexp)
+        * [`$arraySort(sortExp, arrayExp)`](#arraysortsortexp-arrayexp)
+        * [`$arrayPush(arrayExp)`](#arraypusharrayexp)
+        * [`$arrayUnshift(valueExp, arrayExp)`](#arrayunshiftvalueexp-arrayexp)
+        * [`$arrayShift(arrayExp)`](#arrayshiftarrayexp)
+        * [`$arraySlice(startExp, endExp, arrayExp)`](#arrayslicestartexp-endexp-arrayexp)
+        * [`$arraySubstitute(startExp, endExp, valuesExp, arrayExp)`](#arraysubstitutestartexp-endexp-valuesexp-arrayexp)
+        * [`$arrayAddAt(indexExp, valuesExp, arrayExp)`](#arrayaddatindexexp-valuesexp-arrayexp)
+        * [`$arrayRemoveAt(indexExp, countExp, arrayExp)`](#arrayremoveatindexexp-countexp-arrayexp)
+        * [`$arrayJoin(separatorExp, arrayExp)`](#arrayjoinseparatorexp-arrayexp)
+        * [`$arrayAt(indexExp, arrayExp)`](#arrayatindexexp-arrayexp)
+  * [Boolean](#boolean)
+        * [`$boolean(valueExp)`](#booleanvalueexp)
+  * [Comparison](#comparison)
+        * [`$eq(referenceExp, valueExp)`](#eqreferenceexp-valueexp)
+        * [`$notEq(referenceExp, valueExp)`](#noteqreferenceexp-valueexp)
+        * [`$in(arrayExp, valueExp)`](#inarrayexp-valueexp)
+        * [`$notIn(arrayExp, valueExp)`](#notinarrayexp-valueexp)
+        * [`$gt(referenceExp, valueExp)`](#gtreferenceexp-valueexp)
+        * [`$gte(referenceExp, valueExp)`](#gtereferenceexp-valueexp)
+        * [`$lt(referenceExp, valueExp)`](#ltreferenceexp-valueexp)
+        * [`$lte(referenceExp, valueExp)`](#ltereferenceexp-valueexp)
+        * [`$matches(criteriaExp, valueExp)`](#matchescriteriaexp-valueexp)
+  * [Date](#date)
+        * [`()`](#)
+        * [`$date(parseFmtArgs, serializeFmtArgs, date)`](#dateparsefmtargs-serializefmtargs-date)
+        * [`$dateNow(serializeFmtArgs)`](#datenowserializefmtargs)
+        * [`$dateIsValid()`](#dateisvalid)
+        * [`$dateStartOf(unitExp, date)`](#datestartofunitexp-date)
+        * [`$dateEndOf(unitExp, date)`](#dateendofunitexp-date)
+        * [`$dateSet(valuesExp, dateExp)`](#datesetvaluesexp-dateexp)
+        * [`$dateConfig(configExp, date)`](#dateconfigconfigexp-date)
+        * [`$dateGt(referenceDateExp, date)`](#dategtreferencedateexp-date)
+        * [`$dateGte(referenceDateExp, date)`](#dategtereferencedateexp-date)
+        * [`$dateLt(referenceDateExp, date)`](#dateltreferencedateexp-date)
+        * [`$dateLte(referenceDateExp, date)`](#dateltereferencedateexp-date)
+        * [`$dateEq(referenceDateExp, compareUnitExp, date)`](#dateeqreferencedateexp-compareunitexp-date)
+        * [`$dateMoveForward(duration, date)`](#datemoveforwardduration-date)
+        * [`$dateMoveBack(duration, date)`](#datemovebackduration-date)
+  * [Functional](#functional)
+        * [`$pipe(expressionsExp)`](#pipeexpressionsexp)
+  * [Logical](#logical)
+        * [`$and(expressionsExp)`](#andexpressionsexp)
+        * [`$or(expressionsExp)`](#orexpressionsexp)
+        * [`$not(expressionsExp)`](#notexpressionsexp)
+        * [`$nor(expressionsExp)`](#norexpressionsexp)
+        * [`$xor(expressionA, expressionB)`](#xorexpressiona-expressionb)
+        * [`$if(conditionExp, thenExp, elseExp)`](#ifconditionexp-thenexp-elseexp)
+        * [`$switch(casesExp, defaultExp)`](#switchcasesexp-defaultexp)
+        * [`$switchKey(casesExp, defaultExp, ValueExp)`](#switchkeycasesexp-defaultexp-valueexp)
+  * [Math](#math)
+        * [`$mathSum(sum, base)`](#mathsumsum-base)
+        * [`$mathSub(subtract, base)`](#mathsubsubtract-base)
+        * [`$mathMult(multiplier, base)`](#mathmultmultiplier-base)
+        * [`$mathDiv(divisor, dividend)`](#mathdivdivisor-dividend)
+        * [`$mathMod(divisor, dividend)`](#mathmoddivisor-dividend)
+        * [`$mathPow(exponent, base)`](#mathpowexponent-base)
+        * [`$mathAbs(value)`](#mathabsvalue)
+        * [`$mathMax(otherValue, value)`](#mathmaxothervalue-value)
+        * [`$mathMin(otherValue, value)`](#mathminothervalue-value)
+        * [`$mathRound(value)`](#mathroundvalue)
+        * [`$mathFloor(value)`](#mathfloorvalue)
+        * [`$mathCeil(value)`](#mathceilvalue)
+  * [Number](#number)
+        * [`$numberInt(radix, value)`](#numberintradix-value)
+        * [`$numberFloat(value)`](#numberfloatvalue)
+  * [Object](#object)
+        * [`$objectMatches(criteriaByPathExp, valueExp)`](#objectmatchescriteriabypathexp-valueexp)
+        * [`$objectFormat(formatExp, sourceExp)`](#objectformatformatexp-sourceexp)
+        * [`$objectDefaults(defaultValuesExp, baseExp)`](#objectdefaultsdefaultvaluesexp-baseexp)
+        * [`$objectAssign(valuesExp, baseExp)`](#objectassignvaluesexp-baseexp)
+  * [String](#string)
+        * [`$string(valueExp)`](#stringvalueexp)
+        * [`$stringStartsWith(query, strExp)`](#stringstartswithquery-strexp)
+        * [`$stringLength(strExp)`](#stringlengthstrexp)
+        * [`$stringSubstr(startExp, endExp, strExp)`](#stringsubstrstartexp-endexp-strexp)
+        * [`$stringConcat(concatExp, baseExp)`](#stringconcatconcatexp-baseexp)
+        * [`$stringTrim(strExp)`](#stringtrimstrexp)
+        * [`$stringPadStart(targetLengthExp, padStringExp, strExp)`](#stringpadstarttargetlengthexp-padstringexp-strexp)
+        * [`$stringPadEnd(targetLengthExp, padStringExp, strExp)`](#stringpadendtargetlengthexp-padstringexp-strexp)
+        * [`$stringMatch(regExpExp, regExpOptionsExp, valueExp)`](#stringmatchregexpexp-regexpoptionsexp-valueexp)
+        * [`$stringTest(regExpExp, regExpOptionsExp, valueExp)`](#stringtestregexpexp-regexpoptionsexp-valueexp)
+  * [Type](#type)
+        * [`$type(valueExp)`](#typevalueexp)
+  * [Value](#value)
+        * [`$value(pathExp, defaultExp)`](#valuepathexp-defaultexp)
+        * [`$literal(value)`](#literalvalue)
+        * [`$evaluate(expExp, scopeExp)`](#evaluateexpexp-scopeexp)
 
-# Array
+## Array
 
 ##### `$arrayIncludes(searchValueExp, arrayExp)`
 
@@ -311,34 +310,26 @@ Adds items at the given position.
 - `arrayExp` {Array} Default: `$$VALUE`
 - Returns: `value` {*}
 
-##### `$arrayFormat(formatExp, arrayExp)`
-
-- `formatExp` {Array}
-- `arrayExp` {Array} Default: `$$VALUE`
-- Returns: {Array}
-
-
-# Boolean
+## Boolean
 
 ##### `$boolean(valueExp)`
 
 - `valueExp` {*}
 - Returns: {boolean}
 
+## Comparison
 
-# Comparison
-
-##### `$eq(targetValueExp, valueExp)`
+##### `$eq(referenceExp, valueExp)`
 
 Checks if the two values
 
-- `targetValueExp` {*} Value to be compared to.
+- `referenceExp` {*} Value to be compared to.
 - `valueExp` {*} Value being compared.
 - Returns: {boolean}
 
-##### `$notEq(targetValueExp, valueExp)`
+##### `$notEq(referenceExp, valueExp)`
 
-- `targetValueExp` {*} Value to be compared to.
+- `referenceExp` {*} Value to be compared to.
 - `valueExp` {*} Value being compared.
 - Returns: {boolean}
 
@@ -358,35 +349,35 @@ Checks whether the value is **not** in the given array.
 - `valueExp` {*}
 - Returns: {boolean}
 
-##### `$gt(thresholdExp, valueExp)`
+##### `$gt(referenceExp, valueExp)`
 
 Greater than `value > threshold`
 
-- `thresholdExp` {number}
+- `referenceExp` {number}
 - `valueExp` {number}
 - Returns: {boolean}
 
-##### `$gte(thresholdExp, valueExp)`
+##### `$gte(referenceExp, valueExp)`
 
 Greater than or equal `value >= threshold`
 
-- `thresholdExp` {number}
+- `referenceExp` {number}
 - `valueExp` {number}
 - Returns: {boolean}
 
-##### `$lt(thresholdExp, valueExp)`
+##### `$lt(referenceExp, valueExp)`
 
 Lesser than `value < threshold`
 
-- `thresholdExp` {number}
+- `referenceExp` {number}
 - `valueExp` {number}
 - Returns: {boolean}
 
-##### `$lte(thresholdExp, valueExp)`
+##### `$lte(referenceExp, valueExp)`
 
 Lesser than or equal `value <= threshold`
 
-- `thresholdExp` {number}
+- `referenceExp` {number}
 - `valueExp` {number}
 - Returns: {boolean}
 
@@ -398,102 +389,195 @@ Checks if the value matches the set of criteria.
 - `valueExp` {number}
 - Returns: {boolean}
 
+## Date
 
-# Date
+Set of expressions aimed at solving common date-related operations: 
+parse, format, compare, validate, manipulate (e.g. move forward, move back).
+Most (if not all) operations are based on and built with [`Luxon`](https://github.com/moment/luxon/) `DateTime`. If not stated otherwise, date operations return a `string` in ISO 8601 format (`2021-01-27T20:38:12.807Z`).
 
-##### `$date(parseFmtArgsExp, serializeFmtArgsExp, dateExp)`
+##### `()`
 
-- `parseFmtArgsExp` {LuxonFmtArgsExpression} Default: `'ISO'`
-- `serializeFmtArgsExp` {LuxonFmtArgsExpression} Default: `'ISO'`
-- `dateExp` {*} Default: `$$VALUE`
-- Returns: `date` {string}
 
-##### `$dateNow(serializeFmtArgsExp)`
+##### `$date(parseFmtArgs, serializeFmtArgs, date)`
 
-- `serializeFmtArgsExp` {LuxonFmtArgsExpression} Default: `'ISO'`
-- Returns: `date` {string}
+Parses a date from a given input format and serializes it into
+another format. Use this expression to convert date formats into
+your requirements. E.g. `UnixEpochMs` into `ISO`.
+
+- `parseFmtArgs` {DateFormat} Arguments to be forwarded to
+        Luxon corresponding DateTime parser. If a `string`,
+        will be considered as the name of the format. If an `Array`, will be
+        considered as a tuple consisting of [format, formatOptions].
+        Recognized formats (exported as constants DATE_{FORMAT_IN_CONSTANT_CASE}):
+        `ISO`, `ISODate`, `ISOWeekDate`, `ISOTime`, `RFC2822`, `HTTP`, `SQL`,
+        `SQLTime`, `SQLTime`, `UnixEpochMs`, `UnixEpochS`, `JSDate`, `PlainObject`,
+        `LuxonDateTime` Default: `'ISO'`
+- `serializeFmtArgs` {DateFormat} Same as `parseFmtArgs`
+        but will be used to format the resulting output Default: `'ISO'`
+- `date` {string | number | Object | Date} Input type should be in accordance
+        with the `parseFmtArgs`. Default: `$$VALUE`
+- Returns: `date` {string | number | Object | Date} Output will vary according to `serializeFmtArgs`
+
+##### `$dateNow(serializeFmtArgs)`
+
+Generates a ISO date string from `Date.now`
+
+- `serializeFmtArgs` {DateFormat} See `$date` Default: `'ISO'`
+- Returns: `date` {string | number | Object | Date}
 
 ##### `$dateIsValid()`
 
-- `` {ISODateExpression}
+Verifies whether the given date is valid.
+From Luxon docs:
+> The most common way to do that is to over- or underflow some unit:
+> - February 40th
+> - 28:00
+> - 4 pm
+> - etc
+See https://github.com/moment/luxon/blob/master/docs/validity.md
+
+- `` {ISODateTimeString}
 - Returns: `isValid` {boolean}
 
-##### `$dateStartOf(unitExp, dateExp)`
+##### `$dateStartOf(unitExp, date)`
 
-- `unitExp` {StringExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
-- Returns: `date` {ISODateString}
+Returns the date at the start of the given `unit` (e.g. `day`, `month`).
 
-##### `$dateEndOf(unitExp, dateExp)`
+- `unitExp` {string} Unit to be used as basis for calculation:
+                        `year`, `quarter`, `month`, `week`, `day`,
+                        `hour`, `minute`, `second`, or `millisecond`.
+- `date` {ISODateTimeString} Default: `$$VALUE`
+- Returns: `date` {ISODateTimeString}
 
-- `unitExp` {StringExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
-- Returns: `date` {ISODateString}
+##### `$dateEndOf(unitExp, date)`
+
+Returns the date at the end of the given `unit` (e.g. `day`, `month`).
+
+- `unitExp` {string} Unit to be used as basis for calculation:
+                        `year`, `quarter`, `month`, `week`, `day`,
+                        `hour`, `minute`, `second`, or `millisecond`.
+- `date` {ISODateTimeString} Default: `$$VALUE`
+- Returns: `date` {ISODateTimeString}
 
 ##### `$dateSet(valuesExp, dateExp)`
 
-- `valuesExp` {PlainObjectExpression}
-- `dateExp` {ISODateExpression}
-- Returns: `date` {ISODateString}
+Modifies date specific `units` and returns resulting date.
+See https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set
+and https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject
 
-##### `$dateConfig(configExp, dateExp)`
+- `valuesExp` {Object}
+- `valuesExp.year` {number}
+- `valuesExp.month` {number}
+- `valuesExp.day` {number}
+- `valuesExp.ordinal` {number}
+- `valuesExp.weekYear` {number}
+- `valuesExp.weekNumber` {number}
+- `valuesExp.weekday` {number}
+- `valuesExp.hour` {number}
+- `valuesExp.minute` {number}
+- `valuesExp.second` {number}
+- `valuesExp.millisecond` {number}
+- `dateExp` {ISODateTimeString} Default: `$$VALUE`
+- Returns: `date` {ISODateTimeString}
 
-- `configExp` {PlainObjectExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
-- Returns: `date` {ISODateString}
+##### `$dateConfig(configExp, date)`
 
-##### `$dateGt(referenceDateExp, dateExp)`
+Modifies a configurations of the date.
 
-- `referenceDateExp` {ISODateExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
+- `configExp` {Object}
+- `config.locale` {string}
+- `config.zone` {string}
+- `date` {ISODateTimeString} Default: `$$VALUE`
+- Returns: `date` {ISODateTimeString}
+
+##### `$dateGt(referenceDateExp, date)`
+
+Greater than `date > reference`
+
+- `referenceDateExp` {ISODateTimeString}
+- `date` {ISODateTimeString} Default: `$$VALUE`
 - Returns: {boolean}
 
-##### `$dateGte(referenceDateExp, dateExp)`
+##### `$dateGte(referenceDateExp, date)`
 
-- `referenceDateExp` {ISODateExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
+Greater than or equal `date >= reference`
+
+- `referenceDateExp` {ISODateTimeString}
+- `date` {ISODateTimeString} Default: `$$VALUE`
 - Returns: {boolean}
 
-##### `$dateLt(referenceDateExp, dateExp)`
+##### `$dateLt(referenceDateExp, date)`
 
-- `referenceDateExp` {ISODateExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
+Lesser than `date < reference`
+
+- `referenceDateExp` {ISODateTimeString}
+- `date` {ISODateTimeString} Default: `$$VALUE`
 - Returns: {boolean}
 
-##### `$dateLte(referenceDateExp, dateExp)`
+##### `$dateLte(referenceDateExp, date)`
 
-- `referenceDateExp` {ISODateExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
+Lesser than or equal `date <= reference`
+
+- `referenceDateExp` {ISODateTimeString}
+- `date` {ISODateTimeString} Default: `$$VALUE`
 - Returns: {boolean}
 
-##### `$dateEq(referenceDateExp, dateExp)`
+##### `$dateEq(referenceDateExp, compareUnitExp, date)`
 
-- `referenceDateExp` {ISODateExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
+`date == reference`
+Converts both `date` and `reference` and compares their
+specified `compareUnit`. By default compares `millisecond` unit
+so that checks whether are exactly the same millisecond in time,
+but could be used to compare other units, such as whether two dates
+are within the same `day`, `month` or `year`.
+
+- `referenceDateExp` {ISODateTimeString}
+- `compareUnitExp` {string}
+- `date` {ISODateTimeString} Default: `$$VALUE`
 - Returns: {boolean}
 
-##### `$dateMoveForward(moveForwardExp, dateExp)`
+##### `$dateMoveForward(duration, date)`
 
-- `moveForwardExp` {PlainObjectExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
-- Returns: `date` {ISODateString}
+Modifies the date by moving it forward the duration specified.
 
-##### `$dateMoveBack(moveForwardExp, dateExp)`
+- `duration` {Duration}
+- `duration.years` {number}
+- `duration.quarters` {number}
+- `duration.months` {number}
+- `duration.weeks` {number}
+- `duration.days` {number}
+- `duration.hours` {number}
+- `duration.minutes` {number}
+- `duration.seconds` {number}
+- `duration.milliseconds` {number}
+- `date` {ISODateTimeString} Default: `$$VALUE`
+- Returns: `date` {ISODateTimeString}
 
-- `moveForwardExp` {PlainObjectExpression}
-- `dateExp` {ISODateExpression} Default: `$$VALUE`
-- Returns: `date` {ISODateString}
+##### `$dateMoveBack(duration, date)`
 
+Modifies the date by moving it backward the duration specified.
 
-# Functional
+- `duration` {Duration}
+- `duration.years` {number}
+- `duration.quarters` {number}
+- `duration.months` {number}
+- `duration.weeks` {number}
+- `duration.days` {number}
+- `duration.hours` {number}
+- `duration.minutes` {number}
+- `duration.seconds` {number}
+- `duration.milliseconds` {number}
+- `date` {ISODateTimeString} Default: `$$VALUE`
+- Returns: `date` {ISODateTimeString}
+
+## Functional
 
 ##### `$pipe(expressionsExp)`
 
 - `expressionsExp` {ArrayExpression}
 - Returns: `pipeResult` {*}
 
-
-# Logical
+## Logical
 
 ##### `$and(expressionsExp)`
 
@@ -543,8 +627,7 @@ Checks if the value matches the set of criteria.
 - `ValueExp` {String}
 - Returns: {*}
 
-
-# Math
+## Math
 
 ##### `$mathSum(sum, base)`
 
@@ -614,8 +697,7 @@ Checks if the value matches the set of criteria.
 - `value` {number} Default: `$$VALUE`
 - Returns: `result` {number}
 
-
-# Number
+## Number
 
 ##### `$numberInt(radix, value)`
 
@@ -628,8 +710,7 @@ Checks if the value matches the set of criteria.
 - `value` {*}
 - Returns: {number}
 
-
-# Object
+## Object
 
 ##### `$objectMatches(criteriaByPathExp, valueExp)`
 
@@ -639,9 +720,9 @@ Checks if the value matches the set of criteria.
 
 ##### `$objectFormat(formatExp, sourceExp)`
 
-- `formatExp` {Object}
+- `formatExp` {Object | Array}
 - `sourceExp` {*} Default: `$$VALUE`
-- Returns: `object` {Object}
+- Returns: `object` {Object | Array}
 
 ##### `$objectDefaults(defaultValuesExp, baseExp)`
 
@@ -655,8 +736,7 @@ Checks if the value matches the set of criteria.
 - `baseExp` {Object} Default: `$$VALUE`
 - Returns: {Object}
 
-
-# String
+## String
 
 ##### `$string(valueExp)`
 
@@ -719,16 +799,14 @@ Checks if the value matches the set of criteria.
 - `valueExp` {string} Default: `$$VALUE`
 - Returns: {boolean}
 
-
-# Type
+## Type
 
 ##### `$type(valueExp)`
 
 - `valueExp` {*}
 - Returns: `type` {string}
 
-
-# Value
+## Value
 
 ##### `$value(pathExp, defaultExp)`
 

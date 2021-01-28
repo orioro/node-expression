@@ -37,22 +37,22 @@ const _negation = fn => (...args):boolean => !fn(...args)
  * Checks if the two values
  * 
  * @name $eq
- * @param {*} targetValueExp Value to be compared to.
+ * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
  * @return {boolean}
  */
 export const $eq = (
   context:EvaluationContext,
-  targetValueExp:Expression,
+  referenceExp:Expression,
   valueExp:Expression = $$VALUE
 ) => isEqual(
-  evaluate(context, targetValueExp),
+  evaluate(context, referenceExp),
   evaluate(context, valueExp)
 )
 
 /**
  * @name $notEq
- * @param {*} targetValueExp Value to be compared to.
+ * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
  * @return {boolean}
  */
@@ -89,57 +89,57 @@ export const $notIn = _negation($in)
  * Greater than `value > threshold`
  * 
  * @name $gt
- * @param {number} thresholdExp
+ * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
  */
 export const $gt = (
   context:EvaluationContext,
-  thresholdExp:NumberExpression,
+  referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) > evaluateNumber(context, thresholdExp)
+) => evaluateNumber(context, valueExp) > evaluateNumber(context, referenceExp)
 
 /**
  * Greater than or equal `value >= threshold`
  * 
  * @name $gte
- * @param {number} thresholdExp
+ * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
  */
 export const $gte = (
   context:EvaluationContext,
-  thresholdExp:NumberExpression,
+  referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) >= evaluateNumber(context, thresholdExp)
+) => evaluateNumber(context, valueExp) >= evaluateNumber(context, referenceExp)
 
 /**
  * Lesser than `value < threshold`
  * 
  * @name $lt
- * @param {number} thresholdExp
+ * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
  */
 export const $lt = (
   context:EvaluationContext,
-  thresholdExp:NumberExpression,
+  referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) < evaluateNumber(context, thresholdExp)
+) => evaluateNumber(context, valueExp) < evaluateNumber(context, referenceExp)
 
 /**
  * Lesser than or equal `value <= threshold`
  * 
  * @name $lte
- * @param {number} thresholdExp
+ * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
  */
 export const $lte = (
   context:EvaluationContext,
-  thresholdExp:NumberExpression,
+  referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) <= evaluateNumber(context, thresholdExp)
+) => evaluateNumber(context, valueExp) <= evaluateNumber(context, referenceExp)
 
 /**
  * Checks if the value matches the set of criteria.
