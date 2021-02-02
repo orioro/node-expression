@@ -74,6 +74,21 @@ TODO
 // ]
 ```
 
+# API
+
+- [Array](#Array)
+- [Boolean](#Boolean)
+- [Comparison](#Comparison)
+- [Date](#Date)
+- [Functional](#Functional)
+- [Logical](#Logical)
+- [Math](#Math)
+- [Number](#Number)
+- [Object](#Object)
+- [String](#String)
+- [Type](#Type)
+- [Value](#Value)
+
 ## Array
 
 - [`$arrayIncludes(searchValueExp, arrayExp)`](#arrayincludessearchvalueexp-arrayexp)
