@@ -14,7 +14,7 @@ const PATH_VARIABLE_RE = /^\$\$.+/
 export const $$VALUE = ['$value', '$$VALUE']
 
 /**
- * @name $value
+ * @function $value
  * @param {string} pathExp
  * @param {*} defaultExp
  * @return {*} value
@@ -42,7 +42,7 @@ export const $value = (
 }
 
 /**
- * @name $literal
+ * @function $literal
  * @param {*} value
  * @return {*}
  */
@@ -52,7 +52,7 @@ export const $literal = (
 ) => value
 
 /**
- * @name $evaluate
+ * @function $evaluate
  * @param {Expression} expExp
  * @param {Object | null} scopeExp
  * @return {*}

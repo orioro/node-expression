@@ -20,7 +20,7 @@ const mathOperation = (op:(base:number, operator:number) => number) => (
 )
 
 /**
- * @name $mathSum
+ * @function $mathSum
  * @param {number} sum
  * @param {number} [base=$$VALUE]
  * @return {number} result
@@ -28,7 +28,7 @@ const mathOperation = (op:(base:number, operator:number) => number) => (
 export const $mathSum = mathOperation((base, sum) => base + sum)
 
 /**
- * @name $mathSub
+ * @function $mathSub
  * @param {number} subtract
  * @param {number} [base=$$VALUE]
  * @return {number} result
@@ -36,7 +36,7 @@ export const $mathSum = mathOperation((base, sum) => base + sum)
 export const $mathSub = mathOperation((base, sub) => base - sub)
 
 /**
- * @name $mathMult
+ * @function $mathMult
  * @param {number} multiplier
  * @param {number} [base=$$VALUE]
  * @return {number} result
@@ -44,7 +44,7 @@ export const $mathSub = mathOperation((base, sub) => base - sub)
 export const $mathMult = mathOperation((base, mult) => base * mult)
 
 /**
- * @name $mathDiv
+ * @function $mathDiv
  * @param {number} divisor
  * @param {number} dividend
  * @return {number} result
@@ -52,7 +52,7 @@ export const $mathMult = mathOperation((base, mult) => base * mult)
 export const $mathDiv = mathOperation((dividend, divisor) => dividend / divisor)
 
 /**
- * @name $mathMod
+ * @function $mathMod
  * @param {number} divisor
  * @param {number} dividend
  * @return {number} result
@@ -60,7 +60,7 @@ export const $mathDiv = mathOperation((dividend, divisor) => dividend / divisor)
 export const $mathMod = mathOperation((dividend, divisor) => dividend % divisor)
 
 /**
- * @name $mathPow
+ * @function $mathPow
  * @param {number} exponent
  * @param {number} [base=$$VALUE]
  * @return {number} result
@@ -68,7 +68,7 @@ export const $mathMod = mathOperation((dividend, divisor) => dividend % divisor)
 export const $mathPow = mathOperation((base, exponent) => Math.pow(base, exponent))
 
 /**
- * @name $mathAbs
+ * @function $mathAbs
  * @param {number} [value=$$VALUE]
  * @return {number} result
  */
@@ -78,7 +78,7 @@ export const $mathAbs = (
 ) => Math.abs(evaluateNumber(context, valueExp))
 
 /**
- * @name $mathMax
+ * @function $mathMax
  * @param {number} otherValue
  * @param {number} [value=$$VALUE]
  * @return {number} result
@@ -93,7 +93,7 @@ export const $mathMax = (
 )
 
 /**
- * @name $mathMin
+ * @function $mathMin
  * @param {number} otherValue
  * @param {number} [value=$$VALUE]
  * @return {number} result
@@ -108,7 +108,7 @@ export const $mathMin = (
 )
 
 /**
- * @name $mathRound
+ * @function $mathRound
  * @param {number} [value=$$VALUE]
  * @return {number} result
  */
@@ -118,7 +118,7 @@ export const $mathRound = (
 ) => Math.round(evaluateNumber(context, valueExp))
 
 /**
- * @name $mathFloor
+ * @function $mathFloor
  * @param {number} [value=$$VALUE]
  * @return {number} result
  */
@@ -128,7 +128,7 @@ export const $mathFloor = (
 ) => Math.floor(evaluateNumber(context, valueExp))
 
 /**
- * @name $mathCeil
+ * @function $mathCeil
  * @param {number} [value=$$VALUE]
  * @return {number} result
  */

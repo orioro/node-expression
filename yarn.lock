@@ -1076,11 +1076,26 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@orioro/readme@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@orioro/readme/-/readme-0.1.0.tgz#1ba550d8e9202c8df7bd54d04b8f7442590bf0e2"
-  integrity sha512-K076+YqfvY1NMQA/tUxSxirqCrDAnNsDum+nRGdM5AW0o0ZF2N9HK+YvmbtrTunAuC202fzRkhcqgrIQeAXPXQ==
+"@orioro/cascade@^3.0.0-beta.2":
+  version "3.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@orioro/cascade/-/cascade-3.0.0-beta.2.tgz#61cfafc41e80b21e8fd034cd33261a51e491d1d9"
+  integrity sha512-Px9iobg6w385ckNIb80NE7c3uzWbs9SVyjC4vQA+3uew8a73pFLQH+4j4rNZXswnvXz7VEjF8ds+2eTtHjGuNQ==
+
+"@orioro/expression@^1.0.0-alpha.4":
+  version "1.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/@orioro/expression/-/expression-1.0.0-alpha.4.tgz#c779e05cc92fb827d2b373f626cdf10cab27268d"
+  integrity sha512-5fAlK491Xa7hPDu2lwdVLF8G9OFq/GqcJYOz+aupDx0KIaVwZjVro/U0cpjj4gJMbQQN07SEOrlFOpKYSzQDLA==
   dependencies:
+    lodash "^4.17.20"
+    luxon "^1.25.0"
+
+"@orioro/readme@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@orioro/readme/-/readme-0.3.1.tgz#6baf3992dfd91b7c79649a73898a9f9ffcd6e5f3"
+  integrity sha512-zja+WRUXan7dH6ghcfQuSlKkp4lwoy5CC/tgLQrsTiBEkuzhXOlqNzzaNTNbARmg5TpiQq1kJKTaRzSxmMAiFQ==
+  dependencies:
+    "@orioro/cascade" "^3.0.0-beta.2"
+    "@orioro/expression" "^1.0.0-alpha.4"
     chokidar "^3.5.1"
     comment-parser "^1.1.1"
     gulp-rename "^2.0.0"

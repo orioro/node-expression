@@ -116,7 +116,7 @@ type DateFormatExpression = StringExpression | [StringExpression, PlainObjectExp
  * another format. Use this expression to convert date formats into
  * your requirements. E.g. `UnixEpochMs` into `ISO`.
  * 
- * @name $date
+ * @function $date
  * @param {DateFormat} [parseFmtArgs='ISO'] Arguments to be forwarded to
  *         Luxon corresponding DateTime parser. If a `string`,
  *         will be considered as the name of the format. If an `Array`, will be
@@ -153,7 +153,7 @@ export const $date = (
 /**
  * Generates a ISO date string from `Date.now`
  * 
- * @name $dateNow
+ * @function $dateNow
  * @param {DateFormat} [serializeFmtArgs='ISO'] See `$date`
  * @return {string | number | Object | Date} date
  */
@@ -177,7 +177,7 @@ export const $dateNow = (
  * > - etc
  * See https://github.com/moment/luxon/blob/master/docs/validity.md
  * 
- * @name $dateIsValid
+ * @function $dateIsValid
  * @param {ISODateTimeString}
  * @return {boolean} isValid
  */
@@ -189,7 +189,7 @@ export const $dateIsValid = (
 /**
  * Returns the date at the start of the given `unit` (e.g. `day`, `month`).
  * 
- * @name $dateStartOf
+ * @function $dateStartOf
  * @param {string} unitExp Unit to be used as basis for calculation:
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
@@ -209,7 +209,7 @@ export const $dateStartOf = (
 /**
  * Returns the date at the end of the given `unit` (e.g. `day`, `month`).
  * 
- * @name $dateEndOf
+ * @function $dateEndOf
  * @param {string} unitExp Unit to be used as basis for calculation:
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
@@ -231,7 +231,7 @@ export const $dateEndOf = (
  * See https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set
  * and https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject
  * 
- * @name $dateSet
+ * @function $dateSet
  * @param {Object} valuesExp
  * @param {number} valuesExp.year
  * @param {number} valuesExp.month
@@ -271,8 +271,8 @@ const _luxonConfigDate = (dt, config, value) => {
 /**
  * Modifies a configurations of the date.
  * 
- * @todo Rename method to $dateSetConfig
- * @name $dateConfig
+ * @todo --- Rename method to $dateSetConfig
+ * @function $dateConfig
  * @param {Object} configExp
  * @param {string} config.locale
  * @param {string} config.zone
@@ -306,7 +306,7 @@ const _dateComparison = compare => (
 /**
  * Greater than `date > reference`
  * 
- * @name $dateGt
+ * @function $dateGt
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
  * @return {boolean}
@@ -316,7 +316,7 @@ export const $dateGt = _dateComparison((reference, date) => date > reference)
 /**
  * Greater than or equal `date >= reference`
  * 
- * @name $dateGte
+ * @function $dateGte
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
  * @return {boolean}
@@ -326,7 +326,7 @@ export const $dateGte = _dateComparison((reference, date) => date >= reference)
 /**
  * Lesser than `date < reference`
  * 
- * @name $dateLt
+ * @function $dateLt
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
  * @return {boolean}
@@ -336,7 +336,7 @@ export const $dateLt = _dateComparison((reference, date) => date < reference)
 /**
  * Lesser than or equal `date <= reference`
  * 
- * @name $dateLte
+ * @function $dateLte
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
  * @return {boolean}
@@ -351,7 +351,7 @@ export const $dateLte = _dateComparison((reference, date) => date <= reference)
  * but could be used to compare other units, such as whether two dates
  * are within the same `day`, `month` or `year`.
  * 
- * @name $dateEq
+ * @function $dateEq
  * @param {ISODateTimeString} referenceDateExp
  * @param {string} compareUnitExp
  * @param {ISODateTimeString} [date=$$VALUE]
@@ -373,7 +373,7 @@ export const $dateEq = (
 /**
  * Modifies the date by moving it forward the duration specified.
  * 
- * @name $dateMoveForward
+ * @function $dateMoveForward
  * @param {Duration} duration
  * @param {number} duration.years
  * @param {number} duration.quarters
@@ -401,8 +401,8 @@ export const $dateMoveForward = (
 /**
  * Modifies the date by moving it backward the duration specified.
  *
- * @todo Rename to $dateMoveBackward to be in accordance w/ $dateMoveForward
- * @name $dateMoveBack
+ * @todo --- Rename to $dateMoveBackward to be in accordance w/ $dateMoveForward
+ * @function $dateMoveBack
  * @param {Duration} duration
  * @param {number} duration.years
  * @param {number} duration.quarters

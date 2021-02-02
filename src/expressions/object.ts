@@ -28,7 +28,7 @@ import {
 } from './comparison'
 
 /**
- * @name $objectMatches
+ * @function $objectMatches
  * @param {Object} criteriaByPathExp
  * @param {Object} [valueExp=$$VALUE]
  * @return {boolean} matches
@@ -114,7 +114,7 @@ const _formatObject = (
 }
 
 /**
- * @name $objectFormat
+ * @function $objectFormat
  * @param {Object | Array} formatExp
  * @param {*} [sourceExp=$$VALUE]
  * @return {Object | Array} object
@@ -133,7 +133,7 @@ export const $objectFormat = (
 }
 
 /**
- * @name $objectDefaults
+ * @function $objectDefaults
  * @param {Object} defaultValuesExp
  * @param {Object} [baseExp=$$VALUE]
  * @return {Object}
@@ -150,7 +150,7 @@ export const $objectDefaults = (
 }
 
 /**
- * @name $objectAssign
+ * @function $objectAssign
  * @param {Object} valuesExp
  * @param {Object} [baseExp=$$VALUE]
  * @return {Object}

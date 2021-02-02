@@ -12,7 +12,7 @@ import {
 import { $$VALUE } from './value'
 
 /**
- * @name $numberInt
+ * @function $numberInt
  * @param {number} radix
  * @param {*} value
  * @return {number}
@@ -34,7 +34,7 @@ export const $numberInt = (
 }
 
 /**
- * @name $numberFloat
+ * @function $numberFloat
  * @param {*} value
  * @return {number}
  */

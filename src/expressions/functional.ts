@@ -9,7 +9,7 @@ import {
 } from '../expression'
 
 /**
- * @name $pipe
+ * @function $pipe
  * @param {ArrayExpression} expressionsExp
  * @return {*} pipeResult
  */

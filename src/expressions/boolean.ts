@@ -10,7 +10,7 @@ import {
 import { $$VALUE } from './value'
 
 /**
- * @name $boolean
+ * @function $boolean
  * @param {*} valueExp
  * @return {boolean}
  */

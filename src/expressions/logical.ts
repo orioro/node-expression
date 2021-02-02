@@ -21,7 +21,7 @@ import {
 } from '../types'
 
 /**
- * @name $and
+ * @function $and
  * @param {ArrayExpression} expressionsExp
  * @return {boolean}
  */
@@ -35,7 +35,7 @@ export const $and = (
 }
 
 /**
- * @name $or
+ * @function $or
  * @param {ArrayExpression} expressionsExp
  * @return {boolean}
  */
@@ -49,7 +49,7 @@ export const $or = (
 }
 
 /**
- * @name $not
+ * @function $not
  * @param {ArrayExpression} expressionsExp
  * @return {boolean}
  */
@@ -61,7 +61,7 @@ export const $not = (
 }
 
 /**
- * @name $nor
+ * @function $nor
  * @param {ArrayExpression} expressionsExp
  * @return {boolean}
  */
@@ -71,7 +71,7 @@ export const $nor = (
 ):boolean => !$or(context, expressionsExp)
 
 /**
- * @name $xor
+ * @function $xor
  * @param {BooleanExpression} expressionA
  * @param {BooleanExpression} expressionB
  * @return {boolean}
@@ -85,7 +85,7 @@ export const $xor = (
 )
 
 /**
- * @name $if
+ * @function $if
  * @param {BooleanExpression} conditionExp
  * @param {Expression} thenExp
  * @param {Expression} elseExp
@@ -105,7 +105,7 @@ export const $if = (
 type Case = [BooleanExpression, Expression]
 
 /**
- * @name $switch
+ * @function $switch
  * @param {ArrayExpression} casesExp
  * @param {Expression} defaultExp
  * @return {*} result
@@ -126,7 +126,7 @@ export const $switch = (
 }
 
 /**
- * @name $switchKey
+ * @function $switchKey
  * @param {Cases[]} casesExp
  * @param {string} casesExp[].0 Case key
  * @param {*} casesExp[].1 Case value

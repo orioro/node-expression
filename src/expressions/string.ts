@@ -15,7 +15,7 @@ import {
 } from '../types'
 
 /**
- * @name $string
+ * @function $string
  * @param {*} [valueExp=$$VALUE]
  * @return {string}
  */
@@ -29,7 +29,7 @@ export const $string = (
 }
 
 /**
- * @name $stringStartsWith
+ * @function $stringStartsWith
  * @param {string} query
  * @param {string} [strExp=$$VALUE]
  * @return {boolean}
@@ -43,7 +43,7 @@ export const $stringStartsWith = interpreter((
 ])
 
 /**
- * @name $stringLength
+ * @function $stringLength
  * @param {string} [strExp=$$VALUE]
  * @return {number}
  */
@@ -54,7 +54,7 @@ export const $stringLength = interpreter((
 ])
 
 /**
- * @name $stringSubstr
+ * @function $stringSubstr
  * @param {number} startExp
  * @param {number} endExp
  * @param {string} [strExp=$$VALUE]
@@ -73,7 +73,7 @@ export const $stringSubstr = (
 )
 
 /**
- * @name $stringConcat
+ * @function $stringConcat
  * @param {string} concatExp
  * @param {string} [baseExp=$$VALUE]
  * @return {string}
@@ -88,7 +88,7 @@ export const $stringConcat = (
 )
 
 /**
- * @name $stringTrim
+ * @function $stringTrim
  * @param {string} [strExp=$$VALUE]
  * @return {string}
  */
@@ -100,7 +100,7 @@ export const $stringTrim = (
 )
 
 /**
- * @name $stringPadStart
+ * @function $stringPadStart
  * @param {number} targetLengthExp
  * @param {string} padStringExp
  * @param {string} [strExp=$$VALUE]
@@ -119,7 +119,7 @@ export const $stringPadStart = (
 )
 
 /**
- * @name $stringPadEnd
+ * @function $stringPadEnd
  * @param {number} targetLengthExp
  * @param {string} padStringExp
  * @param {string} [strExp=$$VALUE]
@@ -149,7 +149,7 @@ const _regExp = (
 }
 
 /**
- * @name $stringMatch
+ * @function $stringMatch
  * @param {string} regExpExp
  * @param {string} regExpOptionsExp
  * @param {string} [valueExp=$$VALUE]
@@ -170,7 +170,7 @@ export const $stringMatch = (
 }
 
 /**
- * @name $stringTest
+ * @function $stringTest
  * @param {string} regExpExp
  * @param {string} regExpOptionsExp
  * @param {string} [valueExp=$$VALUE]

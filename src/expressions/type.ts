@@ -10,10 +10,10 @@ import {
 import { $$VALUE } from './value'
 
 /**
- * @todo Return value for arrays, objects and regexp
- *       (move away from typeof)
+ * @todo --- Return value for arrays, objects and regexp
+ *         (move away from typeof)
  * 
- * @name $type
+ * @function $type
  * @param {*} valueExp
  * @return {string} type
  */

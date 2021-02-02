@@ -36,7 +36,7 @@ const _negation = fn => (...args):boolean => !fn(...args)
 /**
  * Checks if the two values
  * 
- * @name $eq
+ * @function $eq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
  * @return {boolean}
@@ -51,7 +51,7 @@ export const $eq = (
 )
 
 /**
- * @name $notEq
+ * @function $notEq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
  * @return {boolean}
@@ -61,7 +61,7 @@ export const $notEq = _negation($eq)
 /**
  * Checks whether the value is in the given array.
  * 
- * @name $in
+ * @function $in
  * @param {Array} arrayExp
  * @param {*} valueExp
  * @return {boolean}
@@ -78,7 +78,7 @@ export const $in = (
 /**
  * Checks whether the value is **not** in the given array.
  * 
- * @name $notIn
+ * @function $notIn
  * @param {Array} arrayExp
  * @param {*} valueExp
  * @return {boolean}
@@ -88,7 +88,7 @@ export const $notIn = _negation($in)
 /**
  * Greater than `value > threshold`
  * 
- * @name $gt
+ * @function $gt
  * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
@@ -102,7 +102,7 @@ export const $gt = (
 /**
  * Greater than or equal `value >= threshold`
  * 
- * @name $gte
+ * @function $gte
  * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
@@ -116,7 +116,7 @@ export const $gte = (
 /**
  * Lesser than `value < threshold`
  * 
- * @name $lt
+ * @function $lt
  * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
@@ -130,7 +130,7 @@ export const $lt = (
 /**
  * Lesser than or equal `value <= threshold`
  * 
- * @name $lte
+ * @function $lte
  * @param {number} referenceExp
  * @param {number} valueExp
  * @return {boolean}
@@ -144,7 +144,7 @@ export const $lte = (
 /**
  * Checks if the value matches the set of criteria.
  * 
- * @name $matches
+ * @function $matches
  * @param {Object} criteriaExp
  * @param {number} valueExp
  * @return {boolean}

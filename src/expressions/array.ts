@@ -34,7 +34,7 @@ export const $$SORT_B = ['$value', '$$SORT_B']
 /**
  * Equivalent of `Array.prototype.includes`.
  * 
- * @name $arrayIncludes
+ * @function $arrayIncludes
  * @param {*} searchValueExp
  * @param {Array} [arrayExp=$$VALUE]
  * @return {boolean} includes
@@ -55,7 +55,7 @@ export const $arrayIncludes = (
  * of values to be searched for and returns whether the
  * context array contains all of the searched values.
  *
- * @name $arrayIncludesAll
+ * @function $arrayIncludesAll
  * @param {Array} searchValuesExp
  * @param {Array} [arrayExp=$$VALUE]
  * @return {boolean} includesAll
@@ -75,7 +75,7 @@ export const $arrayIncludesAll = (
  * Similar to `$arrayIncludes`, but returns true if
  * any of the searched values is in the array.
  *
- * @name $arrayIncludesAny
+ * @function $arrayIncludesAny
  * @param {Array} searchValueExp
  * @param {Array} [arrayExp=$$VALUE]
  * @return {boolean} includesAny
@@ -92,7 +92,7 @@ export const $arrayIncludesAny = (
 }
 
 /**
- * @name $arrayLength
+ * @function $arrayLength
  * @param {Array} [arrayExp=$$VALUE]
  * @return {number} length
  */
@@ -103,7 +103,7 @@ export const $arrayLength = interpreter((
 ])
 
 /**
- * @name $arrayReduce
+ * @function $arrayReduce
  * @param {Expression} reduceExp An expression that returns the
  *                               result of reduction. Has access to:
  *                               `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`,
@@ -151,7 +151,7 @@ const _arrayIterator = (method:string) => (
 )
 
 /**
- * @name $arrayMap
+ * @function $arrayMap
  * @param {Expression} mapExp Expression to be evaluated for each
  *                            item and which return value will be
  *                            available in the resulting array. Has
@@ -164,28 +164,28 @@ export const $arrayMap = _arrayIterator('map')
 // export const $arraySome = _arrayIterator('some') remove in favor of logical $or
 
 /**
- * @name $arrayFilter
+ * @function $arrayFilter
  * @param {BooleanExpression} queryExp
  * @param {Array} [arrayExp=$$VALUE]
  */
 export const $arrayFilter = _arrayIterator('filter')
 
 /**
- * @name $arrayIndexOf
+ * @function $arrayIndexOf
  * @param {BooleanExpression} queryExp
  * @param {Array} [arrayExp=$$VALUE]
  */
 export const $arrayIndexOf = _arrayIterator('findIndex')
 
 /**
- * @name $arrayFind
+ * @function $arrayFind
  * @param {BooleanExpression} queryExp
  * @param {Array} [arrayExp=$$VALUE]
  */
 export const $arrayFind = _arrayIterator('find')
 
 /**
- * @name $arrayReverse
+ * @function $arrayReverse
  * @param {Array} [arrayExp=$$VALUE]
  */
 export const $arrayReverse = (
@@ -198,7 +198,7 @@ export const $arrayReverse = (
 }
 
 /**
- * @name $arraySort
+ * @function $arraySort
  * @param {number} sortExp
  * @param {Array} [arrayExp=$$VALUE]
  */
@@ -222,7 +222,7 @@ export const $arraySort = (
 }
 
 /**
- * @name $arrayPush
+ * @function $arrayPush
  * @param {*} valueExp
  * @param {Array} [arrayExp=$$VALUE]
  */
@@ -236,7 +236,7 @@ export const $arrayPush = (
 ])
 
 /**
- * @name $arrayPush
+ * @function $arrayPush
  * @param {Array} [arrayExp=$$VALUE]
  */
 export const $arrayPop = (
@@ -248,7 +248,7 @@ export const $arrayPop = (
 }
 
 /**
- * @name $arrayUnshift
+ * @function $arrayUnshift
  * @param {*} valueExp
  * @param {Array} [arrayExp=$$VALUE]
  */
@@ -262,7 +262,7 @@ export const $arrayUnshift = (
 ])
 
 /**
- * @name $arrayShift
+ * @function $arrayShift
  * @param {Array} [arrayExp=$$VALUE]
  */
 export const $arrayShift = (
@@ -274,7 +274,7 @@ export const $arrayShift = (
 }
 
 /**
- * @name $arraySlice
+ * @function $arraySlice
  * @param {number} startExp
  * @param {number} endExp
  * @param {Array} [arrayExp=$$VALUE]
@@ -294,7 +294,7 @@ export const $arraySlice = (
 }
 
 /**
- * @name $arraySubstitute
+ * @function $arraySubstitute
  * @param {number} startExp
  * @param {number} endExp
  * @param {Array} valuesExp
@@ -323,7 +323,7 @@ export const $arraySubstitute = (
 /**
  * Adds items at the given position.
  * 
- * @name $arrayAddAt
+ * @function $arrayAddAt
  * @param {number} indexExp
  * @param {Array} valuesExp
  * @param {Array} [arrayExp=$$VALUE]
@@ -347,7 +347,7 @@ export const $arrayAddAt = (
 }
 
 /**
- * @name $arrayRemoveAt
+ * @function $arrayRemoveAt
  * @param {number} indexExp
  * @param {number} [countExp=1]
  * @param {Array} [arrayExp=$$VALUE]
@@ -370,7 +370,7 @@ export const $arrayRemoveAt = (
 }
 
 /**
- * @name $arrayJoin
+ * @function $arrayJoin
  * @param {StringExpression} separatorExp
  * @param {Array} [arrayExp=$$VALUE]
  * @return {string}
@@ -385,7 +385,7 @@ export const $arrayJoin = (
 )
 
 /**
- * @name $arrayAt
+ * @function $arrayAt
  * @param {number} indexExp
  * @param {Array} [arrayExp=$$VALUE]
  * @return {*} value
