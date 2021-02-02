@@ -347,14 +347,14 @@ Most (if not all) operations are based on and built with [`Luxon`](https://githu
 - [`$dateStartOf(unitExp, date)`](#datestartofunitexp-date)
 - [`$dateEndOf(unitExp, date)`](#dateendofunitexp-date)
 - [`$dateSet(valuesExp, dateExp)`](#datesetvaluesexp-dateexp)
-- [`$dateConfig(configExp, date)`](#dateconfigconfigexp-date)
+- [`$$dateSetConfig(configExp, date)`](#datesetconfigconfigexp-date)
 - [`$dateGt(referenceDateExp, date)`](#dategtreferencedateexp-date)
 - [`$dateGte(referenceDateExp, date)`](#dategtereferencedateexp-date)
 - [`$dateLt(referenceDateExp, date)`](#dateltreferencedateexp-date)
 - [`$dateLte(referenceDateExp, date)`](#dateltereferencedateexp-date)
 - [`$dateEq(referenceDateExp, compareUnitExp, date)`](#dateeqreferencedateexp-compareunitexp-date)
 - [`$dateMoveForward(duration, date)`](#datemoveforwardduration-date)
-- [`$dateMoveBack(duration, date)`](#datemovebackduration-date)
+- [`$dateMoveBackward(duration, date)`](#datemovebackwardduration-date)
 
 
 ##### `DateFormat`
@@ -472,7 +472,7 @@ and [`DateTime.fromObject`](https://moment.github.io/luxon/docs/class/src/dateti
 - `dateExp` {[ISODate](#isodate)}
 - Returns: `date` {[ISODate](#isodate)} 
 
-##### `$dateConfig(configExp, date)`
+##### `$$dateSetConfig(configExp, date)`
 
 Modifies a configurations of the date.
 
@@ -534,7 +534,7 @@ Modifies the date by moving it forward the duration specified.
 - `date` {[ISODate](#isodate)}
 - Returns: `date` {[ISODate](#isodate)} 
 
-##### `$dateMoveBack(duration, date)`
+##### `$dateMoveBackward(duration, date)`
 
 Modifies the date by moving it backward the duration specified.
 

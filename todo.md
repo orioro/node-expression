@@ -1,3 +1,1 @@
-- $type       | Return value for arrays, objects and regexp (move away from typeof) (src/expressions/type.ts)
-- date-rename | Rename method to $dateSetConfig (src/expressions/date.ts)
-- date-rename | Rename to $dateMoveBackward to be in accordance w/ $dateMoveForward (src/expressions/date.ts)
+- $type | Return value for arrays, objects and regexp (move away from typeof) (src/expressions/type.ts)
