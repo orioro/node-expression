@@ -307,15 +307,14 @@ const _luxonConfigDate = (dt, config, value) => {
 /**
  * Modifies a configurations of the date.
  * 
- * @todo date-rename Rename method to $dateSetConfig
- * @function $dateConfig
+ * @function $$dateSetConfig
  * @param {Object} configExp
  * @param {string} config.locale
  * @param {string} config.zone
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
-export const $dateConfig = (
+export const $$dateSetConfig = (
   context:EvaluationContext,
   configExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
@@ -428,13 +427,12 @@ export const $dateMoveForward = (
 /**
  * Modifies the date by moving it backward the duration specified.
  *
- * @todo date-rename Rename to $dateMoveBackward to be in accordance w/ $dateMoveForward
- * @function $dateMoveBack
+ * @function $dateMoveBackward
  * @param {Duration} duration
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
-export const $dateMoveBack = (
+export const $dateMoveBackward = (
   context:EvaluationContext,
   durationExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
@@ -452,12 +450,12 @@ export const DATE_EXPRESSIONS = {
   $dateStartOf,
   $dateEndOf,
   $dateSet,
-  $dateConfig,
+  $$dateSetConfig,
   $dateGt,
   $dateGte,
   $dateLt,
   $dateLte,
   $dateEq,
   $dateMoveForward,
-  $dateMoveBack,
+  $dateMoveBackward,
 }
