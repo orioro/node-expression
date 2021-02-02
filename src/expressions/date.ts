@@ -107,9 +107,52 @@ const _luxonFmtArgs = args => (
 )
 
 /**
+ * Arguments to be forwarded to Luxon corresponding DateTime parser.
+ * If a `string`, will be considered as the name of the format.
+ * If an `Array`, will be considered as a tuple consisting of
+ * [format, formatOptions].
+ * Recognized formats (exported as constants `DATE_{FORMAT_IN_CONSTANT_CASE}`):
+ * - `ISO`
+ * - `ISODate`
+ * - `ISOWeekDate`
+ * - `ISOTime`
+ * - `RFC2822`
+ * - `HTTP`
+ * - `SQL`
+ * - `SQLTime`
+ * - `SQLTime`
+ * - `UnixEpochMs`
+ * - `UnixEpochS`
+ * - `JSDate`
+ * - `PlainObject`
+ * - `LuxonDateTime`
+ * 
  * @typedef {string|[string, Object]} DateFormat
  */
 type DateFormatExpression = StringExpression | [StringExpression, PlainObjectExpression]
+
+/**
+ * String in the full ISO 8601 format:
+ * `2017-04-20T11:32:00.000-04:00`
+ * 
+ * @typedef {string} ISODate
+ */
+
+/**
+ * Duration represented in an object format:
+ *
+ * @typedef {Object} Duration
+ * @property {Object} duration
+ * @property {number} duration.years
+ * @property {number} duration.quarters
+ * @property {number} duration.months
+ * @property {number} duration.weeks
+ * @property {number} duration.days
+ * @property {number} duration.hours
+ * @property {number} duration.minutes
+ * @property {number} duration.seconds
+ * @property {number} duration.milliseconds
+ */
 
 /**
  * Parses a date from a given input format and serializes it into
@@ -117,14 +160,7 @@ type DateFormatExpression = StringExpression | [StringExpression, PlainObjectExp
  * your requirements. E.g. `UnixEpochMs` into `ISO`.
  * 
  * @function $date
- * @param {DateFormat} [parseFmtArgs='ISO'] Arguments to be forwarded to
- *         Luxon corresponding DateTime parser. If a `string`,
- *         will be considered as the name of the format. If an `Array`, will be
- *         considered as a tuple consisting of [format, formatOptions].
- *         Recognized formats (exported as constants DATE_{FORMAT_IN_CONSTANT_CASE}):
- *         `ISO`, `ISODate`, `ISOWeekDate`, `ISOTime`, `RFC2822`, `HTTP`, `SQL`,
- *         `SQLTime`, `SQLTime`, `UnixEpochMs`, `UnixEpochS`, `JSDate`, `PlainObject`,
- *         `LuxonDateTime`
+ * @param {DateFormat} [parseFmtArgs='ISO']
  * @param {DateFormat} [serializeFmtArgs='ISO'] Same as `parseFmtArgs`
  *         but will be used to format the resulting output
  * @param {string | number | Object | Date} [date=$$VALUE] Input type should be in accordance
@@ -154,7 +190,7 @@ export const $date = (
  * Generates a ISO date string from `Date.now`
  * 
  * @function $dateNow
- * @param {DateFormat} [serializeFmtArgs='ISO'] See `$date`
+ * @param {DateFormat} [serializeFmtArgs='ISO']
  * @returns {string | number | Object | Date} date
  */
 export const $dateNow = (
@@ -178,7 +214,7 @@ export const $dateNow = (
  * See https://github.com/moment/luxon/blob/master/docs/validity.md
  * 
  * @function $dateIsValid
- * @param {ISODateTimeString}
+ * @param {ISODate}
  * @returns {boolean} isValid
  */
 export const $dateIsValid = (
@@ -193,8 +229,8 @@ export const $dateIsValid = (
  * @param {string} unitExp Unit to be used as basis for calculation:
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
- * @param {ISODateTimeString} [date=$$VALUE]
- * @returns {ISODateTimeString} date
+ * @param {ISODate} [date=$$VALUE]
+ * @returns {ISODate} date
  */
 export const $dateStartOf = (
   context:EvaluationContext,
@@ -213,8 +249,8 @@ export const $dateStartOf = (
  * @param {string} unitExp Unit to be used as basis for calculation:
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
- * @param {ISODateTimeString} [date=$$VALUE]
- * @returns {ISODateTimeString} date
+ * @param {ISODate} [date=$$VALUE]
+ * @returns {ISODate} date
  */
 export const $dateEndOf = (
   context:EvaluationContext,
@@ -228,8 +264,8 @@ export const $dateEndOf = (
 
 /**
  * Modifies date specific `units` and returns resulting date.
- * See https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set
- * and https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject
+ * See [`DateTime#set`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set)
+ * and [`DateTime.fromObject`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject)
  * 
  * @function $dateSet
  * @param {Object} valuesExp
@@ -244,8 +280,8 @@ export const $dateEndOf = (
  * @param {number} valuesExp.minute
  * @param {number} valuesExp.second
  * @param {number} valuesExp.millisecond
- * @param {ISODateTimeString} [dateExp=$$VALUE]
- * @returns {ISODateTimeString} date
+ * @param {ISODate} [dateExp=$$VALUE]
+ * @returns {ISODate} date
  */
 export const $dateSet = (
   context:EvaluationContext,
@@ -271,13 +307,13 @@ const _luxonConfigDate = (dt, config, value) => {
 /**
  * Modifies a configurations of the date.
  * 
- * @todo --- Rename method to $dateSetConfig
+ * @todo date-rename Rename method to $dateSetConfig
  * @function $dateConfig
  * @param {Object} configExp
  * @param {string} config.locale
  * @param {string} config.zone
- * @param {ISODateTimeString} [date=$$VALUE]
- * @returns {ISODateTimeString} date
+ * @param {ISODate} [date=$$VALUE]
+ * @returns {ISODate} date
  */
 export const $dateConfig = (
   context:EvaluationContext,
@@ -307,8 +343,8 @@ const _dateComparison = compare => (
  * Greater than `date > reference`
  * 
  * @function $dateGt
- * @param {ISODateTimeString} referenceDateExp
- * @param {ISODateTimeString} [date=$$VALUE]
+ * @param {ISODate} referenceDateExp
+ * @param {ISODate} [date=$$VALUE]
  * @returns {boolean}
  */
 export const $dateGt = _dateComparison((reference, date) => date > reference)
@@ -317,8 +353,8 @@ export const $dateGt = _dateComparison((reference, date) => date > reference)
  * Greater than or equal `date >= reference`
  * 
  * @function $dateGte
- * @param {ISODateTimeString} referenceDateExp
- * @param {ISODateTimeString} [date=$$VALUE]
+ * @param {ISODate} referenceDateExp
+ * @param {ISODate} [date=$$VALUE]
  * @returns {boolean}
  */
 export const $dateGte = _dateComparison((reference, date) => date >= reference)
@@ -327,8 +363,8 @@ export const $dateGte = _dateComparison((reference, date) => date >= reference)
  * Lesser than `date < reference`
  * 
  * @function $dateLt
- * @param {ISODateTimeString} referenceDateExp
- * @param {ISODateTimeString} [date=$$VALUE]
+ * @param {ISODate} referenceDateExp
+ * @param {ISODate} [date=$$VALUE]
  * @returns {boolean}
  */
 export const $dateLt = _dateComparison((reference, date) => date < reference)
@@ -337,8 +373,8 @@ export const $dateLt = _dateComparison((reference, date) => date < reference)
  * Lesser than or equal `date <= reference`
  * 
  * @function $dateLte
- * @param {ISODateTimeString} referenceDateExp
- * @param {ISODateTimeString} [date=$$VALUE]
+ * @param {ISODate} referenceDateExp
+ * @param {ISODate} [date=$$VALUE]
  * @returns {boolean}
  */
 export const $dateLte = _dateComparison((reference, date) => date <= reference)
@@ -352,9 +388,9 @@ export const $dateLte = _dateComparison((reference, date) => date <= reference)
  * are within the same `day`, `month` or `year`.
  * 
  * @function $dateEq
- * @param {ISODateTimeString} referenceDateExp
+ * @param {ISODate} referenceDateExp
  * @param {string} compareUnitExp
- * @param {ISODateTimeString} [date=$$VALUE]
+ * @param {ISODate} [date=$$VALUE]
  * @returns {boolean}
  */
 export const $dateEq = (
@@ -375,17 +411,8 @@ export const $dateEq = (
  * 
  * @function $dateMoveForward
  * @param {Duration} duration
- * @param {number} duration.years
- * @param {number} duration.quarters
- * @param {number} duration.months
- * @param {number} duration.weeks
- * @param {number} duration.days
- * @param {number} duration.hours
- * @param {number} duration.minutes
- * @param {number} duration.seconds
- * @param {number} duration.milliseconds
- * @param {ISODateTimeString} [date=$$VALUE]
- * @returns {ISODateTimeString} date
+ * @param {ISODate} [date=$$VALUE]
+ * @returns {ISODate} date
  */
 export const $dateMoveForward = (
   context:EvaluationContext,
@@ -401,20 +428,11 @@ export const $dateMoveForward = (
 /**
  * Modifies the date by moving it backward the duration specified.
  *
- * @todo --- Rename to $dateMoveBackward to be in accordance w/ $dateMoveForward
+ * @todo date-rename Rename to $dateMoveBackward to be in accordance w/ $dateMoveForward
  * @function $dateMoveBack
  * @param {Duration} duration
- * @param {number} duration.years
- * @param {number} duration.quarters
- * @param {number} duration.months
- * @param {number} duration.weeks
- * @param {number} duration.days
- * @param {number} duration.hours
- * @param {number} duration.minutes
- * @param {number} duration.seconds
- * @param {number} duration.milliseconds
- * @param {ISODateTimeString} [date=$$VALUE]
- * @returns {ISODateTimeString} date
+ * @param {ISODate} [date=$$VALUE]
+ * @returns {ISODate} date
  */
 export const $dateMoveBack = (
   context:EvaluationContext,

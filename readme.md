@@ -339,6 +339,8 @@ parse, format, compare, validate, manipulate (e.g. move forward, move back).
 Most (if not all) operations are based on and built with [`Luxon`](https://github.com/moment/luxon/) `DateTime`. If not stated otherwise, date operations return a `string` in ISO 8601 format (`2021-01-27T20:38:12.807Z`).
 
 - [`DateFormat`](#dateformat)
+- [`ISODate`](#isodate)
+- [`Duration`](#duration)
 - [`$date(parseFmtArgs, serializeFmtArgs, date)`](#dateparsefmtargs-serializefmtargs-date)
 - [`$dateNow(serializeFmtArgs)`](#datenowserializefmtargs)
 - [`$dateIsValid()`](#dateisvalid)
@@ -357,7 +359,49 @@ Most (if not all) operations are based on and built with [`Luxon`](https://githu
 
 ##### `DateFormat`
 
+Arguments to be forwarded to Luxon corresponding DateTime parser.
+If a `string`, will be considered as the name of the format.
+If an `Array`, will be considered as a tuple consisting of
+[format, formatOptions].
+Recognized formats (exported as constants `DATE_{FORMAT_IN_CONSTANT_CASE}`):
+- `ISO`
+- `ISODate`
+- `ISOWeekDate`
+- `ISOTime`
+- `RFC2822`
+- `HTTP`
+- `SQL`
+- `SQLTime`
+- `SQLTime`
+- `UnixEpochMs`
+- `UnixEpochS`
+- `JSDate`
+- `PlainObject`
+- `LuxonDateTime`
 
+
+
+##### `ISODate`
+
+String in the full ISO 8601 format:
+`2017-04-20T11:32:00.000-04:00`
+
+
+
+##### `Duration`
+
+Duration represented in an object format:
+
+- `duration` {Object}
+  - `years` {number}
+  - `quarters` {number}
+  - `months` {number}
+  - `weeks` {number}
+  - `days` {number}
+  - `hours` {number}
+  - `minutes` {number}
+  - `seconds` {number}
+  - `milliseconds` {number}
 
 ##### `$date(parseFmtArgs, serializeFmtArgs, date)`
 
@@ -388,7 +432,7 @@ From Luxon docs:
 > - etc
 See https://github.com/moment/luxon/blob/master/docs/validity.md
 
-- `` {ISODateTimeString}
+- `` {[ISODate](#isodate)}
 - Returns: `isValid` {boolean} 
 
 ##### `$dateStartOf(unitExp, date)`
@@ -396,22 +440,22 @@ See https://github.com/moment/luxon/blob/master/docs/validity.md
 Returns the date at the start of the given `unit` (e.g. `day`, `month`).
 
 - `unitExp` {string}
-- `date` {ISODateTimeString}
-- Returns: `date` {ISODateTimeString} 
+- `date` {[ISODate](#isodate)}
+- Returns: `date` {[ISODate](#isodate)} 
 
 ##### `$dateEndOf(unitExp, date)`
 
 Returns the date at the end of the given `unit` (e.g. `day`, `month`).
 
 - `unitExp` {string}
-- `date` {ISODateTimeString}
-- Returns: `date` {ISODateTimeString} 
+- `date` {[ISODate](#isodate)}
+- Returns: `date` {[ISODate](#isodate)} 
 
 ##### `$dateSet(valuesExp, dateExp)`
 
 Modifies date specific `units` and returns resulting date.
-See https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set
-and https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject
+See [`DateTime#set`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set)
+and [`DateTime.fromObject`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject)
 
 - `valuesExp` {Object}
   - `year` {number}
@@ -425,47 +469,47 @@ and https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#stat
   - `minute` {number}
   - `second` {number}
   - `millisecond` {number}
-- `dateExp` {ISODateTimeString}
-- Returns: `date` {ISODateTimeString} 
+- `dateExp` {[ISODate](#isodate)}
+- Returns: `date` {[ISODate](#isodate)} 
 
 ##### `$dateConfig(configExp, date)`
 
 Modifies a configurations of the date.
 
 - `configExp` {Object}
-- `date` {ISODateTimeString}
-- Returns: `date` {ISODateTimeString} 
+- `date` {[ISODate](#isodate)}
+- Returns: `date` {[ISODate](#isodate)} 
 
 ##### `$dateGt(referenceDateExp, date)`
 
 Greater than `date > reference`
 
-- `referenceDateExp` {ISODateTimeString}
-- `date` {ISODateTimeString}
+- `referenceDateExp` {[ISODate](#isodate)}
+- `date` {[ISODate](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateGte(referenceDateExp, date)`
 
 Greater than or equal `date >= reference`
 
-- `referenceDateExp` {ISODateTimeString}
-- `date` {ISODateTimeString}
+- `referenceDateExp` {[ISODate](#isodate)}
+- `date` {[ISODate](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateLt(referenceDateExp, date)`
 
 Lesser than `date < reference`
 
-- `referenceDateExp` {ISODateTimeString}
-- `date` {ISODateTimeString}
+- `referenceDateExp` {[ISODate](#isodate)}
+- `date` {[ISODate](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateLte(referenceDateExp, date)`
 
 Lesser than or equal `date <= reference`
 
-- `referenceDateExp` {ISODateTimeString}
-- `date` {ISODateTimeString}
+- `referenceDateExp` {[ISODate](#isodate)}
+- `date` {[ISODate](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateEq(referenceDateExp, compareUnitExp, date)`
@@ -477,44 +521,26 @@ so that checks whether are exactly the same millisecond in time,
 but could be used to compare other units, such as whether two dates
 are within the same `day`, `month` or `year`.
 
-- `referenceDateExp` {ISODateTimeString}
+- `referenceDateExp` {[ISODate](#isodate)}
 - `compareUnitExp` {string}
-- `date` {ISODateTimeString}
+- `date` {[ISODate](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateMoveForward(duration, date)`
 
 Modifies the date by moving it forward the duration specified.
 
-- `duration` {Duration}
-  - `years` {number}
-  - `quarters` {number}
-  - `months` {number}
-  - `weeks` {number}
-  - `days` {number}
-  - `hours` {number}
-  - `minutes` {number}
-  - `seconds` {number}
-  - `milliseconds` {number}
-- `date` {ISODateTimeString}
-- Returns: `date` {ISODateTimeString} 
+- `duration` {[Duration](#duration)}
+- `date` {[ISODate](#isodate)}
+- Returns: `date` {[ISODate](#isodate)} 
 
 ##### `$dateMoveBack(duration, date)`
 
 Modifies the date by moving it backward the duration specified.
 
-- `duration` {Duration}
-  - `years` {number}
-  - `quarters` {number}
-  - `months` {number}
-  - `weeks` {number}
-  - `days` {number}
-  - `hours` {number}
-  - `minutes` {number}
-  - `seconds` {number}
-  - `milliseconds` {number}
-- `date` {ISODateTimeString}
-- Returns: `date` {ISODateTimeString} 
+- `duration` {[Duration](#duration)}
+- `date` {[ISODate](#isodate)}
+- Returns: `date` {[ISODate](#isodate)} 
 
 
 ## Functional
