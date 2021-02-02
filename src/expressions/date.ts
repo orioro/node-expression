@@ -129,7 +129,7 @@ type DateFormatExpression = StringExpression | [StringExpression, PlainObjectExp
  *         but will be used to format the resulting output
  * @param {string | number | Object | Date} [date=$$VALUE] Input type should be in accordance
  *         with the `parseFmtArgs`.
- * @return {string | number | Object | Date} date Output will vary according to `serializeFmtArgs`
+ * @returns {string | number | Object | Date} date Output will vary according to `serializeFmtArgs`
  */
 export const $date = (
   context:EvaluationContext,
@@ -155,7 +155,7 @@ export const $date = (
  * 
  * @function $dateNow
  * @param {DateFormat} [serializeFmtArgs='ISO'] See `$date`
- * @return {string | number | Object | Date} date
+ * @returns {string | number | Object | Date} date
  */
 export const $dateNow = (
   context:EvaluationContext,
@@ -179,7 +179,7 @@ export const $dateNow = (
  * 
  * @function $dateIsValid
  * @param {ISODateTimeString}
- * @return {boolean} isValid
+ * @returns {boolean} isValid
  */
 export const $dateIsValid = (
   context:EvaluationContext,
@@ -194,7 +194,7 @@ export const $dateIsValid = (
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {ISODateTimeString} date
+ * @returns {ISODateTimeString} date
  */
 export const $dateStartOf = (
   context:EvaluationContext,
@@ -214,7 +214,7 @@ export const $dateStartOf = (
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {ISODateTimeString} date
+ * @returns {ISODateTimeString} date
  */
 export const $dateEndOf = (
   context:EvaluationContext,
@@ -245,7 +245,7 @@ export const $dateEndOf = (
  * @param {number} valuesExp.second
  * @param {number} valuesExp.millisecond
  * @param {ISODateTimeString} [dateExp=$$VALUE]
- * @return {ISODateTimeString} date
+ * @returns {ISODateTimeString} date
  */
 export const $dateSet = (
   context:EvaluationContext,
@@ -277,7 +277,7 @@ const _luxonConfigDate = (dt, config, value) => {
  * @param {string} config.locale
  * @param {string} config.zone
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {ISODateTimeString} date
+ * @returns {ISODateTimeString} date
  */
 export const $dateConfig = (
   context:EvaluationContext,
@@ -309,7 +309,7 @@ const _dateComparison = compare => (
  * @function $dateGt
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $dateGt = _dateComparison((reference, date) => date > reference)
 
@@ -319,7 +319,7 @@ export const $dateGt = _dateComparison((reference, date) => date > reference)
  * @function $dateGte
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $dateGte = _dateComparison((reference, date) => date >= reference)
 
@@ -329,7 +329,7 @@ export const $dateGte = _dateComparison((reference, date) => date >= reference)
  * @function $dateLt
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $dateLt = _dateComparison((reference, date) => date < reference)
 
@@ -339,7 +339,7 @@ export const $dateLt = _dateComparison((reference, date) => date < reference)
  * @function $dateLte
  * @param {ISODateTimeString} referenceDateExp
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $dateLte = _dateComparison((reference, date) => date <= reference)
 
@@ -355,7 +355,7 @@ export const $dateLte = _dateComparison((reference, date) => date <= reference)
  * @param {ISODateTimeString} referenceDateExp
  * @param {string} compareUnitExp
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $dateEq = (
   context:EvaluationContext,
@@ -385,7 +385,7 @@ export const $dateEq = (
  * @param {number} duration.seconds
  * @param {number} duration.milliseconds
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {ISODateTimeString} date
+ * @returns {ISODateTimeString} date
  */
 export const $dateMoveForward = (
   context:EvaluationContext,
@@ -414,7 +414,7 @@ export const $dateMoveForward = (
  * @param {number} duration.seconds
  * @param {number} duration.milliseconds
  * @param {ISODateTimeString} [date=$$VALUE]
- * @return {ISODateTimeString} date
+ * @returns {ISODateTimeString} date
  */
 export const $dateMoveBack = (
   context:EvaluationContext,

@@ -17,7 +17,7 @@ export const $$VALUE = ['$value', '$$VALUE']
  * @function $value
  * @param {string} pathExp
  * @param {*} defaultExp
- * @return {*} value
+ * @returns {*} value
  */
 export const $value = (
   context:EvaluationContext,
@@ -44,7 +44,7 @@ export const $value = (
 /**
  * @function $literal
  * @param {*} value
- * @return {*}
+ * @returns {*}
  */
 export const $literal = (
   context:EvaluationContext,
@@ -55,7 +55,7 @@ export const $literal = (
  * @function $evaluate
  * @param {Expression} expExp
  * @param {Object | null} scopeExp
- * @return {*}
+ * @returns {*}
  */
 export const $evaluate = (
   context:EvaluationContext,

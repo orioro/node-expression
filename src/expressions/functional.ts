@@ -11,7 +11,7 @@ import {
 /**
  * @function $pipe
  * @param {ArrayExpression} expressionsExp
- * @return {*} pipeResult
+ * @returns {*} pipeResult
  */
 export const $pipe = (
   context:EvaluationContext,

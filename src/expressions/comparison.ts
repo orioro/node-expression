@@ -39,7 +39,7 @@ const _negation = fn => (...args):boolean => !fn(...args)
  * @function $eq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $eq = (
   context:EvaluationContext,
@@ -54,7 +54,7 @@ export const $eq = (
  * @function $notEq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $notEq = _negation($eq)
 
@@ -64,7 +64,7 @@ export const $notEq = _negation($eq)
  * @function $in
  * @param {Array} arrayExp
  * @param {*} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $in = (
   context:EvaluationContext,
@@ -81,7 +81,7 @@ export const $in = (
  * @function $notIn
  * @param {Array} arrayExp
  * @param {*} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $notIn = _negation($in)
 
@@ -91,7 +91,7 @@ export const $notIn = _negation($in)
  * @function $gt
  * @param {number} referenceExp
  * @param {number} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $gt = (
   context:EvaluationContext,
@@ -105,7 +105,7 @@ export const $gt = (
  * @function $gte
  * @param {number} referenceExp
  * @param {number} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $gte = (
   context:EvaluationContext,
@@ -119,7 +119,7 @@ export const $gte = (
  * @function $lt
  * @param {number} referenceExp
  * @param {number} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $lt = (
   context:EvaluationContext,
@@ -133,7 +133,7 @@ export const $lt = (
  * @function $lte
  * @param {number} referenceExp
  * @param {number} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $lte = (
   context:EvaluationContext,
@@ -147,7 +147,7 @@ export const $lte = (
  * @function $matches
  * @param {Object} criteriaExp
  * @param {number} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $matches = (
   context:EvaluationContext,

@@ -23,7 +23,7 @@ import {
 /**
  * @function $and
  * @param {ArrayExpression} expressionsExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $and = (
   context:EvaluationContext,
@@ -37,7 +37,7 @@ export const $and = (
 /**
  * @function $or
  * @param {ArrayExpression} expressionsExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $or = (
   context:EvaluationContext,
@@ -51,7 +51,7 @@ export const $or = (
 /**
  * @function $not
  * @param {ArrayExpression} expressionsExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $not = (
   context:EvaluationContext,
@@ -63,7 +63,7 @@ export const $not = (
 /**
  * @function $nor
  * @param {ArrayExpression} expressionsExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $nor = (
   context:EvaluationContext,
@@ -74,7 +74,7 @@ export const $nor = (
  * @function $xor
  * @param {BooleanExpression} expressionA
  * @param {BooleanExpression} expressionB
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $xor = (
   context:EvaluationContext,
@@ -89,7 +89,7 @@ export const $xor = (
  * @param {BooleanExpression} conditionExp
  * @param {Expression} thenExp
  * @param {Expression} elseExp
- * @return {*} result
+ * @returns {*} result
  */
 export const $if = (
   context:EvaluationContext,
@@ -108,7 +108,7 @@ type Case = [BooleanExpression, Expression]
  * @function $switch
  * @param {ArrayExpression} casesExp
  * @param {Expression} defaultExp
- * @return {*} result
+ * @returns {*} result
  */
 export const $switch = (
   context:EvaluationContext,
@@ -132,7 +132,7 @@ export const $switch = (
  * @param {*} casesExp[].1 Case value
  * @param {*} defaultExp
  * @param {String} ValueExp
- * @return {*}
+ * @returns {*}
  */
 export const $switchKey = (
   context:EvaluationContext,

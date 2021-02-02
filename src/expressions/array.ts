@@ -37,7 +37,7 @@ export const $$SORT_B = ['$value', '$$SORT_B']
  * @function $arrayIncludes
  * @param {*} searchValueExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {boolean} includes
+ * @returns {boolean} includes
  */
 export const $arrayIncludes = (
   context:EvaluationContext,
@@ -58,7 +58,7 @@ export const $arrayIncludes = (
  * @function $arrayIncludesAll
  * @param {Array} searchValuesExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {boolean} includesAll
+ * @returns {boolean} includesAll
  */
 export const $arrayIncludesAll = (
   context:EvaluationContext,
@@ -78,7 +78,7 @@ export const $arrayIncludesAll = (
  * @function $arrayIncludesAny
  * @param {Array} searchValueExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {boolean} includesAny
+ * @returns {boolean} includesAny
  */
 export const $arrayIncludesAny = (
   context:EvaluationContext,
@@ -94,7 +94,7 @@ export const $arrayIncludesAny = (
 /**
  * @function $arrayLength
  * @param {Array} [arrayExp=$$VALUE]
- * @return {number} length
+ * @returns {number} length
  */
 export const $arrayLength = interpreter((
   array:any[]
@@ -278,7 +278,7 @@ export const $arrayShift = (
  * @param {number} startExp
  * @param {number} endExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {Array}
+ * @returns {Array}
  */
 export const $arraySlice = (
   context:EvaluationContext,
@@ -299,7 +299,7 @@ export const $arraySlice = (
  * @param {number} endExp
  * @param {Array} valuesExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {Array}
+ * @returns {Array}
  */
 export const $arraySubstitute = (
   context:EvaluationContext,
@@ -327,7 +327,7 @@ export const $arraySubstitute = (
  * @param {number} indexExp
  * @param {Array} valuesExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {Array} resultingArray The array with items added at position
+ * @returns {Array} resultingArray The array with items added at position
  */
 export const $arrayAddAt = (
   context:EvaluationContext,
@@ -351,7 +351,7 @@ export const $arrayAddAt = (
  * @param {number} indexExp
  * @param {number} [countExp=1]
  * @param {Array} [arrayExp=$$VALUE]
- * @return {Array} resultingArray The array without the removed item
+ * @returns {Array} resultingArray The array without the removed item
  */
 export const $arrayRemoveAt = (
   context:EvaluationContext,
@@ -373,7 +373,7 @@ export const $arrayRemoveAt = (
  * @function $arrayJoin
  * @param {StringExpression} separatorExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {string}
+ * @returns {string}
  */
 export const $arrayJoin = (
   context:EvaluationContext,
@@ -388,7 +388,7 @@ export const $arrayJoin = (
  * @function $arrayAt
  * @param {number} indexExp
  * @param {Array} [arrayExp=$$VALUE]
- * @return {*} value
+ * @returns {*} value
  */
 export const $arrayAt = (
   context:EvaluationContext,

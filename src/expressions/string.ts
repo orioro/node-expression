@@ -17,7 +17,7 @@ import {
 /**
  * @function $string
  * @param {*} [valueExp=$$VALUE]
- * @return {string}
+ * @returns {string}
  */
 export const $string = (
   context:EvaluationContext,
@@ -32,7 +32,7 @@ export const $string = (
  * @function $stringStartsWith
  * @param {string} query
  * @param {string} [strExp=$$VALUE]
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $stringStartsWith = interpreter((
   query:string,
@@ -45,7 +45,7 @@ export const $stringStartsWith = interpreter((
 /**
  * @function $stringLength
  * @param {string} [strExp=$$VALUE]
- * @return {number}
+ * @returns {number}
  */
 export const $stringLength = interpreter((
   str:string
@@ -76,7 +76,7 @@ export const $stringSubstr = (
  * @function $stringConcat
  * @param {string} concatExp
  * @param {string} [baseExp=$$VALUE]
- * @return {string}
+ * @returns {string}
  */
 export const $stringConcat = (
   context:EvaluationContext,
@@ -90,7 +90,7 @@ export const $stringConcat = (
 /**
  * @function $stringTrim
  * @param {string} [strExp=$$VALUE]
- * @return {string}
+ * @returns {string}
  */
 export const $stringTrim = (
   context:EvaluationContext,
@@ -104,7 +104,7 @@ export const $stringTrim = (
  * @param {number} targetLengthExp
  * @param {string} padStringExp
  * @param {string} [strExp=$$VALUE]
- * @return {string}
+ * @returns {string}
  */
 export const $stringPadStart = (
   context:EvaluationContext,
@@ -123,7 +123,7 @@ export const $stringPadStart = (
  * @param {number} targetLengthExp
  * @param {string} padStringExp
  * @param {string} [strExp=$$VALUE]
- * @return {string}
+ * @returns {string}
  */
 export const $stringPadEnd = (
   context:EvaluationContext,
@@ -153,7 +153,7 @@ const _regExp = (
  * @param {string} regExpExp
  * @param {string} regExpOptionsExp
  * @param {string} [valueExp=$$VALUE]
- * @return {string[]}
+ * @returns {string[]}
  */
 export const $stringMatch = (
   context:EvaluationContext,
@@ -174,7 +174,7 @@ export const $stringMatch = (
  * @param {string} regExpExp
  * @param {string} regExpOptionsExp
  * @param {string} [valueExp=$$VALUE]
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $stringTest = (
   context:EvaluationContext,

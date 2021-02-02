@@ -12,7 +12,7 @@ import { $$VALUE } from './value'
 /**
  * @function $boolean
  * @param {*} valueExp
- * @return {boolean}
+ * @returns {boolean}
  */
 export const $boolean = (
   context:EvaluationContext,

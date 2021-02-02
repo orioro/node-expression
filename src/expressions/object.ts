@@ -31,7 +31,7 @@ import {
  * @function $objectMatches
  * @param {Object} criteriaByPathExp
  * @param {Object} [valueExp=$$VALUE]
- * @return {boolean} matches
+ * @returns {boolean} matches
  */
 export const $objectMatches = (
   context:EvaluationContext,
@@ -117,7 +117,7 @@ const _formatObject = (
  * @function $objectFormat
  * @param {Object | Array} formatExp
  * @param {*} [sourceExp=$$VALUE]
- * @return {Object | Array} object
+ * @returns {Object | Array} object
  */
 export const $objectFormat = (
   context:EvaluationContext,
@@ -136,7 +136,7 @@ export const $objectFormat = (
  * @function $objectDefaults
  * @param {Object} defaultValuesExp
  * @param {Object} [baseExp=$$VALUE]
- * @return {Object}
+ * @returns {Object}
  */
 export const $objectDefaults = (
   context:EvaluationContext,
@@ -153,7 +153,7 @@ export const $objectDefaults = (
  * @function $objectAssign
  * @param {Object} valuesExp
  * @param {Object} [baseExp=$$VALUE]
- * @return {Object}
+ * @returns {Object}
  */
 export const $objectAssign = (
   context:EvaluationContext,

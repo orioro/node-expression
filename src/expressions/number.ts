@@ -15,7 +15,7 @@ import { $$VALUE } from './value'
  * @function $numberInt
  * @param {number} radix
  * @param {*} value
- * @return {number}
+ * @returns {number}
  */
 export const $numberInt = (
   context:EvaluationContext,
@@ -36,7 +36,7 @@ export const $numberInt = (
 /**
  * @function $numberFloat
  * @param {*} value
- * @return {number}
+ * @returns {number}
  */
 export const $numberFloat = (
   context:EvaluationContext,

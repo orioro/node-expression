@@ -15,7 +15,7 @@ import { $$VALUE } from './value'
  * 
  * @function $type
  * @param {*} valueExp
- * @return {string} type
+ * @returns {string} type
  */
 export const $type = (
   context:EvaluationContext,
