@@ -11,7 +11,8 @@
     "build": "rm -rf dist && rollup --config ./rollup/build.config.js && npm run tsc-declaration",
     "prepare": "npm run build && readme",
     "update-dependencies": "npx npm-check-updates -u",
-    "tsc-declaration": "tsc --declaration --emitDeclarationOnly --declarationDir dist"
+    "tsc-declaration": "tsc --declaration --emitDeclarationOnly --declarationDir dist",
+    "commit": "cz"
   },
   "author": "",
   "license": "ISC",
@@ -28,12 +29,19 @@
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@types/jest": "^26.0.14",
     "babel-jest": "^26.3.0",
+    "commitizen": "^4.2.3",
     "jest": "^26.4.2",
     "rollup": "^2.26.8",
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "cz-conventional-changelog": "^3.3.0",
     "lodash": "^4.17.20",
     "luxon": "^1.25.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
