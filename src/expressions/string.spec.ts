@@ -79,22 +79,25 @@ test('$stringPadEnd', () => {
   expect(evaluate(context, ['$stringPadEnd', 3, '*'])).toEqual('1**')
 })
 
-test('$stringMatch', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: 'abc_adc_acdc' }
-  }
+describe('$stringMatch', () => {
+  test('array notation - using regexp flags', () => {
+    const context = {
+      interpreters,
+      scope: { $$VALUE: 'abc_adc_acdc' }
+    }
 
-  expect(evaluate(context, ['$stringMatch', 'a.*?c', 'g']))
-    .toEqual([
-      'abc',
-      'adc',
-      'ac'
-    ])
+    expect(evaluate(context, ['$stringMatch', ['a.*?c', 'g']]))
+      .toEqual([
+        'abc',
+        'adc',
+        'ac'
+      ])
 
-  expect(evaluate(context, ['$stringMatch', 'u']))
-    .toEqual([])
+    expect(evaluate(context, ['$stringMatch', 'u']))
+      .toEqual([])
+  })
 })
+
 
 test('$stringTest', () => {
   const context = {
@@ -102,7 +105,7 @@ test('$stringTest', () => {
     scope: { $$VALUE: 'abc_adc_acdc' }
   }
 
-  expect(evaluate(context, ['$stringTest', 'a.*?c', 'g']))
+  expect(evaluate(context, ['$stringTest', ['a.*?c', 'g']]))
     .toEqual(true)
 
   expect(evaluate(context, ['$stringTest', 'u']))

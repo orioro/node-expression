@@ -42,9 +42,12 @@ export const validateRegExp = validateType('regexp', isRegExp)
 export const validateNotObject = validateType('not object', value => {
   return typeof value !== 'object' || isArray(value)
 })
-export const validatePlainObjectOrArray = validateType('plain_object_or_array', value => {
-  return isPlainObject(value) || isArray(value)
-})
+export const validatePlainObjectOrArray = validateType('plain_object_or_array', value => (
+  isPlainObject(value) || isArray(value)
+))
+export const validateStringOrArray = validateType('string_or_array', value => (
+  typeof value === 'string' || isArray(value)
+))
 export const validateStringOrRegExp = validateType('string_or_regexp', value => {
   return isString(value) || isRegExp(value)
 })

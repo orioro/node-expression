@@ -4,6 +4,7 @@ import {
   validateString,
   validateRegExp,
   validateStringOrRegExp,
+  validateStringOrArray,
   validatePlainObject,
   validateBoolean,
   validateNotObject,
@@ -66,6 +67,7 @@ export const evaluateBoolean = _prepEvAndValidate(validateBoolean)
 export const evaluateNotObject = _prepEvAndValidate(validateNotObject)
 export const evaluatePlainObjectOrArray = _prepEvAndValidate(validatePlainObjectOrArray)
 export const evaluateStringOrRegExp = _prepEvAndValidate(validateStringOrRegExp)
+export const evaluateStringOrArray = _prepEvAndValidate(validateStringOrArray)
 export const evaluateDate = _prepEvAndValidate(validateDate)
 
 export const interpreter = (

@@ -1,7 +1,7 @@
 import {
   evaluate,
   evaluateString,
-  evaluateStringOrRegExp,
+  evaluateStringOrArray,
   evaluateNumber,
 
   interpreter
@@ -137,31 +137,31 @@ export const $stringPadEnd = (
   )
 )
 
+type RegExpTuple = [string, string]
+
 const _regExp = (
   context:EvaluationContext,
-  regExpExp:Expression | RegExp,
-  regExpOptionsExp:Expression | String
+  regExpExp:Expression | RegExpTuple | RegExp
 ) => {
-  const regExp = evaluateStringOrRegExp(context, regExpExp)
-  const regExpOptions = evaluateString.allowUndefined(context, regExpOptionsExp)
+  const regExp = evaluateStringOrArray(context, regExpExp)
 
-  return new RegExp(regExp, regExpOptions)
+  return typeof regExp === 'string'
+    ? new RegExp(regExp)
+    : new RegExp(regExp[0], regExp[1])
 }
 
 /**
  * @function $stringMatch
  * @param {string} regExpExp
- * @param {string} regExpOptionsExp
  * @param {string} [valueExp=$$VALUE]
  * @returns {string[]}
  */
 export const $stringMatch = (
   context:EvaluationContext,
-  regExpExp:Expression | RegExp,
-  regExpOptionsExp:Expression | String,
+  regExpExp:Expression | RegExpTuple | RegExp,
   valueExp:Expression = $$VALUE
 ) => {
-  const regExp = _regExp(context, regExpExp, regExpOptionsExp)
+  const regExp = _regExp(context, regExpExp)
   const value = evaluateString(context, valueExp)
 
   const match = value.match(regExp)
@@ -172,17 +172,15 @@ export const $stringMatch = (
 /**
  * @function $stringTest
  * @param {string} regExpExp
- * @param {string} regExpOptionsExp
  * @param {string} [valueExp=$$VALUE]
  * @returns {boolean}
  */
 export const $stringTest = (
   context:EvaluationContext,
-  regExpExp:Expression | RegExp,
-  regExpOptionsExp:Expression | String,
+  regExpExp:Expression | RegExpTuple | RegExp,
   valueExp:Expression = $$VALUE
 ) => {
-  const regExp = _regExp(context, regExpExp, regExpOptionsExp)
+  const regExp = _regExp(context, regExpExp)
   const value = evaluateString(context, valueExp)
 
   return regExp.test(value)
