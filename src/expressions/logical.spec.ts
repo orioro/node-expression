@@ -1,7 +1,7 @@
 import { evaluate } from '../expression'
 import { $value } from './value'
 import { $boolean } from './boolean'
-import { $and, $or, $if, $switch } from './logical'
+import { $and, $or, $if, $switch, LOGICAL_EXPRESSIONS } from './logical'
 import { $arrayMap } from './array'
 import { $eq, $gt, $gte, $lt, $lte } from './comparison'
 import { $stringSubstr } from './string'
@@ -51,13 +51,6 @@ describe('$and', () => {
       scope: { $$VALUE: [true, false, true] }
     }, ['$and'])).toEqual(false)
 
-    expect(() => {
-      evaluate({
-        interpreters,
-        scope: { $$VALUE: [1, false, true] }
-      }, ['$and'])
-    }).toThrow(TypeError)
-
     expect(evaluate({
       interpreters: {
         ...interpreters,
@@ -75,6 +68,28 @@ describe('$and', () => {
       },
       scope: { $$VALUE: [1, '', true] }
     }, ['$and', ['$arrayMap', ['$boolean']]])).toEqual(false)
+  })
+
+  test('value coercion', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: [1, 0, true] }
+    }, ['$and'])).toEqual(false)
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: [1, 'some-string', true] }
+    }, ['$and'])).toEqual(true)
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: [1, '', true] }
+    }, ['$and'])).toEqual(false)
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: [1, null, true] }
+    }, ['$and'])).toEqual(false)
   })
 
   test('w/ comparison', () => {
@@ -241,5 +256,38 @@ describe('$switch', () => {
       interpreters,
       scope: { $$VALUE: 30 }
     }, $expr)).toEqual(-30)
+  })
+})
+
+describe('$switchKey', () => {
+  const interpreters = {
+    $value,
+    ...LOGICAL_EXPRESSIONS
+  }
+
+  const options = {
+    key1: 'value1',
+    key2: 'value2',
+    key3: 'value3',
+  }
+
+  test('', () => {
+    const exp = ['$switchKey', options, 'DEFAULT_VALUE']
+
+    const expected = [
+      [undefined, 'DEFAULT_VALUE'],
+      [null, 'DEFAULT_VALUE'],
+      ['key1', 'value1'],
+      ['key2', 'value2'],
+      ['key3', 'value3'],
+      ['key4', 'DEFAULT_VALUE']
+    ]
+
+    expected.forEach(([input, result]) => {
+      expect(evaluate({
+        interpreters,
+        scope: { $$VALUE: input }
+      }, exp)).toEqual(result)
+    })
   })
 })

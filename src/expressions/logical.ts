@@ -3,9 +3,7 @@ import { validateArray } from '../util/validate'
 import {
   evaluate,
   evaluateArray,
-  evaluatePlainObject,
-  evaluateBoolean,
-  evaluateString
+  evaluatePlainObject
 } from '../expression'
 
 import { $$VALUE } from './value'
@@ -28,11 +26,10 @@ import {
 export const $and = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression = $$VALUE
-):boolean => {
-  const expressions = evaluateArray(context, expressionsExp)
-
-  return expressions.every(exp => evaluateBoolean(context, exp))
-}
+):boolean => (
+  evaluateArray(context, expressionsExp)
+    .every(exp => Boolean(evaluate(context, exp)))
+)
 
 /**
  * @function $or
@@ -42,11 +39,10 @@ export const $and = (
 export const $or = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression = $$VALUE
-):boolean => {
-  const expressions = evaluateArray(context, expressionsExp)
-
-  return expressions.some(exp => evaluateBoolean(context, exp))
-}
+):boolean => (
+  evaluateArray(context, expressionsExp)
+    .some(exp => Boolean(evaluate(context, exp)))
+)
 
 /**
  * @function $not
@@ -55,10 +51,8 @@ export const $or = (
  */
 export const $not = (
   context:EvaluationContext,
-  expression
-):boolean => {
-  return !evaluateBoolean(context, expression)
-}
+  expression:Expression = $$VALUE
+):boolean => !Boolean(evaluate(context, expression))
 
 /**
  * @function $nor
@@ -81,7 +75,7 @@ export const $xor = (
   expressionA:BooleanExpression,
   expressionB:BooleanExpression
 ):boolean => (
-  evaluateBoolean(context, expressionA) !== evaluateBoolean(context, expressionB)
+  Boolean(evaluate(context, expressionA)) !== Boolean(evaluate(context, expressionB))
 )
 
 /**
@@ -96,11 +90,11 @@ export const $if = (
   conditionExp:BooleanExpression,
   thenExp:Expression,
   elseExp:Expression
-) => {
-  return evaluateBoolean(context, conditionExp) ?
-    evaluate(context, thenExp) :
-    evaluate(context, elseExp)
-}
+) => (
+  Boolean(evaluate(context, conditionExp))
+    ? evaluate(context, thenExp)
+    : evaluate(context, elseExp)
+)
 
 type Case = [BooleanExpression, Expression]
 
@@ -113,11 +107,11 @@ type Case = [BooleanExpression, Expression]
 export const $switch = (
   context:EvaluationContext,
   casesExp:ArrayExpression | Case[],
-  defaultExp:Expression = ['$error', 'No default defined', true]
+  defaultExp:AnyExpression = undefined
 ) => {
   const cases = evaluateArray(context, casesExp)
   const correspondingCase = cases.find(([condition]) => (
-    evaluateBoolean(context, condition)
+    Boolean(evaluate(context, condition))
   ))
 
   return correspondingCase
@@ -137,11 +131,11 @@ export const $switch = (
 export const $switchKey = (
   context:EvaluationContext,
   casesExp:PlainObjectExpression | { [key: string]: AnyExpression },
-  defaultExp:AnyExpression = ['$error', 'No default defined', true],
+  defaultExp:AnyExpression = undefined,
   valueExp:StringExpression = $$VALUE
 ) => {
   const cases = evaluatePlainObject(context, casesExp)
-  const correspondingCase = cases[evaluateString(context, valueExp)]
+  const correspondingCase = cases[evaluate(context, valueExp)]
 
   return correspondingCase
     ? evaluate(context, correspondingCase)
