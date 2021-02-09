@@ -186,6 +186,29 @@ describe('$arrayFilter', () => {
   })
 })
 
+describe('$arrayIndexOf vs $arrayFindIndex', () => {
+  test('$arrayIndexOf', () => {
+    const context = {
+      interpreters,
+      scope: { $$VALUE: [0, 10, 20, 40] }
+    }
+
+    expect(evaluate(context, ['$arrayIndexOf', 20])).toEqual(2)
+  })
+
+  test('$arrayFindIndex', () => {
+    const context = {
+      interpreters,
+      scope: { $$VALUE: [0, 10, 20, 40] }
+    }
+
+    expect(evaluate(context, [
+      '$arrayFindIndex',
+      ['$eq', 20]
+    ])).toEqual(2)
+  })
+})
+
 describe('$arrayReduce', () => {
   test('', () => {
     const context = {
@@ -369,4 +392,43 @@ describe('$arrayAt', () => {
     expect(evaluate(context, ['$arrayAt', 4]))
       .toEqual(undefined)
   })
+})
+
+test.skip('example: check for array item uniqueness', () => {
+
+  const ITEM_IS_UNIQUE_EXP = [
+    '$eq',
+    ['$value', '$$INDEX'],
+    [
+      '$arrayIndexOf',
+      ['$value', '$$VALUE'],
+      ['$value', '$$ARRAY']
+    ]
+  ]
+
+  const MAP_EXP = [
+    '$arrayMap',
+    ITEM_IS_UNIQUE_EXP
+  ]
+
+  const exp = [
+    '$and',
+    MAP_EXP
+  ]
+  
+  
+  // const uniqueItems = array => array.some((item, index) => array.indexOf(item) !== index)
+
+  console.log(evaluate({
+    interpreters,
+    scope: { $$VALUE: [1, 2, 3, 1] }
+  }, MAP_EXP))
+
+  const itemsAreUnique = array => evaluate({
+    interpreters,
+    scope: { $$VALUE: array }
+  }, exp)
+
+  expect(itemsAreUnique([1, 2, 3, 4])).toEqual(true)
+  expect(itemsAreUnique([1, 2, 3, 1])).toEqual(false)
 })

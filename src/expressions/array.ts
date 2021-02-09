@@ -171,11 +171,22 @@ export const $arrayMap = _arrayIterator('map')
 export const $arrayFilter = _arrayIterator('filter')
 
 /**
- * @function $arrayIndexOf
+ * @function $arrayFindIndex
  * @param {BooleanExpression} queryExp
  * @param {Array} [arrayExp=$$VALUE]
  */
-export const $arrayIndexOf = _arrayIterator('findIndex')
+export const $arrayFindIndex = _arrayIterator('findIndex')
+
+/**
+ * @function $arrayIndexOf
+ * @param {*} value
+ * @param {Array} [arrayExp=$$VALUE]
+ */
+export const $arrayIndexOf = (
+  context:EvaluationContext,
+  valueExp:Expression,
+  arrayExp:ArrayExpression = $$VALUE
+):number => evaluateArray(context, arrayExp).indexOf(evaluate(context, valueExp))
 
 /**
  * @function $arrayFind
@@ -408,6 +419,7 @@ export const ARRAY_EXPRESSIONS = {
   $arrayReduce,
   $arrayMap,
   $arrayFilter,
+  $arrayFindIndex,
   $arrayIndexOf,
   $arrayFind,
   $arrayReverse,
