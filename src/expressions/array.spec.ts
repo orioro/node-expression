@@ -382,7 +382,7 @@ describe('$arrayAt', () => {
       interpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] }
     }
-    
+
     expect(evaluate(context, ['$arrayAt', 0]))
       .toEqual('A')
     
@@ -394,7 +394,7 @@ describe('$arrayAt', () => {
   })
 })
 
-test.skip('example: check for array item uniqueness', () => {
+describe('$arrayEvery vs $and (logical) - example: check for array item uniqueness', () => {
 
   const ITEM_IS_UNIQUE_EXP = [
     '$eq',
@@ -406,29 +406,42 @@ test.skip('example: check for array item uniqueness', () => {
     ]
   ]
 
-  const MAP_EXP = [
-    '$arrayMap',
-    ITEM_IS_UNIQUE_EXP
-  ]
+  test('using $and', () => {
+    const MAP_EXP = [
+      '$arrayMap',
+      ITEM_IS_UNIQUE_EXP
+    ]
 
-  const exp = [
-    '$and',
-    MAP_EXP
-  ]
-  
-  
-  // const uniqueItems = array => array.some((item, index) => array.indexOf(item) !== index)
+    const ITEMS_UNIQUE_EXP = [
+      '$and',
+      MAP_EXP
+    ]
+    
+    const itemsAreUnique = array => evaluate({
+      interpreters,
+      scope: { $$VALUE: array }
+    }, ITEMS_UNIQUE_EXP)
 
-  console.log(evaluate({
-    interpreters,
-    scope: { $$VALUE: [1, 2, 3, 1] }
-  }, MAP_EXP))
+    expect(itemsAreUnique([1, 2, 3, 4])).toEqual(true)
+    expect(itemsAreUnique([1, 2, 3, 1])).toEqual(false)
+  })
 
-  const itemsAreUnique = array => evaluate({
-    interpreters,
-    scope: { $$VALUE: array }
-  }, exp)
+  test('using $arrayEvery', () => {
+    // Skips the 'map' step,
+    // which prevents executing the ITEM_IS_UNIQUE_EXP for
+    // every value, as $arrayEvery (Array.prototype.every)
+    // will return at first false value
+    const ITEMS_UNIQUE_EXP = [
+      '$arrayEvery',
+      ITEM_IS_UNIQUE_EXP
+    ]
 
-  expect(itemsAreUnique([1, 2, 3, 4])).toEqual(true)
-  expect(itemsAreUnique([1, 2, 3, 1])).toEqual(false)
+    const itemsAreUnique = array => evaluate({
+      interpreters,
+      scope: { $$VALUE: array }
+    }, ITEMS_UNIQUE_EXP)
+
+    expect(itemsAreUnique([1, 2, 3, 4])).toEqual(true)
+    expect(itemsAreUnique([1, 2, 3, 1])).toEqual(false)
+  })
 })

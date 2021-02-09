@@ -160,8 +160,29 @@ const _arrayIterator = (method:string) => (
  * @param {Array} [arrayExp=$$VALUE]
  */
 export const $arrayMap = _arrayIterator('map')
-// export const $arrayEvery = _arrayIterator('every') remove in favor of logical $and
-// export const $arraySome = _arrayIterator('some') remove in favor of logical $or
+
+/**
+ * `Array.prototype.every`
+ * 
+ * Result is similar to logical operator `$and`. Main difference
+ * (and reason for existence as isolate expression) is that
+ * $arrayEvery exposes array iteration variables:
+ * `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
+ * 
+ * @function $arrayEvery
+ * @param {Expression} everyExp
+ * @param {Array} [arrayExp=$$VALUE]
+ */
+export const $arrayEvery = _arrayIterator('every')
+
+/**
+ * `Array.prototype.some`
+ * 
+ * @function $arraySome
+ * @param {Expression} someExp
+ * @param {Array} [arrayExp=$$VALUE]
+ */
+export const $arraySome = _arrayIterator('some')
 
 /**
  * @function $arrayFilter
@@ -418,6 +439,8 @@ export const ARRAY_EXPRESSIONS = {
   $arrayLength,
   $arrayReduce,
   $arrayMap,
+  $arrayEvery,
+  $arraySome,
   $arrayFilter,
   $arrayFindIndex,
   $arrayIndexOf,
