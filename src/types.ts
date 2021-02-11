@@ -4,10 +4,13 @@ export type ExpressionInterpreter = (context:EvaluationContext, ...args:any[]) =
 
 export type EvaluationScope = {
   $$PARENT_SCOPE?: EvaluationScope,
-  $$VALUE: any,
+  $$VALUE?: any,
   $$ARRAY?: any[],
   $$INDEX?: number,
-  $$ACC?: any
+  $$ACC?: any,
+  $$SORT_A?: any,
+  $$SORT_B?: any,
+  [key: string]: any
 }
 
 export type EvaluationContext = {
