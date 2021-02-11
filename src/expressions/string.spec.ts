@@ -111,3 +111,39 @@ test('$stringTest', () => {
   expect(evaluate(context, ['$stringTest', 'u']))
     .toEqual(false)
 })
+
+describe('$stringReplace', () => {
+  test('string search - replaces only first match', () => {
+    const context = {
+      interpreters,
+      scope: { $$VALUE: 'abc_adc_acdc' }
+    }
+
+    expect(evaluate(context, ['$stringReplace', 'a', '--REPLACEMENT--']))
+      .toEqual('--REPLACEMENT--bc_adc_acdc')
+  })
+
+  test('regexp search - using global (g) flag', () => {
+    const context = {
+      interpreters,
+      scope: { $$VALUE: 'abc_adc_acdc' }
+    }
+
+    expect(evaluate(context, ['$stringReplace', ['a', 'g'], '--REPLACEMENT--']))
+      .toEqual('--REPLACEMENT--bc_--REPLACEMENT--dc_--REPLACEMENT--cdc')
+  })
+
+  test('regexp search - using replacement expression', () => {
+    const context = {
+      interpreters,
+      scope: { $$VALUE: 'abc_adc_acdc' }
+    }
+
+    expect(evaluate(context, [
+      '$stringReplace',
+      ['[a-c]', 'g'],
+      ['$stringToUpperCase']
+    ]))
+    .toEqual('ABC_AdC_ACdC')
+  })
+})

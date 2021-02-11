@@ -97,8 +97,11 @@ TODO
 - [`$arrayLength(arrayExp)`](#arraylengtharrayexp)
 - [`$arrayReduce(reduceExp, startExp, arrayExp)`](#arrayreducereduceexp-startexp-arrayexp)
 - [`$arrayMap(mapExp, arrayExp)`](#arraymapmapexp-arrayexp)
+- [`$arrayEvery(everyExp, arrayExp)`](#arrayeveryeveryexp-arrayexp)
+- [`$arraySome(someExp, arrayExp)`](#arraysomesomeexp-arrayexp)
 - [`$arrayFilter(queryExp, arrayExp)`](#arrayfilterqueryexp-arrayexp)
-- [`$arrayIndexOf(queryExp, arrayExp)`](#arrayindexofqueryexp-arrayexp)
+- [`$arrayFindIndex(queryExp, arrayExp)`](#arrayfindindexqueryexp-arrayexp)
+- [`$arrayIndexOf(value, arrayExp)`](#arrayindexofvalue-arrayexp)
 - [`$arrayFind(queryExp, arrayExp)`](#arrayfindqueryexp-arrayexp)
 - [`$arrayReverse(arrayExp)`](#arrayreversearrayexp)
 - [`$arraySort(sortExp, arrayExp)`](#arraysortsortexp-arrayexp)
@@ -156,14 +159,38 @@ any of the searched values is in the array.
 - `mapExp` {Expression}
 - `arrayExp` {Array}
 
+##### `$arrayEvery(everyExp, arrayExp)`
+
+`Array.prototype.every`
+
+Result is similar to logical operator `$and`. Main difference
+(and reason for existence as isolate expression) is that
+$arrayEvery exposes array iteration variables:
+`$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
+
+- `everyExp` {Expression}
+- `arrayExp` {Array}
+
+##### `$arraySome(someExp, arrayExp)`
+
+`Array.prototype.some`
+
+- `someExp` {Expression}
+- `arrayExp` {Array}
+
 ##### `$arrayFilter(queryExp, arrayExp)`
 
 - `queryExp` {BooleanExpression}
 - `arrayExp` {Array}
 
-##### `$arrayIndexOf(queryExp, arrayExp)`
+##### `$arrayFindIndex(queryExp, arrayExp)`
 
 - `queryExp` {BooleanExpression}
+- `arrayExp` {Array}
+
+##### `$arrayIndexOf(value, arrayExp)`
+
+- `value` {*}
 - `arrayExp` {Array}
 
 ##### `$arrayFind(queryExp, arrayExp)`
@@ -761,8 +788,11 @@ Modifies the date by moving it backward the duration specified.
 - [`$stringTrim(strExp)`](#stringtrimstrexp)
 - [`$stringPadStart(targetLengthExp, padStringExp, strExp)`](#stringpadstarttargetlengthexp-padstringexp-strexp)
 - [`$stringPadEnd(targetLengthExp, padStringExp, strExp)`](#stringpadendtargetlengthexp-padstringexp-strexp)
-- [`$stringMatch(regExpExp, regExpOptionsExp, valueExp)`](#stringmatchregexpexp-regexpoptionsexp-valueexp)
-- [`$stringTest(regExpExp, regExpOptionsExp, valueExp)`](#stringtestregexpexp-regexpoptionsexp-valueexp)
+- [`$stringMatch(regExpExp, valueExp)`](#stringmatchregexpexp-valueexp)
+- [`$stringTest(regExpExp, valueExp)`](#stringtestregexpexp-valueexp)
+- [`$stringReplace(searchExp, replacementExp)`](#stringreplacesearchexp-replacementexp)
+- [`$stringToUpperCase(valueExp)`](#stringtouppercasevalueexp)
+- [`$stringToLowerCase(valueExp)`](#stringtolowercasevalueexp)
 
 
 ##### `$string(valueExp)`
@@ -812,19 +842,33 @@ Modifies the date by moving it backward the duration specified.
 - `strExp` {string}
 - Returns: {string} 
 
-##### `$stringMatch(regExpExp, regExpOptionsExp, valueExp)`
+##### `$stringMatch(regExpExp, valueExp)`
 
 - `regExpExp` {string}
-- `regExpOptionsExp` {string}
 - `valueExp` {string}
 - Returns: {string[]} 
 
-##### `$stringTest(regExpExp, regExpOptionsExp, valueExp)`
+##### `$stringTest(regExpExp, valueExp)`
 
 - `regExpExp` {string}
-- `regExpOptionsExp` {string}
 - `valueExp` {string}
 - Returns: {boolean} 
+
+##### `$stringReplace(searchExp, replacementExp)`
+
+- `searchExp` {string | [string, string?]}
+- `replacementExp` {string | StringExpression}
+- Returns: {string} 
+
+##### `$stringToUpperCase(valueExp)`
+
+- `valueExp` {string}
+- Returns: {string} 
+
+##### `$stringToLowerCase(valueExp)`
+
+- `valueExp` {string}
+- Returns: {string} 
 
 
 ## Type

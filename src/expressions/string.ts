@@ -159,8 +159,8 @@ const _regExp = (
 export const $stringMatch = (
   context:EvaluationContext,
   regExpExp:Expression | RegExpTuple | RegExp,
-  valueExp:Expression = $$VALUE
-) => {
+  valueExp:StringExpression = $$VALUE
+):string[] => {
   const regExp = _regExp(context, regExpExp)
   const value = evaluateString(context, valueExp)
 
@@ -178,13 +178,61 @@ export const $stringMatch = (
 export const $stringTest = (
   context:EvaluationContext,
   regExpExp:Expression | RegExpTuple | RegExp,
-  valueExp:Expression = $$VALUE
-) => {
+  valueExp:StringExpression = $$VALUE
+):boolean => {
   const regExp = _regExp(context, regExpExp)
   const value = evaluateString(context, valueExp)
 
   return regExp.test(value)
 }
+
+/**
+ * @function $stringReplace
+ * @param {string | [string, string?]} searchExp
+ * @param {string | StringExpression} replacementExp
+ * @returns {string}
+ */
+export const $stringReplace = (
+  context:EvaluationContext,
+  searchExp:Expression | RegExpTuple | RegExp | string,
+  replacementExp:StringExpression,
+  valueExp:StringExpression = $$VALUE
+):string => {
+  let search = evaluateStringOrArray(context, searchExp)
+  search = Array.isArray(search)
+    ? new RegExp(search[0], search[1])
+    : search
+
+  const value = evaluateString(context, valueExp)
+
+  return value.replace(search, match => evaluateString({
+    ...context,
+    scope: {
+      $$VALUE: match,
+      $$PARENT_SCOPE: context.scope,
+    }
+  }, replacementExp))
+}
+
+/**
+ * @function $stringToUpperCase
+ * @param {string} valueExp
+ * @returns {string}
+ */
+export const $stringToUpperCase = (
+  context:EvaluationContext,
+  valueExp:StringExpression = $$VALUE
+):string => evaluateString(context, valueExp).toUpperCase()
+
+/**
+ * @function $stringToLowerCase
+ * @param {string} valueExp
+ * @returns {string}
+ */
+export const $stringToLowerCase = (
+  context:EvaluationContext,
+  valueExp:StringExpression = $$VALUE
+):string => evaluateString(context, valueExp).toLowerCase()
 
 export const STRING_EXPRESSIONS = {
   $string,
@@ -196,5 +244,8 @@ export const STRING_EXPRESSIONS = {
   $stringPadStart,
   $stringPadEnd,
   $stringMatch,
-  $stringTest
+  $stringTest,
+  $stringReplace,
+  $stringToUpperCase,
+  $stringToLowerCase
 }
