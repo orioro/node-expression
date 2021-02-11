@@ -12,7 +12,7 @@ import {
 
 import {
   evaluate,
-  typedEvaluate
+  evaluateTyped
 } from '../expression'
 
 import { $$VALUE } from './value'
@@ -219,7 +219,7 @@ export const $dateNow = (
 export const $dateIsValid = (
   context:EvaluationContext,
   dateExp:ISODateExpression = $$VALUE
-):boolean => DateTime.fromISO(typedEvaluate('string', context, dateExp)).isValid
+):boolean => DateTime.fromISO(evaluateTyped('string', context, dateExp)).isValid
 
 /**
  * Returns the date at the start of the given `unit` (e.g. `day`, `month`).
@@ -236,8 +236,8 @@ export const $dateStartOf = (
   unitExp:StringExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => (
-  DateTime.fromISO(typedEvaluate('string', context, dateExp))
-    .startOf(typedEvaluate('string', context, unitExp))
+  DateTime.fromISO(evaluateTyped('string', context, dateExp))
+    .startOf(evaluateTyped('string', context, unitExp))
     .toISO()
 )
 
@@ -256,8 +256,8 @@ export const $dateEndOf = (
   unitExp:StringExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => (
-  DateTime.fromISO(typedEvaluate('string', context, dateExp))
-    .endOf(typedEvaluate('string', context, unitExp))
+  DateTime.fromISO(evaluateTyped('string', context, dateExp))
+    .endOf(evaluateTyped('string', context, unitExp))
     .toISO()
 )
 
@@ -287,8 +287,8 @@ export const $dateSet = (
   valuesExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => (
-  DateTime.fromISO(typedEvaluate('string', context, dateExp))
-    .set(typedEvaluate('object', context, valuesExp))
+  DateTime.fromISO(evaluateTyped('string', context, dateExp))
+    .set(evaluateTyped('object', context, valuesExp))
     .toISO()
 )
 
@@ -318,8 +318,8 @@ export const $$dateSetConfig = (
   configExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => {
-  const date = DateTime.fromISO(typedEvaluate('string', context, dateExp))
-  const config = typedEvaluate('object', context, configExp)
+  const date = DateTime.fromISO(evaluateTyped('string', context, dateExp))
+  const config = evaluateTyped('object', context, configExp)
 
   return Object.keys(config).reduce(
     (dt, key) => _luxonConfigDate(dt, key, config[key]),
@@ -333,8 +333,8 @@ const _dateComparison = compare => (
   referenceDateExp:ISODateExpression,
   dateExp:ISODateExpression = $$VALUE
 ):boolean => compare(
-  DateTime.fromISO(typedEvaluate('string', context, referenceDateExp)),
-  DateTime.fromISO(typedEvaluate('string', context, dateExp))
+  DateTime.fromISO(evaluateTyped('string', context, referenceDateExp)),
+  DateTime.fromISO(evaluateTyped('string', context, dateExp))
 )
 
 /**
@@ -397,10 +397,10 @@ export const $dateEq = (
   compareUnitExp:StringExpression = 'millisecond',
   dateExp:ISODateExpression = $$VALUE
 ):boolean => (
-  DateTime.fromISO(typedEvaluate('string', context, referenceDateExp))
+  DateTime.fromISO(evaluateTyped('string', context, referenceDateExp))
     .hasSame(
-      DateTime.fromISO(typedEvaluate('string', context, dateExp)),
-      typedEvaluate('string', context, compareUnitExp)
+      DateTime.fromISO(evaluateTyped('string', context, dateExp)),
+      evaluateTyped('string', context, compareUnitExp)
     )
 )
 
@@ -417,8 +417,8 @@ export const $dateMoveForward = (
   durationExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => {
-  const date = DateTime.fromISO(typedEvaluate('string', context, dateExp))
-  const moveForward = typedEvaluate('object', context, durationExp)
+  const date = DateTime.fromISO(evaluateTyped('string', context, dateExp))
+  const moveForward = evaluateTyped('object', context, durationExp)
 
   return date.plus(moveForward).toISO()
 }
@@ -436,8 +436,8 @@ export const $dateMoveBackward = (
   durationExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => {
-  const date = DateTime.fromISO(typedEvaluate('string', context, dateExp))
-  const moveBack = typedEvaluate('object', context, durationExp)
+  const date = DateTime.fromISO(evaluateTyped('string', context, dateExp))
+  const moveBack = evaluateTyped('object', context, durationExp)
 
   return date.minus(moveBack).toISO()
 }

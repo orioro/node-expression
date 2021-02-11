@@ -23,7 +23,7 @@ export const evaluate = (
   return interpreter(context, ...interpreterArgs)
 }
 
-export const typedEvaluate = (
+export const evaluateTyped = (
   expectedTypes:(string | string[]),
   context:EvaluationContext,
   expOrValue:Expression | any

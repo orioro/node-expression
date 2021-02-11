@@ -2,7 +2,7 @@ import { get, set, isPlainObject } from 'lodash'
 
 import {
   evaluate,
-  typedEvaluate,
+  evaluateTyped,
   isExpression
 } from '../expression'
 
@@ -34,8 +34,8 @@ export const $objectMatches = (
   criteriaByPathExp:PlainObjectExpression,
   valueExp:PlainObjectExpression = $$VALUE
 ):boolean => {
-  const value = typedEvaluate('object', context, valueExp)
-  const criteriaByPath = typedEvaluate('object', context, criteriaByPathExp)
+  const value = evaluateTyped('object', context, valueExp)
+  const criteriaByPath = evaluateTyped('object', context, criteriaByPathExp)
 
   const paths = Object.keys(criteriaByPath)
 
@@ -120,7 +120,7 @@ export const $objectFormat = (
   formatExp:(PlainObjectExpression | ArrayExpression),
   sourceExp:Expression = $$VALUE
 ):(PlainObject | any[]) => {
-  const format = typedEvaluate(['array', 'object'], context, formatExp)
+  const format = evaluateTyped(['array', 'object'], context, formatExp)
   const source = evaluate(context, sourceExp)
 
   return Array.isArray(format)
@@ -139,8 +139,8 @@ export const $objectDefaults = (
   defaultValuesExp:PlainObjectExpression,
   baseExp:PlainObjectExpression = $$VALUE
 ):{ [key: string]: any } => {
-  const defaultValues = typedEvaluate('object', context, defaultValuesExp)
-  const base = typedEvaluate('object', context, baseExp)
+  const defaultValues = evaluateTyped('object', context, defaultValuesExp)
+  const base = evaluateTyped('object', context, baseExp)
 
   return objectDeepApplyDefaults(base, defaultValues)
 }
@@ -156,8 +156,8 @@ export const $objectAssign = (
   valuesExp:PlainObjectExpression,
   baseExp:PlainObjectExpression = $$VALUE
 ):{ [key: string]: any } => {
-  const values = typedEvaluate('object', context, valuesExp)
-  const base = typedEvaluate('object', context, baseExp)
+  const values = evaluateTyped('object', context, valuesExp)
+  const base = evaluateTyped('object', context, baseExp)
 
   return objectDeepAssign(base, values)
 }

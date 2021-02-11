@@ -2,7 +2,7 @@ import { validateArray } from '../util/validate'
 
 import {
   evaluate,
-  typedEvaluate
+  evaluateTyped
 } from '../expression'
 
 import { $$VALUE } from './value'
@@ -26,7 +26,7 @@ export const $and = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression = $$VALUE
 ):boolean => (
-  typedEvaluate('array', context, expressionsExp)
+  evaluateTyped('array', context, expressionsExp)
     .every(exp => Boolean(evaluate(context, exp)))
 )
 
@@ -39,7 +39,7 @@ export const $or = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression = $$VALUE
 ):boolean => (
-  typedEvaluate('array', context, expressionsExp)
+  evaluateTyped('array', context, expressionsExp)
     .some(exp => Boolean(evaluate(context, exp)))
 )
 
@@ -108,7 +108,7 @@ export const $switch = (
   casesExp:ArrayExpression | Case[],
   defaultExp:AnyExpression = undefined
 ) => {
-  const cases = typedEvaluate('array', context, casesExp)
+  const cases = evaluateTyped('array', context, casesExp)
   const correspondingCase = cases.find(([condition]) => (
     Boolean(evaluate(context, condition))
   ))
@@ -133,7 +133,7 @@ export const $switchKey = (
   defaultExp:AnyExpression = undefined,
   valueExp:StringExpression = $$VALUE
 ) => {
-  const cases = typedEvaluate('object', context, casesExp)
+  const cases = evaluateTyped('object', context, casesExp)
   const correspondingCase = cases[evaluate(context, valueExp)]
 
   return correspondingCase

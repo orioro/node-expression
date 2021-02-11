@@ -1,18 +1,18 @@
 import {
-  typedEvaluate
+  evaluateTyped
 } from './expression'
 
-describe('typedEvaluate(expectedTypes, context, value)', () => {
+describe('evaluateTyped(expectedTypes, context, value)', () => {
   test('simple type - example: number', () => {
     expect(() => {
-      console.log(typedEvaluate('number', {
+      console.log(evaluateTyped('number', {
         interpreters: {},
         scope: { $$VALUE: 'aa' }
       }, '1'))
     }).toThrow(TypeError)
 
     expect(() => {
-      console.log(typedEvaluate('number', {
+      console.log(evaluateTyped('number', {
         interpreters: {},
         scope: { $$VALUE: 'aa' }
       }, ['$someUnknownExpression']))
@@ -21,14 +21,14 @@ describe('typedEvaluate(expectedTypes, context, value)', () => {
 
   test('array object type', () => {
     expect(() => {
-      console.log(typedEvaluate('array', {
+      console.log(evaluateTyped('array', {
         interpreters: {},
         scope: { $$VALUE: 'aa' }
       }, '1'))
     }).toThrow(TypeError)
 
     expect(() => {
-      console.log(typedEvaluate('array', {
+      console.log(evaluateTyped('array', {
         interpreters: {
           $someExpression: () => 'text'
         },
@@ -36,7 +36,7 @@ describe('typedEvaluate(expectedTypes, context, value)', () => {
       }, ['$someExpression']))
     }).toThrow(TypeError)
 
-    expect(typedEvaluate('array', {
+    expect(evaluateTyped('array', {
       interpreters: {
         $someExpression: () => ['item-1', 'item-2']
       },

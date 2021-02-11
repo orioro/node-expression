@@ -5,7 +5,7 @@ import {
 
 import {
   evaluate,
-  typedEvaluate
+  evaluateTyped
 } from '../expression'
 
 import {
@@ -61,7 +61,7 @@ export const $in = (
   valueExp:Expression = $$VALUE
 ) => {
   const value = evaluate(context, valueExp)
-  return typedEvaluate('array', context, arrayExp).some(item => isEqual(item, value))
+  return evaluateTyped('array', context, arrayExp).some(item => isEqual(item, value))
 }
 
 /**
@@ -86,7 +86,7 @@ export const $gt = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => typedEvaluate('number', context, valueExp) > typedEvaluate('number', context, referenceExp)
+) => evaluateTyped('number', context, valueExp) > evaluateTyped('number', context, referenceExp)
 
 /**
  * Greater than or equal `value >= threshold`
@@ -100,7 +100,7 @@ export const $gte = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => typedEvaluate('number', context, valueExp) >= typedEvaluate('number', context, referenceExp)
+) => evaluateTyped('number', context, valueExp) >= evaluateTyped('number', context, referenceExp)
 
 /**
  * Lesser than `value < threshold`
@@ -114,7 +114,7 @@ export const $lt = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => typedEvaluate('number', context, valueExp) < typedEvaluate('number', context, referenceExp)
+) => evaluateTyped('number', context, valueExp) < evaluateTyped('number', context, referenceExp)
 
 /**
  * Lesser than or equal `value <= threshold`
@@ -128,7 +128,7 @@ export const $lte = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => typedEvaluate('number', context, valueExp) <= typedEvaluate('number', context, referenceExp)
+) => evaluateTyped('number', context, valueExp) <= evaluateTyped('number', context, referenceExp)
 
 /**
  * Checks if the value matches the set of criteria.
@@ -143,7 +143,7 @@ export const $matches = (
   criteriaExp:PlainObjectExpression,
   valueExp:Expression = $$VALUE
 ) => {
-  const criteria = typedEvaluate('object', context, criteriaExp)
+  const criteria = evaluateTyped('object', context, criteriaExp)
   const value = evaluate(context, valueExp)
 
   const criteriaKeys = Object.keys(criteria)
@@ -160,7 +160,7 @@ export const $matches = (
     //
     const criteriaValue = evaluate(context, criteria[criteriaKey])
 
-    return typedEvaluate(
+    return evaluateTyped(
       'boolean',
       {
         ...context,
