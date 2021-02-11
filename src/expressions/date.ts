@@ -12,8 +12,7 @@ import {
 
 import {
   evaluate,
-  evaluateString,
-  evaluatePlainObject
+  typedEvaluate
 } from '../expression'
 
 import { $$VALUE } from './value'
@@ -220,7 +219,7 @@ export const $dateNow = (
 export const $dateIsValid = (
   context:EvaluationContext,
   dateExp:ISODateExpression = $$VALUE
-):boolean => DateTime.fromISO(evaluateString(context, dateExp)).isValid
+):boolean => DateTime.fromISO(typedEvaluate('string', context, dateExp)).isValid
 
 /**
  * Returns the date at the start of the given `unit` (e.g. `day`, `month`).
@@ -237,8 +236,8 @@ export const $dateStartOf = (
   unitExp:StringExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => (
-  DateTime.fromISO(evaluateString(context, dateExp))
-    .startOf(evaluateString(context, unitExp))
+  DateTime.fromISO(typedEvaluate('string', context, dateExp))
+    .startOf(typedEvaluate('string', context, unitExp))
     .toISO()
 )
 
@@ -257,8 +256,8 @@ export const $dateEndOf = (
   unitExp:StringExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => (
-  DateTime.fromISO(evaluateString(context, dateExp))
-    .endOf(evaluateString(context, unitExp))
+  DateTime.fromISO(typedEvaluate('string', context, dateExp))
+    .endOf(typedEvaluate('string', context, unitExp))
     .toISO()
 )
 
@@ -288,8 +287,8 @@ export const $dateSet = (
   valuesExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => (
-  DateTime.fromISO(evaluateString(context, dateExp))
-    .set(evaluatePlainObject(context, valuesExp))
+  DateTime.fromISO(typedEvaluate('string', context, dateExp))
+    .set(typedEvaluate('object', context, valuesExp))
     .toISO()
 )
 
@@ -319,8 +318,8 @@ export const $$dateSetConfig = (
   configExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => {
-  const date = DateTime.fromISO(evaluateString(context, dateExp))
-  const config = evaluatePlainObject(context, configExp)
+  const date = DateTime.fromISO(typedEvaluate('string', context, dateExp))
+  const config = typedEvaluate('object', context, configExp)
 
   return Object.keys(config).reduce(
     (dt, key) => _luxonConfigDate(dt, key, config[key]),
@@ -334,8 +333,8 @@ const _dateComparison = compare => (
   referenceDateExp:ISODateExpression,
   dateExp:ISODateExpression = $$VALUE
 ):boolean => compare(
-  DateTime.fromISO(evaluateString(context, referenceDateExp)),
-  DateTime.fromISO(evaluateString(context, dateExp))
+  DateTime.fromISO(typedEvaluate('string', context, referenceDateExp)),
+  DateTime.fromISO(typedEvaluate('string', context, dateExp))
 )
 
 /**
@@ -398,10 +397,10 @@ export const $dateEq = (
   compareUnitExp:StringExpression = 'millisecond',
   dateExp:ISODateExpression = $$VALUE
 ):boolean => (
-  DateTime.fromISO(evaluateString(context, referenceDateExp))
+  DateTime.fromISO(typedEvaluate('string', context, referenceDateExp))
     .hasSame(
-      DateTime.fromISO(evaluateString(context, dateExp)),
-      evaluateString(context, compareUnitExp)
+      DateTime.fromISO(typedEvaluate('string', context, dateExp)),
+      typedEvaluate('string', context, compareUnitExp)
     )
 )
 
@@ -418,8 +417,8 @@ export const $dateMoveForward = (
   durationExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => {
-  const date = DateTime.fromISO(evaluateString(context, dateExp))
-  const moveForward = evaluatePlainObject(context, durationExp)
+  const date = DateTime.fromISO(typedEvaluate('string', context, dateExp))
+  const moveForward = typedEvaluate('object', context, durationExp)
 
   return date.plus(moveForward).toISO()
 }
@@ -437,8 +436,8 @@ export const $dateMoveBackward = (
   durationExp:PlainObjectExpression,
   dateExp:ISODateExpression = $$VALUE
 ):ISODate => {
-  const date = DateTime.fromISO(evaluateString(context, dateExp))
-  const moveBack = evaluatePlainObject(context, durationExp)
+  const date = DateTime.fromISO(typedEvaluate('string', context, dateExp))
+  const moveBack = typedEvaluate('object', context, durationExp)
 
   return date.minus(moveBack).toISO()
 }

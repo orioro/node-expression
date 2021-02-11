@@ -8,7 +8,6 @@ import {
   typedEvaluate
 } from '../expression'
 
-import { formatParseItem } from '../util/formatParseItem'
 import { arrayDeepApplyDefaults } from '../util/deepApplyDefaults'
 
 import {

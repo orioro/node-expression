@@ -1,6 +1,6 @@
 import {
   evaluate,
-  evaluateNumber
+  typedEvaluate
 } from '../expression'
 
 import {
@@ -27,7 +27,7 @@ export const $numberInt = (
   if (typeof value === 'number') {
     return value
   } else if (typeof value === 'string') {
-    return parseInt(value, evaluateNumber(context, radixExp))
+    return parseInt(value, typedEvaluate('number', context, radixExp))
   } else {
     throw new TypeError(`Invalid valueExp ${JSON.stringify(valueExp)}`)
   }

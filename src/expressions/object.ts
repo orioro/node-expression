@@ -2,14 +2,10 @@ import { get, set, isPlainObject } from 'lodash'
 
 import {
   evaluate,
-  evaluatePlainObject,
-  evaluatePlainObjectOrArray,
-  evaluateString,
-  evaluateArray,
+  typedEvaluate,
   isExpression
 } from '../expression'
 
-import { formatParseItem } from '../util/formatParseItem'
 import { objectDeepApplyDefaults } from '../util/deepApplyDefaults'
 import { objectDeepAssign } from '../util/deepAssign'
 
@@ -38,8 +34,8 @@ export const $objectMatches = (
   criteriaByPathExp:PlainObjectExpression,
   valueExp:PlainObjectExpression = $$VALUE
 ):boolean => {
-  const value = evaluatePlainObject(context, valueExp)
-  const criteriaByPath = evaluatePlainObject(context, criteriaByPathExp)
+  const value = typedEvaluate('object', context, valueExp)
+  const criteriaByPath = typedEvaluate('object', context, criteriaByPathExp)
 
   const paths = Object.keys(criteriaByPath)
 
@@ -124,7 +120,7 @@ export const $objectFormat = (
   formatExp:(PlainObjectExpression | ArrayExpression),
   sourceExp:Expression = $$VALUE
 ):(PlainObject | any[]) => {
-  const format = evaluatePlainObjectOrArray(context, formatExp)
+  const format = typedEvaluate(['array', 'object'], context, formatExp)
   const source = evaluate(context, sourceExp)
 
   return Array.isArray(format)
@@ -143,8 +139,8 @@ export const $objectDefaults = (
   defaultValuesExp:PlainObjectExpression,
   baseExp:PlainObjectExpression = $$VALUE
 ):{ [key: string]: any } => {
-  const defaultValues = evaluatePlainObject(context, defaultValuesExp)
-  const base = evaluatePlainObject(context, baseExp)
+  const defaultValues = typedEvaluate('object', context, defaultValuesExp)
+  const base = typedEvaluate('object', context, baseExp)
 
   return objectDeepApplyDefaults(base, defaultValues)
 }
@@ -160,8 +156,8 @@ export const $objectAssign = (
   valuesExp:PlainObjectExpression,
   baseExp:PlainObjectExpression = $$VALUE
 ):{ [key: string]: any } => {
-  const values = evaluatePlainObject(context, valuesExp)
-  const base = evaluatePlainObject(context, baseExp)
+  const values = typedEvaluate('object', context, valuesExp)
+  const base = typedEvaluate('object', context, baseExp)
 
   return objectDeepAssign(base, values)
 }

@@ -1,6 +1,4 @@
-import {
-  evaluateNumber,
-} from '../expression'
+import { typedEvaluate } from '../expression'
 
 import {
   Expression,
@@ -15,8 +13,8 @@ const mathOperation = (op:(base:number, operator:number) => number) => (
   operatorExp:NumberExpression,
   baseExp:NumberExpression = $$VALUE
 ):number => op(
-  evaluateNumber(context, baseExp),
-  evaluateNumber(context, operatorExp)
+  typedEvaluate('number', context, baseExp),
+  typedEvaluate('number', context, operatorExp)
 )
 
 /**
@@ -75,7 +73,7 @@ export const $mathPow = mathOperation((base, exponent) => Math.pow(base, exponen
 export const $mathAbs = (
   context:EvaluationContext,
   valueExp:NumberExpression = $$VALUE
-) => Math.abs(evaluateNumber(context, valueExp))
+) => Math.abs(typedEvaluate('number', context, valueExp))
 
 /**
  * @function $mathMax
@@ -88,8 +86,8 @@ export const $mathMax = (
   otherValueExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
 ) => Math.max(
-  evaluateNumber(context, otherValueExp),
-  evaluateNumber(context, valueExp)
+  typedEvaluate('number', context, otherValueExp),
+  typedEvaluate('number', context, valueExp)
 )
 
 /**
@@ -103,8 +101,8 @@ export const $mathMin = (
   otherValueExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
 ) => Math.min(
-  evaluateNumber(context, otherValueExp),
-  evaluateNumber(context, valueExp)
+  typedEvaluate('number', context, otherValueExp),
+  typedEvaluate('number', context, valueExp)
 )
 
 /**
@@ -115,7 +113,7 @@ export const $mathMin = (
 export const $mathRound = (
   context:EvaluationContext,
   valueExp:NumberExpression = $$VALUE
-) => Math.round(evaluateNumber(context, valueExp))
+) => Math.round(typedEvaluate('number', context, valueExp))
 
 /**
  * @function $mathFloor
@@ -125,7 +123,7 @@ export const $mathRound = (
 export const $mathFloor = (
   context:EvaluationContext,
   valueExp:NumberExpression = $$VALUE
-) => Math.floor(evaluateNumber(context, valueExp))
+) => Math.floor(typedEvaluate('number', context, valueExp))
 
 /**
  * @function $mathCeil
@@ -135,7 +133,7 @@ export const $mathFloor = (
 export const $mathCeil = (
   context:EvaluationContext,
   valueExp:NumberExpression = $$VALUE
-) => Math.ceil(evaluateNumber(context, valueExp))
+) => Math.ceil(typedEvaluate('number', context, valueExp))
 
 export const MATH_EXPRESSIONS = {
   $mathSum,

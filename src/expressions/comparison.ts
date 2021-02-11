@@ -5,11 +5,7 @@ import {
 
 import {
   evaluate,
-  typedEvaluate,
-  evaluatePlainObject,
-  evaluateArray,
-  evaluateNumber,
-  evaluateString
+  typedEvaluate
 } from '../expression'
 
 import {
@@ -65,7 +61,7 @@ export const $in = (
   valueExp:Expression = $$VALUE
 ) => {
   const value = evaluate(context, valueExp)
-  return evaluateArray(context, arrayExp).some(item => isEqual(item, value))
+  return typedEvaluate('array', context, arrayExp).some(item => isEqual(item, value))
 }
 
 /**
@@ -90,7 +86,7 @@ export const $gt = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) > evaluateNumber(context, referenceExp)
+) => typedEvaluate('number', context, valueExp) > typedEvaluate('number', context, referenceExp)
 
 /**
  * Greater than or equal `value >= threshold`
@@ -104,7 +100,7 @@ export const $gte = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) >= evaluateNumber(context, referenceExp)
+) => typedEvaluate('number', context, valueExp) >= typedEvaluate('number', context, referenceExp)
 
 /**
  * Lesser than `value < threshold`
@@ -118,7 +114,7 @@ export const $lt = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) < evaluateNumber(context, referenceExp)
+) => typedEvaluate('number', context, valueExp) < typedEvaluate('number', context, referenceExp)
 
 /**
  * Lesser than or equal `value <= threshold`
@@ -132,7 +128,7 @@ export const $lte = (
   context:EvaluationContext,
   referenceExp:NumberExpression,
   valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) <= evaluateNumber(context, referenceExp)
+) => typedEvaluate('number', context, valueExp) <= typedEvaluate('number', context, referenceExp)
 
 /**
  * Checks if the value matches the set of criteria.
@@ -147,7 +143,7 @@ export const $matches = (
   criteriaExp:PlainObjectExpression,
   valueExp:Expression = $$VALUE
 ) => {
-  const criteria = evaluatePlainObject(context, criteriaExp)
+  const criteria = typedEvaluate('object', context, criteriaExp)
   const value = evaluate(context, valueExp)
 
   const criteriaKeys = Object.keys(criteria)

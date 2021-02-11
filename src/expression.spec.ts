@@ -1,40 +1,46 @@
 import {
-  evaluateNumber,
   typedEvaluate
 } from './expression'
 
-import {
-  MATH_EXPRESSIONS
-} from './expressions/math'
+describe('typedEvaluate(expectedTypes, context, value)', () => {
+  test('simple type - example: number', () => {
+    expect(() => {
+      console.log(typedEvaluate('number', {
+        interpreters: {},
+        scope: { $$VALUE: 'aa' }
+      }, '1'))
+    }).toThrow(TypeError)
 
-test('evaluateNumber', () => {
-  expect(() => {
-    console.log(evaluateNumber({
-      interpreters: MATH_EXPRESSIONS,
-      scope: { $$VALUE: 'aa' }
-    }, '1'))
-  }).toThrow('Evaluated invalid valid_number')
+    expect(() => {
+      console.log(typedEvaluate('number', {
+        interpreters: {},
+        scope: { $$VALUE: 'aa' }
+      }, ['$someUnknownExpression']))
+    }).toThrow(TypeError)
+  })
 
-  expect(() => {
-    console.log(evaluateNumber({
-      interpreters: MATH_EXPRESSIONS,
-      scope: { $$VALUE: 'aa' }
-    }, ['$someUnknownExpression']))
-  }).toThrow('Evaluated invalid valid_number')
-})
+  test('array object type', () => {
+    expect(() => {
+      console.log(typedEvaluate('array', {
+        interpreters: {},
+        scope: { $$VALUE: 'aa' }
+      }, '1'))
+    }).toThrow(TypeError)
 
-test('typedEvaluate(expectedTypes, context, value)', () => {
-  expect(() => {
-    console.log(typedEvaluate('number', {
-      interpreters: {},
-      scope: { $$VALUE: 'aa' }
-    }, '1'))
-  }).toThrow(TypeError)
+    expect(() => {
+      console.log(typedEvaluate('array', {
+        interpreters: {
+          $someExpression: () => 'text'
+        },
+        scope: { $$VALUE: 'aa' }
+      }, ['$someExpression']))
+    }).toThrow(TypeError)
 
-  expect(() => {
-    console.log(typedEvaluate('number', {
-      interpreters: {},
+    expect(typedEvaluate('array', {
+      interpreters: {
+        $someExpression: () => ['item-1', 'item-2']
+      },
       scope: { $$VALUE: 'aa' }
-    }, ['$someUnknownExpression']))
-  }).toThrow(TypeError)
+    }, ['$someExpression'])).toEqual(['item-1', 'item-2'])
+  })
 })

@@ -5,7 +5,7 @@ import {
 
 import {
   evaluate,
-  evaluateArray
+  typedEvaluate
 } from '../expression'
 
 /**
@@ -17,7 +17,7 @@ export const $pipe = (
   context:EvaluationContext,
   expressionsExp:ArrayExpression
 ) => {
-  const expressions = evaluateArray(context, expressionsExp)
+  const expressions = typedEvaluate('array', context, expressionsExp)
 
   return expressions.reduce((acc, expression) => {
     return evaluate({

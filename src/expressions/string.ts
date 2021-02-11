@@ -1,8 +1,6 @@
 import {
   evaluate,
-  evaluateString,
-  evaluateStringOrArray,
-  evaluateNumber,
+  typedEvaluate,
 
   interpreter
 } from '../expression'
@@ -38,8 +36,8 @@ export const $stringStartsWith = interpreter((
   query:string,
   str:string
 ):boolean => str.startsWith(query), [
-  evaluateString,
-  evaluateString
+  typedEvaluate.bind(null, 'string'),
+  typedEvaluate.bind(null, 'string')
 ])
 
 /**
@@ -50,7 +48,7 @@ export const $stringStartsWith = interpreter((
 export const $stringLength = interpreter((
   str:string
 ):number => str.length, [
-  evaluateString
+  typedEvaluate.bind(null, 'string')
 ])
 
 /**
@@ -65,10 +63,10 @@ export const $stringSubstr = (
   endExp:NumberExpression,
   strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, strExp)
+  typedEvaluate('string', context, strExp)
     .substring(
-      evaluateNumber(context, startExp),
-      evaluateNumber.allowUndefined(context, endExp)
+      typedEvaluate('number', context, startExp),
+      typedEvaluate(['number', 'undefined'], context, endExp)
     )
 )
 
@@ -83,8 +81,8 @@ export const $stringConcat = (
   concatExp:StringExpression,
   baseExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, baseExp)
-    .concat(evaluateString(context, concatExp))
+  typedEvaluate('string', context, baseExp)
+    .concat(typedEvaluate('string', context, concatExp))
 )
 
 /**
@@ -96,7 +94,7 @@ export const $stringTrim = (
   context:EvaluationContext,
   strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, strExp).trim()
+  typedEvaluate('string', context, strExp).trim()
 )
 
 /**
@@ -112,9 +110,9 @@ export const $stringPadStart = (
   padStringExp:StringExpression = ' ',
   strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, strExp).padStart(
-    evaluateNumber(context, targetLengthExp),
-    evaluateString(context, padStringExp)
+  typedEvaluate('string', context, strExp).padStart(
+    typedEvaluate('number', context, targetLengthExp),
+    typedEvaluate('string', context, padStringExp)
   )
 )
 
@@ -131,9 +129,9 @@ export const $stringPadEnd = (
   padStringExp:StringExpression = ' ',
   strExp:StringExpression = $$VALUE
 ):string => (
-  evaluateString(context, strExp).padEnd(
-    evaluateNumber(context, targetLengthExp),
-    evaluateString(context, padStringExp)
+  typedEvaluate('string', context, strExp).padEnd(
+    typedEvaluate('number', context, targetLengthExp),
+    typedEvaluate('string', context, padStringExp)
   )
 )
 
@@ -143,7 +141,7 @@ const _regExp = (
   context:EvaluationContext,
   regExpExp:Expression | RegExpTuple | RegExp
 ) => {
-  const regExp = evaluateStringOrArray(context, regExpExp)
+  const regExp = typedEvaluate(['string', 'array'], context, regExpExp)
 
   return typeof regExp === 'string'
     ? new RegExp(regExp)
@@ -162,7 +160,7 @@ export const $stringMatch = (
   valueExp:StringExpression = $$VALUE
 ):string[] => {
   const regExp = _regExp(context, regExpExp)
-  const value = evaluateString(context, valueExp)
+  const value = typedEvaluate('string', context, valueExp)
 
   const match = value.match(regExp)
 
@@ -181,7 +179,7 @@ export const $stringTest = (
   valueExp:StringExpression = $$VALUE
 ):boolean => {
   const regExp = _regExp(context, regExpExp)
-  const value = evaluateString(context, valueExp)
+  const value = typedEvaluate('string', context, valueExp)
 
   return regExp.test(value)
 }
@@ -198,14 +196,14 @@ export const $stringReplace = (
   replacementExp:StringExpression,
   valueExp:StringExpression = $$VALUE
 ):string => {
-  let search = evaluateStringOrArray(context, searchExp)
+  let search = typedEvaluate(['string', 'array'], context, searchExp)
   search = Array.isArray(search)
     ? new RegExp(search[0], search[1])
     : search
 
-  const value = evaluateString(context, valueExp)
+  const value = typedEvaluate('string', context, valueExp)
 
-  return value.replace(search, match => evaluateString({
+  return value.replace(search, match => typedEvaluate('string', {
     ...context,
     scope: {
       $$VALUE: match,
@@ -222,7 +220,7 @@ export const $stringReplace = (
 export const $stringToUpperCase = (
   context:EvaluationContext,
   valueExp:StringExpression = $$VALUE
-):string => evaluateString(context, valueExp).toUpperCase()
+):string => typedEvaluate('string', context, valueExp).toUpperCase()
 
 /**
  * @function $stringToLowerCase
@@ -232,7 +230,7 @@ export const $stringToUpperCase = (
 export const $stringToLowerCase = (
   context:EvaluationContext,
   valueExp:StringExpression = $$VALUE
-):string => evaluateString(context, valueExp).toLowerCase()
+):string => typedEvaluate('string', context, valueExp).toLowerCase()
 
 export const STRING_EXPRESSIONS = {
   $string,
