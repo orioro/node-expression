@@ -5,9 +5,7 @@ import {
 import {
   interpreter,
   evaluate,
-  evaluateArray,
-  evaluateNumber,
-  evaluateString
+  typedEvaluate
 } from '../expression'
 
 import { formatParseItem } from '../util/formatParseItem'
@@ -45,7 +43,7 @@ export const $arrayIncludes = (
   arrayExp:ArrayExpression = $$VALUE
 ):boolean => {
   const value = evaluate(context, searchValueExp)
-  const array = evaluateArray(context, arrayExp)
+  const array = typedEvaluate('array', context, arrayExp)
 
   return array.includes(value)
 }
@@ -65,8 +63,8 @@ export const $arrayIncludesAll = (
   searchValuesExp:any,
   arrayExp:ArrayExpression = $$VALUE
 ):boolean => {
-  const values = evaluateArray(context, searchValuesExp)
-  const array = evaluateArray(context, arrayExp)
+  const values = typedEvaluate('array', context, searchValuesExp)
+  const array = typedEvaluate('array', context, arrayExp)
 
   return values.every(value => array.includes(value))
 }
@@ -85,8 +83,8 @@ export const $arrayIncludesAny = (
   searchValuesExp:any,
   arrayExp:ArrayExpression = $$VALUE
 ):boolean => {
-  const values = evaluateArray(context, searchValuesExp)
-  const array = evaluateArray(context, arrayExp)
+  const values = typedEvaluate('array', context, searchValuesExp)
+  const array = typedEvaluate('array', context, arrayExp)
 
   return values.some(value => array.includes(value))
 }
@@ -99,7 +97,7 @@ export const $arrayIncludesAny = (
 export const $arrayLength = interpreter((
   array:any[]
 ):number => array.length, [
-  evaluateArray
+  typedEvaluate.bind(null, 'array')
 ])
 
 /**
@@ -117,7 +115,7 @@ export const $arrayReduce = (
   startExp:any,
   arrayExp:ArrayExpression = $$VALUE
 ):any => (
-  evaluateArray(context, arrayExp)
+  typedEvaluate('array', context, arrayExp)
     .reduce(($$ACC, $$VALUE, $$INDEX, $$ARRAY) => {
       return evaluate({
         ...context,
@@ -137,7 +135,7 @@ const _arrayIterator = (method:string) => (
   iteratorExp:any,
   arrayExp:ArrayExpression = $$VALUE
 ) => (
-  evaluateArray(context, arrayExp)[method](($$VALUE, $$INDEX, $$ARRAY) => {
+  typedEvaluate('array', context, arrayExp)[method](($$VALUE, $$INDEX, $$ARRAY) => {
     return evaluate({
       ...context,
       scope: {
@@ -207,7 +205,7 @@ export const $arrayIndexOf = (
   context:EvaluationContext,
   valueExp:Expression,
   arrayExp:ArrayExpression = $$VALUE
-):number => evaluateArray(context, arrayExp).indexOf(evaluate(context, valueExp))
+):number => typedEvaluate('array', context, arrayExp).indexOf(evaluate(context, valueExp))
 
 /**
  * @function $arrayFind
@@ -224,7 +222,7 @@ export const $arrayReverse = (
   context:EvaluationContext,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const arr = evaluateArray(context, arrayExp).slice()
+  const arr = typedEvaluate('array', context, arrayExp).slice()
   arr.reverse()
   return arr
 }
@@ -239,12 +237,12 @@ export const $arraySort = (
   sortExp:any,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const arr = evaluateArray(context, arrayExp).slice()
+  const arr = typedEvaluate('array', context, arrayExp).slice()
 
   if (sortExp === undefined) {
     arr.sort()
   } else {
-    arr.sort(($$SORT_A, $$SORT_B) => evaluateNumber({
+    arr.sort(($$SORT_A, $$SORT_B) => typedEvaluate('number', {
       ...context,
       scope: { $$SORT_A, $$SORT_B }
     }, sortExp))
@@ -263,7 +261,7 @@ export const $arrayPush = (
   valueExp:any,
   arrayExp:ArrayExpression = $$VALUE
 ) => ([
-  ...evaluateArray(context, arrayExp),
+  ...typedEvaluate('array', context, arrayExp),
   evaluate(context, valueExp)
 ])
 
@@ -275,7 +273,7 @@ export const $arrayPop = (
   context:EvaluationContext,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const arr = evaluateArray(context, arrayExp)
+  const arr = typedEvaluate('array', context, arrayExp)
   return arr.slice(0, arr.length - 1)
 }
 
@@ -290,7 +288,7 @@ export const $arrayUnshift = (
   arrayExp:ArrayExpression = $$VALUE
 ) => ([
   evaluate(context, valueExp),
-  ...evaluateArray(context, arrayExp)
+  ...typedEvaluate('array', context, arrayExp)
 ])
 
 /**
@@ -301,7 +299,7 @@ export const $arrayShift = (
   context:EvaluationContext,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const arr = evaluateArray(context, arrayExp)
+  const arr = typedEvaluate('array', context, arrayExp)
   return arr.slice(1, arr.length)
 }
 
@@ -318,10 +316,10 @@ export const $arraySlice = (
   endExp:NumberExpression,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  return evaluateArray(context, arrayExp)
+  return typedEvaluate('array', context, arrayExp)
     .slice(
-      evaluateNumber(context, startExp),
-      evaluateNumber(context, endExp)
+      typedEvaluate('number', context, startExp),
+      typedEvaluate('number', context, endExp)
     )
 }
 
@@ -340,10 +338,10 @@ export const $arraySubstitute = (
   valuesExp:ArrayExpression,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const array = evaluateArray(context, arrayExp)
-  const start = evaluateNumber(context, startExp)
-  const end = evaluateNumber(context, endExp)
-  const values = evaluateArray(context, valuesExp)
+  const array = typedEvaluate('array', context, arrayExp)
+  const start = typedEvaluate('number', context, startExp)
+  const end = typedEvaluate('number', context, endExp)
+  const values = typedEvaluate('array', context, valuesExp)
 
   return [
     ...array.slice(0, start),
@@ -367,9 +365,9 @@ export const $arrayAddAt = (
   valuesExp:any,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const array = evaluateArray(context, arrayExp)
-  const index = evaluateNumber(context, indexExp)
-  const values = evaluateArray(context, valuesExp)
+  const array = typedEvaluate('array', context, arrayExp)
+  const index = typedEvaluate('number', context, indexExp)
+  const values = typedEvaluate('array', context, valuesExp)
 
   return [
     ...array.slice(0, index),
@@ -391,9 +389,9 @@ export const $arrayRemoveAt = (
   countExp:any = 1,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const array = evaluateArray(context, arrayExp)
-  const position = evaluateNumber(context, indexExp)
-  const count = evaluateNumber(context, countExp)
+  const array = typedEvaluate('array', context, arrayExp)
+  const position = typedEvaluate('number', context, indexExp)
+  const count = typedEvaluate('number', context, countExp)
 
   return [
     ...array.slice(0, position),
@@ -412,8 +410,8 @@ export const $arrayJoin = (
   separatorExp:any = '',
   arrayExp:ArrayExpression = $$VALUE
 ) => (
-  evaluateArray(context, arrayExp)
-    .join(evaluateString(context, separatorExp))
+  typedEvaluate('array', context, arrayExp)
+    .join(typedEvaluate('string', context, separatorExp))
 )
 
 /**
@@ -427,9 +425,9 @@ export const $arrayAt = (
   indexExp:NumberExpression,
   arrayExp:ArrayExpression = $$VALUE
 ) => {
-  const array = evaluateArray(context, arrayExp)
+  const array = typedEvaluate('array', context, arrayExp)
 
-  return array[evaluateNumber(context, indexExp)]
+  return array[typedEvaluate('number', context, indexExp)]
 }
 
 export const ARRAY_EXPRESSIONS = {

@@ -1,5 +1,6 @@
 import {
   evaluateNumber,
+  typedEvaluate
 } from './expression'
 
 import {
@@ -20,4 +21,20 @@ test('evaluateNumber', () => {
       scope: { $$VALUE: 'aa' }
     }, ['$someUnknownExpression']))
   }).toThrow('Evaluated invalid valid_number')
+})
+
+test('typedEvaluate(expectedTypes, context, value)', () => {
+  expect(() => {
+    console.log(typedEvaluate('number', {
+      interpreters: {},
+      scope: { $$VALUE: 'aa' }
+    }, '1'))
+  }).toThrow(TypeError)
+
+  expect(() => {
+    console.log(typedEvaluate('number', {
+      interpreters: {},
+      scope: { $$VALUE: 'aa' }
+    }, ['$someUnknownExpression']))
+  }).toThrow(TypeError)
 })

@@ -4,15 +4,8 @@ import {
 } from 'lodash'
 
 import {
-  isValidNumber,
-  validateNumber,
-  validateArray,
-  validatePlainObject
-} from '../util/validate'
-
-import {
   evaluate,
-  evaluateBoolean,
+  typedEvaluate,
   evaluatePlainObject,
   evaluateArray,
   evaluateNumber,
@@ -171,7 +164,8 @@ export const $matches = (
     //
     const criteriaValue = evaluate(context, criteria[criteriaKey])
 
-    return evaluateBoolean(
+    return typedEvaluate(
+      'boolean',
       {
         ...context,
         scope: {

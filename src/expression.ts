@@ -12,6 +12,8 @@ import {
   validateDate
 } from './util/validate'
 
+import { validateType } from '@orioro/validate-type'
+
 import {
   Expression,
   EvaluationContext
@@ -33,6 +35,16 @@ export const evaluate = (
   const interpreter = context.interpreters[interpreterId]
 
   return interpreter(context, ...interpreterArgs)
+}
+
+export const typedEvaluate = (
+  expectedTypes:(string | string[]),
+  context:EvaluationContext,
+  expOrValue:Expression | any
+):any => {
+  const value = evaluate(context, expOrValue)
+  validateType(expectedTypes, value)
+  return value
 }
 
 const _prepEvAndValidate = (validate) => {
