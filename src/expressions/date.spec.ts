@@ -1,14 +1,15 @@
 import { evaluate } from '../expression'
-import { $value } from './value'
-import { $date, $dateNow, $dateLt } from './date'
-import { $gt, $gte, $lt, $lte, $eq } from './comparison'
+import { VALUE_EXPRESSIONS } from './value'
+import { DATE_EXPRESSIONS } from './date'
+import { COMPARISON_EXPRESSIONS } from './comparison'
+
+const interpreters = {
+  ...VALUE_EXPRESSIONS,
+  ...DATE_EXPRESSIONS,
+  ...COMPARISON_EXPRESSIONS
+}
 
 describe('$date', () => {
-  const interpreters = {
-    $value,
-    $date
-  }
-
   test('ISO', () => {
     const context = {
       interpreters,
@@ -32,12 +33,6 @@ describe('$date', () => {
 })
 
 describe('$dateNow', () => {
-  const interpreters = {
-    $value,
-    $date,
-    $dateNow
-  }
-
   test('', () => {
     const context = {
       interpreters,
@@ -45,48 +40,229 @@ describe('$dateNow', () => {
     }
 
     const now = evaluate(context, ['$dateNow', 'UnixEpochMs'])
-    expect(now).toBeLessThanOrEqual(Date.now())
-    expect(now).toBeGreaterThan(Date.now() - 10)
+
+    return new Promise(resolve => setTimeout(resolve, 50)).then(() => {
+      expect(now).toBeLessThanOrEqual(Date.now())
+      expect(now).toBeGreaterThan(Date.now() - 100)
+    })
   })
 })
 
+test('$dateIsValid', () => {
+  const expectations = [
+    [undefined, false],
+    [null, false],
+    ['', false],
+    ['2021 02 12T12:34:15.020-03:00', false],
+    ['2021-02-12T12:34:15.020-03:00', true],
+    ['2021-02-12T12:34:15.020', true],
+    ['2021-02-12T12:34:15', true],
+    ['2021-02-12', true],
+    ['2021-02', true],
+    ['2021', true],
+    ['202', false],
+    ['some random string', false],
+    [10, false],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: input }
+    }, ['$dateIsValid'])).toEqual(result)
+  })
+})
+
+test('$dateStartOf', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: '2021-02-12T12:34:15.020-03:00' }
+  }
+
+  const expectations = [
+    ['year', '2021-01-01T00:00:00.000-03:00'],
+    ['month', '2021-02-01T00:00:00.000-03:00'],
+    ['day', '2021-02-12T00:00:00.000-03:00'],
+    ['hour', '2021-02-12T12:00:00.000-03:00'],
+    ['minute', '2021-02-12T12:34:00.000-03:00'],
+    ['second', '2021-02-12T12:34:15.000-03:00'],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate(context, ['$dateStartOf', input]))
+      .toEqual(result)
+  })
+})
+
+test('$dateEndOf', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: '2021-02-12T12:34:15.020-03:00' }
+  }
+
+  const expectations = [
+    ['year', '2021-12-31T23:59:59.999-03:00'],
+    ['month', '2021-02-28T23:59:59.999-03:00'],
+    ['day', '2021-02-12T23:59:59.999-03:00'],
+    ['hour', '2021-02-12T12:59:59.999-03:00'],
+    ['minute', '2021-02-12T12:34:59.999-03:00'],
+    ['second', '2021-02-12T12:34:15.999-03:00'],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate(context, ['$dateEndOf', input]))
+      .toEqual(result)
+  })
+})
+
+test('$dateSet', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: '2021-02-12T12:34:15.020-03:00' }
+  }
+
+  const expectations = [
+    [{ month: 1 }, '2021-01-12T12:34:15.020-03:00'],
+    [{ year: 2020 }, '2020-02-12T12:34:15.020-03:00'],
+    [{ day: 1 }, '2021-02-01T12:34:15.020-03:00'],
+    [{ hour: 1 }, '2021-02-12T01:34:15.020-03:00'],
+    [{ minute: 1 }, '2021-02-12T12:01:15.020-03:00'],
+    [{ second: 1 }, '2021-02-12T12:34:01.020-03:00'],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate(context, ['$dateSet', input]))
+      .toEqual(result)
+  })
+})
+
+test('$dateSetConfig', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: '2021-02-12T12:34:15.020-03:00' }
+  }
+
+  const expectations = [
+    [{ zone: 'UTC+0' }, '2021-02-12T15:34:15.020Z'],
+    [{ zone: 'UTC+1' }, '2021-02-12T16:34:15.020+01:00'],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate(context, ['$dateSetConfig', input]))
+      .toEqual(result)
+  })
+
+  expect(() => {
+    expect(evaluate(context, ['$dateSetConfig', {
+      unknownConfig: 'value'
+    }]))
+  }).toThrow('Unknown DateTime config')
+})
+
 describe('date comparison', () => {
-  const interpreters = {
-    $value,
-    $date,
-    $dateNow,
-    $gt,
-    $gte,
-    $lt,
-    $lte,
-    $dateLt
+  const DATE_BEFORE = '2019-10-14T23:09:30.787Z'
+  const DATE_REFERENCE = '2020-10-14T23:09:30.787Z'
+  const DATE_REFERENCE_OTHER_TZ = '2020-10-14T20:09:30.787-03:00'
+  const DATE_AFTER = '2021-10-14T23:09:30.787Z'
+  const context = {
+    interpreters,
+    scope: { $$VALUE: DATE_REFERENCE }
   }
 
   test('with math operators', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: '2020-10-14T23:09:30.787Z' }
-    }
-
     expect(evaluate(context, ['$lt', Date.now(), ['$date', 'ISO', 'UnixEpochMs']])).toEqual(true)
   })
 
   test('with date operators', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: '2020-10-14T23:09:30.787Z' }
-    }
+    const expectations = [
+      ['$dateGt', DATE_BEFORE, true],
+      ['$dateGt', DATE_AFTER, false],
+      ['$dateGt', DATE_REFERENCE, false],
+      ['$dateGt', DATE_REFERENCE_OTHER_TZ, false],
 
-    expect(evaluate(context, [
-      '$dateLt',
-      '2021-10-14T23:09:30.787Z'
-    ]))
-    .toEqual(true)
+      ['$dateGte', DATE_BEFORE, true],
+      ['$dateGte', DATE_AFTER, false],
+      ['$dateGte', DATE_REFERENCE, true],
+      ['$dateGte', DATE_REFERENCE_OTHER_TZ, true],
 
-    expect(evaluate(context, [
-      '$dateLt',
-      '2019-10-14T23:09:30.787Z'
-    ]))
-    .toEqual(false)
+      ['$dateLt', DATE_BEFORE, false],
+      ['$dateLt', DATE_AFTER, true],
+      ['$dateLt', DATE_REFERENCE, false],
+      ['$dateLt', DATE_REFERENCE_OTHER_TZ, false],
+
+      ['$dateLte', DATE_BEFORE, false],
+      ['$dateLte', DATE_AFTER, true],
+      ['$dateLte', DATE_REFERENCE, true],
+      ['$dateLte', DATE_REFERENCE_OTHER_TZ, true],
+
+      ['$dateEq', DATE_BEFORE, false],
+      ['$dateEq', DATE_AFTER, false],
+      ['$dateEq', DATE_REFERENCE, true],
+      ['$dateEq', DATE_REFERENCE_OTHER_TZ, true],
+    ]
+
+    expectations.forEach(([expression, input, result]) => {
+      expect(evaluate(context, [expression, input])).toEqual(result)
+    })
+  })
+
+  // test('$dateGte', () => {
+
+  // })
+
+  // test('$dateLt', () => {
+  //   expect(evaluate(context, [
+  //     '$dateLt',
+  //     '2021-10-14T23:09:30.787Z'
+  //   ]))
+  //   .toEqual(true)
+
+  //   expect(evaluate(context, [
+  //     '$dateLt',
+  //     '2019-10-14T23:09:30.787Z'
+  //   ]))
+  //   .toEqual(false)
+  // })
+})
+
+test('$dateMoveForward', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: '2021-02-12T12:34:15.020-03:00' }
+  }
+
+  const expectations = [
+    [{ month: 1 }, '2021-03-12T12:34:15.020-03:00'],
+    [{ year: 2 }, '2023-02-12T12:34:15.020-03:00'],
+    [{ day: 1 }, '2021-02-13T12:34:15.020-03:00'],
+    [{ hour: 1 }, '2021-02-12T13:34:15.020-03:00'],
+    [{ minute: 1 }, '2021-02-12T12:35:15.020-03:00'],
+    [{ second: 1 }, '2021-02-12T12:34:16.020-03:00'],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate(context, ['$dateMoveForward', input]))
+      .toEqual(result)
+  })
+})
+
+test('$dateMoveBackward', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: '2021-02-12T12:34:15.020-03:00' }
+  }
+
+  const expectations = [
+    [{ month: 1 }, '2021-01-12T12:34:15.020-03:00'],
+    [{ year: 1 }, '2020-02-12T12:34:15.020-03:00'],
+    [{ day: 1 }, '2021-02-11T12:34:15.020-03:00'],
+    [{ hour: 1 }, '2021-02-12T11:34:15.020-03:00'],
+    [{ minute: 1 }, '2021-02-12T12:33:15.020-03:00'],
+    [{ second: 1 }, '2021-02-12T12:34:14.020-03:00'],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate(context, ['$dateMoveBackward', input]))
+      .toEqual(result)
   })
 })
