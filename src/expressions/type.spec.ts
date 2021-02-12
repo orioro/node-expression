@@ -30,4 +30,39 @@ describe('$type', () => {
       scope: { $$VALUE: true }
     }, ['$type'])).toEqual('boolean')
   })
+
+  test('array', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: [] }
+    }, ['$type'])).toEqual('array')
+  })
+
+  test('object', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: {} }
+    }, ['$type'])).toEqual('object')
+  })
+
+  test('map', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: new Map() }
+    }, ['$type'])).toEqual('map')
+  })
+
+  test('set', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: new Set() }
+    }, ['$type'])).toEqual('set')
+  })
+
+  test('symbol', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: Symbol() }
+    }, ['$type'])).toEqual('symbol')
+  })
 })

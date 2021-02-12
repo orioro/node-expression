@@ -1,6 +1,5 @@
-import {
-  evaluate
-} from '../expression'
+import { evaluate } from '../expression'
+import { getType } from '@orioro/validate-type'
 
 import {
   EvaluationContext,
@@ -14,12 +13,29 @@ import { $$VALUE } from './value'
  * 
  * @function $type
  * @param {*} valueExp
- * @returns {string} type
+ * @returns {string} type Possible values:
+ *   - string
+ *   - regexp
+ *   - number
+ *   - bigint
+ *   - nan
+ *   - null
+ *   - undefined
+ *   - boolean
+ *   - function
+ *   - object
+ *   - array
+ *   - date
+ *   - symbol
+ *   - map
+ *   - set
+ *   - weakmap
+ *   - weakset
  */
 export const $type = (
   context:EvaluationContext,
   valueExp:Expression = $$VALUE
-) => typeof (evaluate(context, valueExp))
+) => getType(evaluate(context, valueExp))
 
 export const TYPE_EXPRESSIONS = {
   $type
