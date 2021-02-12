@@ -147,3 +147,56 @@ describe('$stringReplace', () => {
     .toEqual('ABC_AdC_ACdC')
   })
 })
+
+describe('$stringInterpolate(data, string)', () => {
+  test('object', () => {
+    const data = {
+      name: 'João',
+      mother: {
+        name: 'Maria'
+      },
+      father: {
+        name: 'Guilherme',
+      }
+    }
+
+    const template = 'Olá, eu sou ${ name }. Minha mãe ${ mother.name }, meu pai ${ father.name }.'
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: template }
+    }, ['$stringInterpolate', data]))
+    .toEqual('Olá, eu sou João. Minha mãe Maria, meu pai Guilherme.')
+  })
+
+  test('array', () => {
+    const data = ['first', 'second', 'third']
+    const template = '1: ${0}; 2: ${1}; 3: ${2}'
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: template }
+    }, ['$stringInterpolate', data]))
+    .toEqual('1: first; 2: second; 3: third')
+  })
+
+  test('null / undefined / other type values', () => {
+    const data = ['first', null, 'third']
+    const template = '1: ${0}; 2: ${1}; 3: ${2}'
+
+    const expectations = [
+      [['first', null, 3], '1: first; 2: ; 3: 3'],
+      [[undefined, false, 'third'], '1: ; 2: ; 3: third'],
+      [[true, { some: 'object' }, 'third'], '1: ; 2: ; 3: third'],
+      [[function () {}, { some: 'object' }, 'third'], '1: ; 2: ; 3: third'],
+    ]
+
+    expectations.forEach(([input, result]) => {
+      expect(evaluate({
+        interpreters,
+        scope: { $$VALUE: template }
+      }, ['$stringInterpolate', input]))
+      .toEqual(result)
+    })
+  })
+})

@@ -4,6 +4,7 @@ import {
 
   interpreter
 } from '../expression'
+import { get } from 'lodash'
 import { $$VALUE } from './value'
 import {
   EvaluationContext,
@@ -232,6 +233,34 @@ export const $stringToLowerCase = (
   valueExp:StringExpression = $$VALUE
 ):string => evaluateTyped('string', context, valueExp).toLowerCase()
 
+const INTERPOLATION_RE = /\$\{\s*(.+?)\s*\}/g
+const INTERPOLATABLE_TYPES = ['string', 'number']
+
+/**
+ * @function $stringInterpolate
+ * @param {object | array} data Data context to be used for interpolation
+ * @param {string} template Basic JS template string like `${value.path}` value
+ *                          interpolation. It is possible to access nested properties
+ *                          through dot `.` notation. Keywords between braces are
+ *                          only interpreted as paths to the value. No logic
+ *                          supported: loops, conditionals, etc.
+ */
+export const $stringInterpolate = interpreter((
+  data:({ [key:string]: any } | any[]),
+  template:string
+):string => (
+  template.replace(INTERPOLATION_RE, (match, path) => {
+    const value = get(data, path)
+
+    return INTERPOLATABLE_TYPES.includes(typeof value)
+      ? value
+      : ''
+  })
+), [
+  evaluateTyped.bind(null, ['object', 'array']),
+  evaluateTyped.bind(null, 'string'),
+])
+
 export const STRING_EXPRESSIONS = {
   $string,
   $stringStartsWith,
@@ -245,5 +274,6 @@ export const STRING_EXPRESSIONS = {
   $stringTest,
   $stringReplace,
   $stringToUpperCase,
-  $stringToLowerCase
+  $stringToLowerCase,
+  $stringInterpolate
 }
