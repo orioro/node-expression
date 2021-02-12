@@ -227,6 +227,8 @@ export const $arrayReverse = (
 }
 
 /**
+ * @todo array Improve ease of use of the sorting comparison expression.
+ * 
  * @function $arraySort
  * @param {number} sortExp
  * @param {Array} [arrayExp=$$VALUE]
