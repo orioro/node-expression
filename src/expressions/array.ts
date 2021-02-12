@@ -245,7 +245,7 @@ export const $arraySort = (
   } else {
     arr.sort(($$SORT_A, $$SORT_B) => evaluateTyped('number', {
       ...context,
-      scope: { $$SORT_A, $$SORT_B }
+      scope: { $$VALUE: null, $$SORT_A, $$SORT_B }
     }, sortExp))
   }
 

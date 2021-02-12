@@ -1,1 +1,2 @@
 - $type | Return value for arrays, objects and regexp (move away from typeof) (src/expressions/type.ts)
+- array | Improve ease of use of the sorting comparison expression. (src/expressions/array.ts)

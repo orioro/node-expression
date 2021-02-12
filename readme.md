@@ -150,13 +150,13 @@ any of the searched values is in the array.
 
 ##### `$arrayReduce(reduceExp, startExp, arrayExp)`
 
-- `reduceExp` {Expression}
+- `reduceExp` {[Expression](#expression)}
 - `startExp` {*}
 - `arrayExp` {Array}
 
 ##### `$arrayMap(mapExp, arrayExp)`
 
-- `mapExp` {Expression}
+- `mapExp` {[Expression](#expression)}
 - `arrayExp` {Array}
 
 ##### `$arrayEvery(everyExp, arrayExp)`
@@ -168,24 +168,24 @@ Result is similar to logical operator `$and`. Main difference
 $arrayEvery exposes array iteration variables:
 `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
 
-- `everyExp` {Expression}
+- `everyExp` {[Expression](#expression)}
 - `arrayExp` {Array}
 
 ##### `$arraySome(someExp, arrayExp)`
 
 `Array.prototype.some`
 
-- `someExp` {Expression}
+- `someExp` {[Expression](#expression)}
 - `arrayExp` {Array}
 
 ##### `$arrayFilter(queryExp, arrayExp)`
 
-- `queryExp` {BooleanExpression}
+- `queryExp` {Boolean[Expression](#expression)}
 - `arrayExp` {Array}
 
 ##### `$arrayFindIndex(queryExp, arrayExp)`
 
-- `queryExp` {BooleanExpression}
+- `queryExp` {Boolean[Expression](#expression)}
 - `arrayExp` {Array}
 
 ##### `$arrayIndexOf(value, arrayExp)`
@@ -195,7 +195,7 @@ $arrayEvery exposes array iteration variables:
 
 ##### `$arrayFind(queryExp, arrayExp)`
 
-- `queryExp` {BooleanExpression}
+- `queryExp` {Boolean[Expression](#expression)}
 - `arrayExp` {Array}
 
 ##### `$arrayReverse(arrayExp)`
@@ -253,7 +253,7 @@ Adds items at the given position.
 
 ##### `$arrayJoin(separatorExp, arrayExp)`
 
-- `separatorExp` {StringExpression}
+- `separatorExp` {String[Expression](#expression)}
 - `arrayExp` {Array}
 - Returns: {string} 
 
@@ -459,7 +459,7 @@ From Luxon docs:
 > - etc
 See https://github.com/moment/luxon/blob/master/docs/validity.md
 
-- `` {[ISODate](#isodate)}
+- `` {[[ISODate](#isodate)](#isodate)}
 - Returns: `isValid` {boolean} 
 
 ##### `$dateStartOf(unitExp, date)`
@@ -467,16 +467,16 @@ See https://github.com/moment/luxon/blob/master/docs/validity.md
 Returns the date at the start of the given `unit` (e.g. `day`, `month`).
 
 - `unitExp` {string}
-- `date` {[ISODate](#isodate)}
-- Returns: `date` {[ISODate](#isodate)} 
+- `date` {[[ISODate](#isodate)](#isodate)}
+- Returns: `date` {[[ISODate](#isodate)](#isodate)} 
 
 ##### `$dateEndOf(unitExp, date)`
 
 Returns the date at the end of the given `unit` (e.g. `day`, `month`).
 
 - `unitExp` {string}
-- `date` {[ISODate](#isodate)}
-- Returns: `date` {[ISODate](#isodate)} 
+- `date` {[[ISODate](#isodate)](#isodate)}
+- Returns: `date` {[[ISODate](#isodate)](#isodate)} 
 
 ##### `$dateSet(valuesExp, dateExp)`
 
@@ -496,47 +496,47 @@ and [`DateTime.fromObject`](https://moment.github.io/luxon/docs/class/src/dateti
   - `minute` {number}
   - `second` {number}
   - `millisecond` {number}
-- `dateExp` {[ISODate](#isodate)}
-- Returns: `date` {[ISODate](#isodate)} 
+- `dateExp` {[[ISODate](#isodate)](#isodate)}
+- Returns: `date` {[[ISODate](#isodate)](#isodate)} 
 
 ##### `$$dateSetConfig(configExp, date)`
 
 Modifies a configurations of the date.
 
 - `configExp` {Object}
-- `date` {[ISODate](#isodate)}
-- Returns: `date` {[ISODate](#isodate)} 
+- `date` {[[ISODate](#isodate)](#isodate)}
+- Returns: `date` {[[ISODate](#isodate)](#isodate)} 
 
 ##### `$dateGt(referenceDateExp, date)`
 
 Greater than `date > reference`
 
-- `referenceDateExp` {[ISODate](#isodate)}
-- `date` {[ISODate](#isodate)}
+- `referenceDateExp` {[[ISODate](#isodate)](#isodate)}
+- `date` {[[ISODate](#isodate)](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateGte(referenceDateExp, date)`
 
 Greater than or equal `date >= reference`
 
-- `referenceDateExp` {[ISODate](#isodate)}
-- `date` {[ISODate](#isodate)}
+- `referenceDateExp` {[[ISODate](#isodate)](#isodate)}
+- `date` {[[ISODate](#isodate)](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateLt(referenceDateExp, date)`
 
 Lesser than `date < reference`
 
-- `referenceDateExp` {[ISODate](#isodate)}
-- `date` {[ISODate](#isodate)}
+- `referenceDateExp` {[[ISODate](#isodate)](#isodate)}
+- `date` {[[ISODate](#isodate)](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateLte(referenceDateExp, date)`
 
 Lesser than or equal `date <= reference`
 
-- `referenceDateExp` {[ISODate](#isodate)}
-- `date` {[ISODate](#isodate)}
+- `referenceDateExp` {[[ISODate](#isodate)](#isodate)}
+- `date` {[[ISODate](#isodate)](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateEq(referenceDateExp, compareUnitExp, date)`
@@ -548,9 +548,9 @@ so that checks whether are exactly the same millisecond in time,
 but could be used to compare other units, such as whether two dates
 are within the same `day`, `month` or `year`.
 
-- `referenceDateExp` {[ISODate](#isodate)}
+- `referenceDateExp` {[[ISODate](#isodate)](#isodate)}
 - `compareUnitExp` {string}
-- `date` {[ISODate](#isodate)}
+- `date` {[[ISODate](#isodate)](#isodate)}
 - Returns: {boolean} 
 
 ##### `$dateMoveForward(duration, date)`
@@ -558,16 +558,16 @@ are within the same `day`, `month` or `year`.
 Modifies the date by moving it forward the duration specified.
 
 - `duration` {[Duration](#duration)}
-- `date` {[ISODate](#isodate)}
-- Returns: `date` {[ISODate](#isodate)} 
+- `date` {[[ISODate](#isodate)](#isodate)}
+- Returns: `date` {[[ISODate](#isodate)](#isodate)} 
 
 ##### `$dateMoveBackward(duration, date)`
 
 Modifies the date by moving it backward the duration specified.
 
 - `duration` {[Duration](#duration)}
-- `date` {[ISODate](#isodate)}
-- Returns: `date` {[ISODate](#isodate)} 
+- `date` {[[ISODate](#isodate)](#isodate)}
+- Returns: `date` {[[ISODate](#isodate)](#isodate)} 
 
 
 ## Functional
@@ -577,7 +577,7 @@ Modifies the date by moving it backward the duration specified.
 
 ##### `$pipe(expressionsExp)`
 
-- `expressionsExp` {ArrayExpression}
+- `expressionsExp` {Array[Expression](#expression)}
 - Returns: `pipeResult` {*} 
 
 
@@ -595,41 +595,41 @@ Modifies the date by moving it backward the duration specified.
 
 ##### `$and(expressionsExp)`
 
-- `expressionsExp` {ArrayExpression}
+- `expressionsExp` {Array[Expression](#expression)}
 - Returns: {boolean} 
 
 ##### `$or(expressionsExp)`
 
-- `expressionsExp` {ArrayExpression}
+- `expressionsExp` {Array[Expression](#expression)}
 - Returns: {boolean} 
 
 ##### `$not(expressionsExp)`
 
-- `expressionsExp` {ArrayExpression}
+- `expressionsExp` {Array[Expression](#expression)}
 - Returns: {boolean} 
 
 ##### `$nor(expressionsExp)`
 
-- `expressionsExp` {ArrayExpression}
+- `expressionsExp` {Array[Expression](#expression)}
 - Returns: {boolean} 
 
 ##### `$xor(expressionA, expressionB)`
 
-- `expressionA` {BooleanExpression}
-- `expressionB` {BooleanExpression}
+- `expressionA` {Boolean[Expression](#expression)}
+- `expressionB` {Boolean[Expression](#expression)}
 - Returns: {boolean} 
 
 ##### `$if(conditionExp, thenExp, elseExp)`
 
-- `conditionExp` {BooleanExpression}
-- `thenExp` {Expression}
-- `elseExp` {Expression}
+- `conditionExp` {Boolean[Expression](#expression)}
+- `thenExp` {[Expression](#expression)}
+- `elseExp` {[Expression](#expression)}
 - Returns: `result` {*} 
 
 ##### `$switch(casesExp, defaultExp)`
 
-- `casesExp` {ArrayExpression}
-- `defaultExp` {Expression}
+- `casesExp` {Array[Expression](#expression)}
+- `defaultExp` {[Expression](#expression)}
 - Returns: `result` {*} 
 
 ##### `$switchKey(casesExp, defaultExp, ValueExp)`
@@ -793,6 +793,7 @@ Modifies the date by moving it backward the duration specified.
 - [`$stringReplace(searchExp, replacementExp)`](#stringreplacesearchexp-replacementexp)
 - [`$stringToUpperCase(valueExp)`](#stringtouppercasevalueexp)
 - [`$stringToLowerCase(valueExp)`](#stringtolowercasevalueexp)
+- [`$stringInterpolate(data, template)`](#stringinterpolatedata-template)
 
 
 ##### `$string(valueExp)`
@@ -857,7 +858,7 @@ Modifies the date by moving it backward the duration specified.
 ##### `$stringReplace(searchExp, replacementExp)`
 
 - `searchExp` {string | [string, string?]}
-- `replacementExp` {string | StringExpression}
+- `replacementExp` {string | String[Expression](#expression)}
 - Returns: {string} 
 
 ##### `$stringToUpperCase(valueExp)`
@@ -869,6 +870,11 @@ Modifies the date by moving it backward the duration specified.
 
 - `valueExp` {string}
 - Returns: {string} 
+
+##### `$stringInterpolate(data, template)`
+
+- `data` {object | array}
+- `template` {string}
 
 
 ## Type
@@ -902,6 +908,6 @@ Modifies the date by moving it backward the duration specified.
 
 ##### `$evaluate(expExp, scopeExp)`
 
-- `expExp` {Expression}
+- `expExp` {[Expression](#expression)}
 - `scopeExp` {Object | null}
 - Returns: {*}

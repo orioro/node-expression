@@ -11,7 +11,7 @@ import {
 
 const PATH_VARIABLE_RE = /^\$\$.+/
 
-export const $$VALUE = ['$value', '$$VALUE']
+export const $$VALUE:Expression = ['$value', '$$VALUE']
 
 /**
  * @function $value
