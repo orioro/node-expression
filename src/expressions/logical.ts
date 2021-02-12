@@ -1,6 +1,7 @@
 import {
   evaluate,
-  evaluateTyped
+  evaluateTyped,
+  interpreter
 } from '../expression'
 
 import { $$VALUE } from './value'
@@ -16,50 +17,61 @@ import {
 } from '../types'
 
 /**
+ * @todo logical Better handle unknown expressions for boolean logical operators
+ *               Uninterpreted expressions are returned as simple arrays, which
+ *               in turn return mistaken true results
+ * 
  * @function $and
  * @param {ArrayExpression} expressionsExp
  * @returns {boolean}
  */
-export const $and = (
-  context:EvaluationContext,
-  expressionsExp:ArrayExpression = $$VALUE
+export const $and = interpreter((
+  expressions:Expression[],
+  context:EvaluationContext
 ):boolean => (
-  evaluateTyped('array', context, expressionsExp)
-    .every(exp => Boolean(evaluate(context, exp)))
-)
+  expressions.every(exp => Boolean(evaluate(context, exp)))
+), [
+  ['array', 'undefined']
+])
 
 /**
  * @function $or
  * @param {ArrayExpression} expressionsExp
  * @returns {boolean}
  */
-export const $or = (
-  context:EvaluationContext,
-  expressionsExp:ArrayExpression = $$VALUE
+export const $or = interpreter((
+  expressions:Expression[],
+  context:EvaluationContext
 ):boolean => (
-  evaluateTyped('array', context, expressionsExp)
-    .some(exp => Boolean(evaluate(context, exp)))
-)
+  expressions.some(exp => Boolean(evaluate(context, exp)))
+), [
+  ['array', 'undefined']
+])
 
 /**
  * @function $not
  * @param {ArrayExpression} expressionsExp
  * @returns {boolean}
  */
-export const $not = (
-  context:EvaluationContext,
-  expression:Expression = $$VALUE
-):boolean => !Boolean(evaluate(context, expression))
+export const $not = interpreter((
+  value:any
+):boolean => !Boolean(value), [
+  'any'
+])
 
 /**
  * @function $nor
  * @param {ArrayExpression} expressionsExp
  * @returns {boolean}
  */
-export const $nor = (
-  context:EvaluationContext,
-  expressionsExp:ArrayExpression = $$VALUE
-):boolean => !$or(context, expressionsExp)
+export const $nor = interpreter((
+  expressions:Expression[],
+  context:EvaluationContext
+):boolean => (
+  expressions.every(exp => !Boolean(evaluate(context, exp)))
+), [
+  'array'
+])
 
 /**
  * @function $xor
@@ -67,13 +79,15 @@ export const $nor = (
  * @param {BooleanExpression} expressionB
  * @returns {boolean}
  */
-export const $xor = (
-  context:EvaluationContext,
-  expressionA:BooleanExpression,
-  expressionB:BooleanExpression
+export const $xor = interpreter((
+  valueA:any,
+  valueB:any
 ):boolean => (
-  Boolean(evaluate(context, expressionA)) !== Boolean(evaluate(context, expressionB))
-)
+  Boolean(valueA) !== Boolean(valueB)
+), [
+  'any',
+  'any'
+])
 
 /**
  * @function $if
@@ -82,16 +96,20 @@ export const $xor = (
  * @param {Expression} elseExp
  * @returns {*} result
  */
-export const $if = (
-  context:EvaluationContext,
-  conditionExp:BooleanExpression,
+export const $if = interpreter((
+  condition:any,
   thenExp:Expression,
-  elseExp:Expression
-) => (
-  Boolean(evaluate(context, conditionExp))
+  elseExp:Expression,
+  context:EvaluationContext
+):any => (
+  Boolean(condition)
     ? evaluate(context, thenExp)
     : evaluate(context, elseExp)
-)
+), [
+  'any',
+  null, // Only evaluate if condition is satisfied
+  null  // Only evaluate if condition is not satisfied
+])
 
 type Case = [BooleanExpression, Expression]
 
@@ -101,20 +119,22 @@ type Case = [BooleanExpression, Expression]
  * @param {Expression} defaultExp
  * @returns {*} result
  */
-export const $switch = (
-  context:EvaluationContext,
-  casesExp:ArrayExpression | Case[],
-  defaultExp:AnyExpression = undefined
-) => {
-  const cases = evaluateTyped('array', context, casesExp)
-  const correspondingCase = cases.find(([condition]) => (
-    Boolean(evaluate(context, condition))
+export const $switch = interpreter((
+  cases:Case[],
+  defaultExp:Expression,
+  context:EvaluationContext
+):any => {
+  const correspondingCase = cases.find(([conditionExp]) => (
+    Boolean(evaluate(context, conditionExp))
   ))
 
   return correspondingCase
     ? evaluate(context, correspondingCase[1])
     : evaluate(context, defaultExp)
-}
+}, [
+  'array',
+  null
+], false)
 
 /**
  * @function $switchKey
@@ -125,19 +145,22 @@ export const $switch = (
  * @param {String} ValueExp
  * @returns {*}
  */
-export const $switchKey = (
-  context:EvaluationContext,
-  casesExp:PlainObjectExpression | { [key: string]: AnyExpression },
-  defaultExp:AnyExpression = undefined,
-  valueExp:StringExpression = $$VALUE
-) => {
-  const cases = evaluateTyped('object', context, casesExp)
-  const correspondingCase = cases[evaluate(context, valueExp)]
+export const $switchKey = interpreter((
+  cases:{ [key:string]: any },
+  defaultExp:(Expression | undefined) = undefined,
+  value:any,
+  context:EvaluationContext
+):any => {
+  const correspondingCase = cases[value]
 
-  return correspondingCase
+  return correspondingCase !== undefined
     ? evaluate(context, correspondingCase)
     : evaluate(context, defaultExp)
-}
+}, [
+  'object',
+  null,
+  'any'
+])
 
 export const LOGICAL_EXPRESSIONS = {
   $and,

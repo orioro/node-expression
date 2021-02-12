@@ -10,10 +10,31 @@ const interpreters = {
 }
 
 test('$string', () => {
-  expect(evaluate({
-    interpreters,
-    scope: { $$VALUE: 10.5 }
-  }, ['$string'])).toEqual('10.5')
+  const expectations = [
+    ['some string', 'some string'],
+    [10.5, '10.5'],
+    [false, 'false'],
+    [undefined, 'undefined'],
+    [null, 'null'],
+    [NaN, 'NaN'],
+    [[], ''],
+    [[1, 'some str', {}, 'another str'], '1, some str, [object Object], another str'],
+    [() => {}, '[object Function]'],
+    [{}, '[object Object]'],
+    [/re/g, '[object RegExp]'],
+    [Symbol(), '[object Symbol]'],
+    [new Set(), '[object Set]'],
+    [new WeakSet(), '[object WeakSet]'],
+    [new Map(), '[object Map]'],
+    [new WeakMap(), '[object WeakMap]'],
+  ]
+
+  expectations.forEach(([input, result]) => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: input }
+    }, ['$string'])).toEqual(result)
+  })
 })
 
 test('$stringStartsWith', () => {
@@ -146,6 +167,20 @@ describe('$stringReplace', () => {
     ]))
     .toEqual('ABC_AdC_ACdC')
   })
+})
+
+test('$stringToUpperCase', () => {
+  expect(evaluate({
+    interpreters,
+    scope: { $$VALUE: 'String Multi Case' }
+  }, ['$stringToUpperCase'])).toEqual('STRING MULTI CASE')
+})
+
+test('$stringToLowerCase', () => {
+  expect(evaluate({
+    interpreters,
+    scope: { $$VALUE: 'String Multi Case' }
+  }, ['$stringToLowerCase'])).toEqual('string multi case')
 })
 
 describe('$stringInterpolate(data, string)', () => {

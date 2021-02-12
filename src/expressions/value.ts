@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 
-import { evaluate } from '../expression'
+import { evaluate, interpreter } from '../expression'
 
 import {
   Expression,
@@ -19,17 +19,11 @@ export const $$VALUE:Expression = ['$value', '$$VALUE']
  * @param {*} defaultExp
  * @returns {*} value
  */
-export const $value = (
-  context:EvaluationContext,
-  pathExp:StringExpression,
-  defaultExp:Expression
-) => {
-  const path = evaluate(context, pathExp) || '$$VALUE'
-
-  if (typeof path !== 'string') {
-    throw new TypeError(`${JSON.stringify(path)} is not a valid path - must be string`)
-  }
-
+export const $value = interpreter((
+  path:string = '$$VALUE',
+  defaultExp:Expression,
+  context:EvaluationContext
+):any => {
   const value = PATH_VARIABLE_RE.test(path)
     ? get(context.scope, path)
     : get(context.scope, `$$VALUE.${path}`)
@@ -39,17 +33,21 @@ export const $value = (
     : defaultExp !== undefined
       ? evaluate(context, defaultExp)
       : value
-}
+}, [
+  ['string', 'undefined'],
+  null
+], false)
 
 /**
  * @function $literal
  * @param {*} value
  * @returns {*}
  */
-export const $literal = (
-  context:EvaluationContext,
+export const $literal = interpreter((
   value:any
-) => value
+):any => value, [
+  null
+], false)
 
 /**
  * @function $evaluate
@@ -57,21 +55,21 @@ export const $literal = (
  * @param {Object | null} scopeExp
  * @returns {*}
  */
-export const $evaluate = (
-  context:EvaluationContext,
-  expExp:Expression,
-  scopeExp:(PlainObjectExpression | null) = null
-) => {
-  const exp = evaluate(context, expExp)
-  const scope = scopeExp === null
-    ? context.scope
-    : evaluate(context, scopeExp)
-
-  return evaluate({
+export const $evaluate = interpreter((
+  expression:Expression,
+  scope,
+  context:EvaluationContext
+):any => (
+  evaluate({
     ...context,
     scope
-  }, exp)
-}
+  }, expression)
+), [
+  (context, expExp) => evaluate(context, expExp),
+  (context, scopeExp = null) => scopeExp === null
+    ? context.scope
+    : evaluate(context, scopeExp)
+], false)
 
 export const VALUE_EXPRESSIONS = {
   $value,

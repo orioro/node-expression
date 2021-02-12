@@ -1,18 +1,23 @@
 import { evaluate } from '../expression'
-import { $value } from './value'
-import { $boolean } from './boolean'
-import { $and, $or, $if, $switch, LOGICAL_EXPRESSIONS } from './logical'
-import { $arrayMap } from './array'
-import { $eq, $gt, $gte, $lt, $lte } from './comparison'
-import { $stringSubstr } from './string'
-import { $mathSum, $mathMult } from './math'
+import { VALUE_EXPRESSIONS } from './value'
+import { BOOLEAN_EXPRESSIONS } from './boolean'
+import { LOGICAL_EXPRESSIONS } from './logical'
+import { ARRAY_EXPRESSIONS } from './array'
+import { COMPARISON_EXPRESSIONS } from './comparison'
+import { STRING_EXPRESSIONS } from './string'
+import { MATH_EXPRESSIONS } from './math'
+
+const interpreters = {
+  ...VALUE_EXPRESSIONS,
+  ...BOOLEAN_EXPRESSIONS,
+  ...LOGICAL_EXPRESSIONS,
+  ...ARRAY_EXPRESSIONS,
+  ...COMPARISON_EXPRESSIONS,
+  ...STRING_EXPRESSIONS,
+  ...MATH_EXPRESSIONS
+}
 
 describe('$and', () => {
-  const interpreters = {
-    $value,
-    $and
-  }
-
   test('error situations', () => {
     expect(() => evaluate({
       interpreters,
@@ -52,20 +57,12 @@ describe('$and', () => {
     }, ['$and'])).toEqual(false)
 
     expect(evaluate({
-      interpreters: {
-        ...interpreters,
-        $arrayMap,
-        $boolean
-      },
+      interpreters,
       scope: { $$VALUE: [1, 'string', true] }
     }, ['$and', ['$arrayMap', ['$boolean']]])).toEqual(true)
 
     expect(evaluate({
-      interpreters: {
-        ...interpreters,
-        $arrayMap,
-        $boolean
-      },
+      interpreters,
       scope: { $$VALUE: [1, '', true] }
     }, ['$and', ['$arrayMap', ['$boolean']]])).toEqual(false)
   })
@@ -92,15 +89,23 @@ describe('$and', () => {
     }, ['$and'])).toEqual(false)
   })
 
+  test.skip('value coercion on unknown expressions', () => {
+    expect(() => {
+      evaluate({
+        interpreters,
+        scope: {
+          $$VALUE: [
+            ['$unknownExpression', 1, 2],
+            ['$anotherUnknownExpression', null]
+          ]
+        }
+      }, ['$and'])
+    }).toThrow(TypeError)
+  })
+
   test('w/ comparison', () => {
     const context = {
-      interpreters: {
-        ...interpreters,
-        $eq,
-        $gt,
-        $lt,
-        $stringSubstr
-      },
+      interpreters,
       scope: {
         $$VALUE: {
           name: 'João Maranhão',
@@ -134,11 +139,6 @@ describe('$and', () => {
 })
 
 describe('$or', () => {
-  const interpreters = {
-    $value,
-    $or
-  }
-
   test('', () => {
     expect(evaluate({
       interpreters,
@@ -152,13 +152,91 @@ describe('$or', () => {
   })
 })
 
-describe('$if', () => {
-  const interpreters = {
-    $value,
-    $if,
-    $gt
-  }
+describe('$not', () => {
+  test('', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: 'some-value' }
+    }, [
+      '$not',
+      ['$eq', 'some-value']
+    ]))
+    .toEqual(false)
 
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: 'some-value' }
+    }, [
+      '$not',
+      ['$eq', 'some-other-value']
+    ]))
+    .toEqual(true)
+  })
+})
+
+describe('$nor', () => {
+  test('', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: '1234567890' }
+    }, [
+      '$nor',
+      [
+        ['$stringStartsWith', '123'],  // true
+        ['$gt', 15, ['$stringLength']] // false
+      ]
+    ]))
+    .toEqual(false)
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: '1234567890' }
+    }, [
+      '$nor',
+      [
+        ['$stringStartsWith', '0000'], // false
+        ['$gt', 15, ['$stringLength']] // false
+      ]
+    ]))
+    .toEqual(true)
+  })
+})
+
+describe('$xor', () => {
+  test('', () => {
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: '1234567890' }
+    }, [
+      '$xor',
+      ['$stringStartsWith', '123'],  // true
+      ['$gt', 15, ['$stringLength']] // false
+    ]))
+    .toEqual(true)
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: '1234567890' }
+    }, [
+      '$xor',
+      ['$stringStartsWith', '0000'], // false
+      ['$gt', 15, ['$stringLength']] // false
+    ]))
+    .toEqual(false)
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: '1234567890' }
+    }, [
+      '$xor',
+      ['$stringStartsWith', '123'], // true
+      ['$gt', 5, ['$stringLength']] // true
+    ]))
+    .toEqual(false)
+  })
+})
+
+describe('$if', () => {
   test('', () => {
     expect(evaluate({
       interpreters,
@@ -170,24 +248,39 @@ describe('$if', () => {
       scope: { $$VALUE: 8 }
     }, ['$if', ['$gt', 10], 100, 0])).toEqual(0)
   })
+
+  test('then and else expressions should be evaluated only after condition evaluation', () => {
+    let expAExecuted = false
+    let expBExecuted = false
+
+    expect(evaluate({
+      interpreters: {
+        ...interpreters,
+        $expA: () => {
+          expAExecuted = true
+          return 'expA-result'
+        },
+        $expB: () => {
+          expAExecuted = false
+          return 'expB-result'
+        }
+      },
+      scope: { $$VALUE: 15 }
+    }, [
+      '$if',
+      ['$gt', 10],
+      ['$expA'],
+      ['$expB']
+    ])).toEqual('expA-result')
+
+    expect(expAExecuted).toEqual(true)
+    expect(expBExecuted).toEqual(false)
+  })
 })
 
 describe('$switch', () => {
-  const interpreters = {
-    $value,
-    $switch,
-    $and,
-    $eq,
-    $gt,
-    $gte,
-    $lt,
-    $lte,
-    $mathSum,
-    $mathMult
-  }
-
   test('', () => {
-    const $expr = ['$switch', [
+    const expNoDefault = ['$switch', [
       [
         ['$eq', 'CASE_A'],
         'VALUE_A'
@@ -202,10 +295,22 @@ describe('$switch', () => {
       ]
     ]]
 
+    const expWithDefault = [...expNoDefault, 'DEFAULT_VALUE']
+
     expect(evaluate({
       interpreters,
       scope: { $$VALUE: 'CASE_B' }
-    }, $expr)).toEqual('VALUE_B')
+    }, expNoDefault)).toEqual('VALUE_B')
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: 'CASE_D' }
+    }, expNoDefault)).toEqual(undefined)
+
+    expect(evaluate({
+      interpreters,
+      scope: { $$VALUE: 'CASE_D' }
+    }, expWithDefault)).toEqual('DEFAULT_VALUE')
   })
 
   test('', () => {
@@ -260,11 +365,6 @@ describe('$switch', () => {
 })
 
 describe('$switchKey', () => {
-  const interpreters = {
-    $value,
-    ...LOGICAL_EXPRESSIONS
-  }
-
   const options = {
     key1: 'value1',
     key2: 'value2',

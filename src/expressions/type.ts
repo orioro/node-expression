@@ -1,12 +1,5 @@
-import { evaluate } from '../expression'
+import { interpreter } from '../expression'
 import { getType } from '@orioro/validate-type'
-
-import {
-  EvaluationContext,
-  Expression
-} from '../types'
-
-import { $$VALUE } from './value'
 
 /**
  * @todo $type Return value for arrays, objects and regexp (move away from typeof)
@@ -32,10 +25,11 @@ import { $$VALUE } from './value'
  *   - weakmap
  *   - weakset
  */
-export const $type = (
-  context:EvaluationContext,
-  valueExp:Expression = $$VALUE
-) => getType(evaluate(context, valueExp))
+export const $type = interpreter((
+  value:any
+):string => getType(value), [
+  'any'
+])
 
 export const TYPE_EXPRESSIONS = {
   $type

@@ -13,19 +13,55 @@ import {
   NumberExpression
 } from '../types'
 
+import { getType } from '@orioro/validate-type'
+
+const stringifyValue = value => {
+  switch (getType(value)) {
+    // Statically locate stringify functions
+    case 'string':
+      return value
+    case 'boolean':
+      return Boolean.prototype.toString.call(value)
+    case 'number':
+      return Number.prototype.toString.call(value)
+    case 'bigint':
+      return BigInt.prototype.toString.call(value)
+    case 'date':
+      return Date.prototype.toString.call(value)
+    case 'array':
+      return Array.prototype.join.call(
+        Array.prototype.map.call(value, stringifyValue),
+        ', '
+      )
+    case 'nan':
+      return 'NaN'
+    case 'null':
+      return 'null'
+    case 'undefined':
+      return 'undefined'
+    case 'regexp':
+    case 'function':
+    case 'object':
+    case 'symbol':
+    case 'map':
+    case 'set':
+    case 'weakmap':
+    case 'weakset':
+    default:
+      return Object.prototype.toString.call(value)
+  }
+}
+
 /**
  * @function $string
- * @param {*} [valueExp=$$VALUE]
+ * @param {*} [value=$$VALUE]
  * @returns {string}
  */
-export const $string = (
-  context:EvaluationContext,
-  valueExp:Expression = $$VALUE
-) => {
-  const value = evaluate(context, valueExp)
-
-  return typeof value === 'string' ? value : value.toString()
-}
+export const $string = interpreter((
+  value:any
+):string => stringifyValue(value), [
+  'any'
+])
 
 /**
  * @function $stringStartsWith
@@ -58,45 +94,43 @@ export const $stringLength = interpreter((
  * @param {number} endExp
  * @param {string} [strExp=$$VALUE]
  */
-export const $stringSubstr = (
-  context:EvaluationContext,
-  startExp:NumberExpression,
-  endExp:NumberExpression,
-  strExp:StringExpression = $$VALUE
+export const $stringSubstr = interpreter((
+  start:number,
+  end:(number | undefined),
+  str:string
 ):string => (
-  evaluateTyped('string', context, strExp)
-    .substring(
-      evaluateTyped('number', context, startExp),
-      evaluateTyped(['number', 'undefined'], context, endExp)
-    )
-)
+  str.substring(start, end)
+), [
+  'number',
+  ['number', 'undefined'],
+  'string'
+])
 
 /**
+ * @todo string Modify interface to allow for concatenating multiple strings at once
  * @function $stringConcat
  * @param {string} concatExp
  * @param {string} [baseExp=$$VALUE]
  * @returns {string}
  */
-export const $stringConcat = (
-  context:EvaluationContext,
-  concatExp:StringExpression,
-  baseExp:StringExpression = $$VALUE
-):string => (
-  evaluateTyped('string', context, baseExp)
-    .concat(evaluateTyped('string', context, concatExp))
-)
+export const $stringConcat = interpreter((
+  concat:string,
+  base:string
+):string => base.concat(concat), [
+  'string',
+  'string'
+])
 
 /**
  * @function $stringTrim
  * @param {string} [strExp=$$VALUE]
  * @returns {string}
  */
-export const $stringTrim = (
-  context:EvaluationContext,
-  strExp:StringExpression = $$VALUE
-):string => (
-  evaluateTyped('string', context, strExp).trim()
-)
+export const $stringTrim = interpreter((
+  str:string
+):string => str.trim(), [
+  'string'
+])
 
 /**
  * @function $stringPadStart
@@ -105,17 +139,15 @@ export const $stringTrim = (
  * @param {string} [strExp=$$VALUE]
  * @returns {string}
  */
-export const $stringPadStart = (
-  context:EvaluationContext,
-  targetLengthExp:NumberExpression,
-  padStringExp:StringExpression = ' ',
-  strExp:StringExpression = $$VALUE
-):string => (
-  evaluateTyped('string', context, strExp).padStart(
-    evaluateTyped('number', context, targetLengthExp),
-    evaluateTyped('string', context, padStringExp)
-  )
-)
+export const $stringPadStart = interpreter((
+  targetLength:number,
+  padString:string,
+  str:string
+):string => str.padStart(targetLength, padString), [
+  'number',
+  'string',
+  'string'
+])
 
 /**
  * @function $stringPadEnd
@@ -124,119 +156,126 @@ export const $stringPadStart = (
  * @param {string} [strExp=$$VALUE]
  * @returns {string}
  */
-export const $stringPadEnd = (
-  context:EvaluationContext,
-  targetLengthExp:NumberExpression,
-  padStringExp:StringExpression = ' ',
-  strExp:StringExpression = $$VALUE
-):string => (
-  evaluateTyped('string', context, strExp).padEnd(
-    evaluateTyped('number', context, targetLengthExp),
-    evaluateTyped('string', context, padStringExp)
-  )
-)
+export const $stringPadEnd = interpreter((
+  targetLength:number,
+  padString:string,
+  str:string
+):string => str.padEnd(targetLength, padString), [
+  'number',
+  'string',
+  'string'
+])
 
 type RegExpTuple = [string, string]
 
-const _regExp = (
-  context:EvaluationContext,
-  regExpExp:Expression | RegExpTuple | RegExp
-) => {
-  const regExp = evaluateTyped(['string', 'array'], context, regExpExp)
-
-  return typeof regExp === 'string'
-    ? new RegExp(regExp)
-    : new RegExp(regExp[0], regExp[1])
+const _prepareRegExp = regExpCandidate => {
+  switch (getType(regExpCandidate)) {
+    case 'string':
+      return new RegExp(regExpCandidate)
+    case 'array':
+      return new RegExp(regExpCandidate[0], regExpCandidate[1])
+    case 'regexp':
+      return regExpCandidate
+    default:
+      throw new TypeError(`Invalid RegExp candidate: ${regExpCandidate}`)   
+  }
 }
 
 /**
+ * @todo string $stringMatch is RegExp dependant, which may open vulnerabilities
+ *              to RegExp DoS attacks. Might want to move away into non-built in.
+ * 
  * @function $stringMatch
  * @param {string} regExpExp
  * @param {string} [valueExp=$$VALUE]
  * @returns {string[]}
  */
-export const $stringMatch = (
-  context:EvaluationContext,
-  regExpExp:Expression | RegExpTuple | RegExp,
-  valueExp:StringExpression = $$VALUE
+export const $stringMatch = interpreter((
+  regExpCandidate:(RegExp | string | [string, string?]),
+  value:string
 ):string[] => {
-  const regExp = _regExp(context, regExpExp)
-  const value = evaluateTyped('string', context, valueExp)
-
-  const match = value.match(regExp)
+  const match = value.match(_prepareRegExp(regExpCandidate))
 
   return match === null ? [] : [...match]
-}
+}, [
+  ['string', 'regexp', 'array'],
+  'string'
+])
 
 /**
+ * @todo string $stringTest is RegExp dependant, which may open vulnerabilities
+ *              to RegExp DoS attacks. Might want to move away into non-built in.
+ * 
  * @function $stringTest
  * @param {string} regExpExp
  * @param {string} [valueExp=$$VALUE]
  * @returns {boolean}
  */
-export const $stringTest = (
-  context:EvaluationContext,
-  regExpExp:Expression | RegExpTuple | RegExp,
-  valueExp:StringExpression = $$VALUE
-):boolean => {
-  const regExp = _regExp(context, regExpExp)
-  const value = evaluateTyped('string', context, valueExp)
-
-  return regExp.test(value)
-}
+export const $stringTest = interpreter((
+  regExpCandidate:(RegExp | string | [string, string?]),
+  value:string
+):string[] => _prepareRegExp(regExpCandidate).test(value), [
+  ['string', 'regexp', 'array'],
+  'string'
+])
 
 /**
+ * @todo string $stringReplace is RegExp dependant, which may open vulnerabilities
+ *              to RegExp DoS attacks. Might want to move away into non-built in.
+ * 
  * @function $stringReplace
  * @param {string | [string, string?]} searchExp
  * @param {string | StringExpression} replacementExp
  * @returns {string}
  */
-export const $stringReplace = (
-  context:EvaluationContext,
-  searchExp:Expression | RegExpTuple | RegExp | string,
-  replacementExp:StringExpression,
-  valueExp:StringExpression = $$VALUE
-):string => {
-  let search = evaluateTyped(['string', 'array'], context, searchExp)
-  search = Array.isArray(search)
-    ? new RegExp(search[0], search[1])
-    : search
-
-  const value = evaluateTyped('string', context, valueExp)
-
-  return value.replace(search, match => evaluateTyped('string', {
+export const $stringReplace = interpreter((
+  search:(RegExp | string | [string, string?]),
+  replacementExp:Expression,
+  value:string,
+  context:EvaluationContext
+):string => (
+  value.replace(_prepareRegExp(search), match => evaluateTyped('string', {
     ...context,
     scope: {
       $$VALUE: match,
       $$PARENT_SCOPE: context.scope,
     }
   }, replacementExp))
-}
+), [
+  ['string', 'regexp', 'array'],
+  null,
+  'string'
+])
 
 /**
  * @function $stringToUpperCase
  * @param {string} valueExp
  * @returns {string}
  */
-export const $stringToUpperCase = (
-  context:EvaluationContext,
-  valueExp:StringExpression = $$VALUE
-):string => evaluateTyped('string', context, valueExp).toUpperCase()
+export const $stringToUpperCase = interpreter((
+  str:string
+):string => str.toUpperCase(), [
+  'string'
+])
 
 /**
  * @function $stringToLowerCase
  * @param {string} valueExp
  * @returns {string}
  */
-export const $stringToLowerCase = (
-  context:EvaluationContext,
-  valueExp:StringExpression = $$VALUE
-):string => evaluateTyped('string', context, valueExp).toLowerCase()
+export const $stringToLowerCase = interpreter((
+  str:string
+):string => str.toLowerCase(), [
+  'string'
+])
 
 const INTERPOLATION_RE = /\$\{\s*(.+?)\s*\}/g
 const INTERPOLATABLE_TYPES = ['string', 'number']
 
 /**
+ * @todo string $stringInterpolate verify if INTERPOLATION_RE is vulnerable to
+ *              RegExp DoS attacks.
+ * 
  * @function $stringInterpolate
  * @param {object | array} data Data context to be used for interpolation
  * @param {string} template Basic JS template string like `${value.path}` value
@@ -257,8 +296,8 @@ export const $stringInterpolate = interpreter((
       : ''
   })
 ), [
-  evaluateTyped.bind(null, ['object', 'array']),
-  evaluateTyped.bind(null, 'string'),
+  ['object', 'array'],
+  'string',
 ])
 
 export const STRING_EXPRESSIONS = {

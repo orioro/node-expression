@@ -3,7 +3,8 @@ import { get, set, isPlainObject } from 'lodash'
 import {
   evaluate,
   evaluateTyped,
-  isExpression
+  isExpression,
+  interpreter
 } from '../expression'
 
 import { objectDeepApplyDefaults } from '../util/deepApplyDefaults'
@@ -14,7 +15,8 @@ import {
   EvaluationContext,
   PlainObjectExpression,
   ArrayExpression,
-  StringExpression
+  StringExpression,
+  PlainObject
 } from '../types'
 
 import { $$VALUE } from './value'
@@ -25,22 +27,19 @@ import {
 
 /**
  * @function $objectMatches
- * @param {Object} criteriaByPathExp
- * @param {Object} [valueExp=$$VALUE]
+ * @param {Object} criteriaByPath
+ * @param {Object} [value=$$VALUE]
  * @returns {boolean} matches
  */
-export const $objectMatches = (
-  context:EvaluationContext,
-  criteriaByPathExp:PlainObjectExpression,
-  valueExp:PlainObjectExpression = $$VALUE
+export const $objectMatches = interpreter((
+  criteriaByPath:{ [key:string]: any },
+  value:{ [key:string]: any },
+  context:EvaluationContext
 ):boolean => {
-  const value = evaluateTyped('object', context, valueExp)
-  const criteriaByPath = evaluateTyped('object', context, criteriaByPathExp)
-
   const paths = Object.keys(criteriaByPath)
 
   if (paths.length === 0) {
-    throw new Error(`Invalid criteriaByPathExp: ${JSON.stringify(criteriaByPathExp)}`)
+    throw new Error(`Invalid criteriaByPath: ${JSON.stringify(criteriaByPath)}`)
   }
 
   return paths.every(path => {
@@ -58,7 +57,10 @@ export const $objectMatches = (
       scope: { $$VALUE: get(value, path) }
     }, pathCriteria)
   })
-}
+}, [
+  'object',
+  'object'
+])
 
 const _formatEvaluate = (context, targetValue, source) => {
   targetValue = typeof targetValue === 'string'
@@ -89,8 +91,6 @@ const _formatArray = (
   source
 ))
 
-type PlainObject = { [key:string]: any }
-
 const _formatObject = (
   context:EvaluationContext,
   format:PlainObject,
@@ -111,56 +111,50 @@ const _formatObject = (
 
 /**
  * @function $objectFormat
- * @param {Object | Array} formatExp
- * @param {*} [sourceExp=$$VALUE]
+ * @param {Object | Array} format
+ * @param {*} [source=$$VALUE]
  * @returns {Object | Array} object
  */
-export const $objectFormat = (
-  context:EvaluationContext,
-  formatExp:(PlainObjectExpression | ArrayExpression),
-  sourceExp:Expression = $$VALUE
+export const $objectFormat = interpreter((
+  format:(PlainObject | any[]),
+  source:any,
+  context:EvaluationContext
 ):(PlainObject | any[]) => {
-  const format = evaluateTyped(['array', 'object'], context, formatExp)
-  const source = evaluate(context, sourceExp)
-
   return Array.isArray(format)
     ? _formatArray(context, format, source)
     : _formatObject(context, format, source)
-}
+}, [
+  ['object', 'array'],
+  'any'
+])
 
 /**
  * @function $objectDefaults
  * @param {Object} defaultValuesExp
- * @param {Object} [baseExp=$$VALUE]
+ * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectDefaults = (
-  context:EvaluationContext,
-  defaultValuesExp:PlainObjectExpression,
-  baseExp:PlainObjectExpression = $$VALUE
-):{ [key: string]: any } => {
-  const defaultValues = evaluateTyped('object', context, defaultValuesExp)
-  const base = evaluateTyped('object', context, baseExp)
-
-  return objectDeepApplyDefaults(base, defaultValues)
-}
+export const $objectDefaults = interpreter((
+  defaultValues:PlainObject,
+  base:PlainObject
+):PlainObject => objectDeepApplyDefaults(base, defaultValues), [
+  'object',
+  'object'
+])
 
 /**
  * @function $objectAssign
- * @param {Object} valuesExp
- * @param {Object} [baseExp=$$VALUE]
+ * @param {Object} values
+ * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectAssign = (
-  context:EvaluationContext,
-  valuesExp:PlainObjectExpression,
-  baseExp:PlainObjectExpression = $$VALUE
-):{ [key: string]: any } => {
-  const values = evaluateTyped('object', context, valuesExp)
-  const base = evaluateTyped('object', context, baseExp)
-
-  return objectDeepAssign(base, values)
-}
+export const $objectAssign = interpreter((
+  values:PlainObject,
+  base:PlainObject
+):PlainObject => objectDeepAssign(base, values), [
+  'object',
+  'object'
+])
 
 export const OBJECT_EXPRESSIONS = {
   $objectMatches,

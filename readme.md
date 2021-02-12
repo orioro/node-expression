@@ -91,75 +91,76 @@ TODO
 
 ## Array
 
-- [`$arrayIncludes(searchValueExp, arrayExp)`](#arrayincludessearchvalueexp-arrayexp)
-- [`$arrayIncludesAll(searchValuesExp, arrayExp)`](#arrayincludesallsearchvaluesexp-arrayexp)
-- [`$arrayIncludesAny(searchValueExp, arrayExp)`](#arrayincludesanysearchvalueexp-arrayexp)
-- [`$arrayLength(arrayExp)`](#arraylengtharrayexp)
-- [`$arrayReduce(reduceExp, startExp, arrayExp)`](#arrayreducereduceexp-startexp-arrayexp)
-- [`$arrayMap(mapExp, arrayExp)`](#arraymapmapexp-arrayexp)
-- [`$arrayEvery(everyExp, arrayExp)`](#arrayeveryeveryexp-arrayexp)
-- [`$arraySome(someExp, arrayExp)`](#arraysomesomeexp-arrayexp)
-- [`$arrayFilter(queryExp, arrayExp)`](#arrayfilterqueryexp-arrayexp)
-- [`$arrayFindIndex(queryExp, arrayExp)`](#arrayfindindexqueryexp-arrayexp)
-- [`$arrayIndexOf(value, arrayExp)`](#arrayindexofvalue-arrayexp)
-- [`$arrayFind(queryExp, arrayExp)`](#arrayfindqueryexp-arrayexp)
-- [`$arrayReverse(arrayExp)`](#arrayreversearrayexp)
-- [`$arraySort(sortExp, arrayExp)`](#arraysortsortexp-arrayexp)
-- [`$arrayPush(arrayExp)`](#arraypusharrayexp)
-- [`$arrayUnshift(valueExp, arrayExp)`](#arrayunshiftvalueexp-arrayexp)
-- [`$arrayShift(arrayExp)`](#arrayshiftarrayexp)
-- [`$arraySlice(startExp, endExp, arrayExp)`](#arrayslicestartexp-endexp-arrayexp)
-- [`$arraySubstitute(startExp, endExp, valuesExp, arrayExp)`](#arraysubstitutestartexp-endexp-valuesexp-arrayexp)
-- [`$arrayAddAt(indexExp, valuesExp, arrayExp)`](#arrayaddatindexexp-valuesexp-arrayexp)
-- [`$arrayRemoveAt(indexExp, countExp, arrayExp)`](#arrayremoveatindexexp-countexp-arrayexp)
-- [`$arrayJoin(separatorExp, arrayExp)`](#arrayjoinseparatorexp-arrayexp)
-- [`$arrayAt(indexExp, arrayExp)`](#arrayatindexexp-arrayexp)
+- [`$arrayIncludes(searchValue, array)`](#arrayincludessearchvalue-array)
+- [`$arrayIncludesAll(searchValues, array)`](#arrayincludesallsearchvalues-array)
+- [`$arrayIncludesAny(searchValue, array)`](#arrayincludesanysearchvalue-array)
+- [`$arrayLength(array)`](#arraylengtharray)
+- [`$arrayReduce(reduceExp, start, array)`](#arrayreducereduceexp-start-array)
+- [`$arrayMap(mapExp, array)`](#arraymapmapexp-array)
+- [`$arrayEvery(everyExp, array)`](#arrayeveryeveryexp-array)
+- [`$arraySome(someExp, array)`](#arraysomesomeexp-array)
+- [`$arrayFilter(queryExp, array)`](#arrayfilterqueryexp-array)
+- [`$arrayFindIndex(queryExp, array)`](#arrayfindindexqueryexp-array)
+- [`$arrayIndexOf(value, array)`](#arrayindexofvalue-array)
+- [`$arrayFind(queryExp, array)`](#arrayfindqueryexp-array)
+- [`$arrayReverse(array)`](#arrayreversearray)
+- [`$arraySort(sortExp, array)`](#arraysortsortexp-array)
+- [`$arrayPush(valueExp, array)`](#arraypushvalueexp-array)
+- [`$arrayPop(array)`](#arraypoparray)
+- [`$arrayUnshift(valueExp, array)`](#arrayunshiftvalueexp-array)
+- [`$arrayShift(array)`](#arrayshiftarray)
+- [`$arraySlice(start, end, array)`](#arrayslicestart-end-array)
+- [`$arraySubstitute(start, end, values, array)`](#arraysubstitutestart-end-values-array)
+- [`$arrayAddAt(index, values, array)`](#arrayaddatindex-values-array)
+- [`$arrayRemoveAt(index, countExp, array)`](#arrayremoveatindex-countexp-array)
+- [`$arrayJoin(separator, array)`](#arrayjoinseparator-array)
+- [`$arrayAt(index, array)`](#arrayatindex-array)
 
 
-##### `$arrayIncludes(searchValueExp, arrayExp)`
+##### `$arrayIncludes(searchValue, array)`
 
 Equivalent of `Array.prototype.includes`.
 
-- `searchValueExp` {*}
-- `arrayExp` {Array}
+- `searchValue` {*}
+- `array` {Array}
 - Returns: `includes` {boolean} 
 
-##### `$arrayIncludesAll(searchValuesExp, arrayExp)`
+##### `$arrayIncludesAll(searchValues, array)`
 
 Similar to `$arrayIncludes`, but receives an array
 of values to be searched for and returns whether the
 context array contains all of the searched values.
 
-- `searchValuesExp` {Array}
-- `arrayExp` {Array}
+- `searchValues` {Array}
+- `array` {Array}
 - Returns: `includesAll` {boolean} 
 
-##### `$arrayIncludesAny(searchValueExp, arrayExp)`
+##### `$arrayIncludesAny(searchValue, array)`
 
 Similar to `$arrayIncludes`, but returns true if
 any of the searched values is in the array.
 
-- `searchValueExp` {Array}
-- `arrayExp` {Array}
+- `searchValue` {Array}
+- `array` {Array}
 - Returns: `includesAny` {boolean} 
 
-##### `$arrayLength(arrayExp)`
+##### `$arrayLength(array)`
 
-- `arrayExp` {Array}
+- `array` {Array}
 - Returns: `length` {number} 
 
-##### `$arrayReduce(reduceExp, startExp, arrayExp)`
+##### `$arrayReduce(reduceExp, start, array)`
 
 - `reduceExp` {[Expression](#expression)}
-- `startExp` {*}
-- `arrayExp` {Array}
+- `start` {*}
+- `array` {Array}
 
-##### `$arrayMap(mapExp, arrayExp)`
+##### `$arrayMap(mapExp, array)`
 
 - `mapExp` {[Expression](#expression)}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arrayEvery(everyExp, arrayExp)`
+##### `$arrayEvery(everyExp, array)`
 
 `Array.prototype.every`
 
@@ -169,109 +170,114 @@ $arrayEvery exposes array iteration variables:
 `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
 
 - `everyExp` {[Expression](#expression)}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arraySome(someExp, arrayExp)`
+##### `$arraySome(someExp, array)`
 
 `Array.prototype.some`
 
 - `someExp` {[Expression](#expression)}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arrayFilter(queryExp, arrayExp)`
-
-- `queryExp` {Boolean[Expression](#expression)}
-- `arrayExp` {Array}
-
-##### `$arrayFindIndex(queryExp, arrayExp)`
+##### `$arrayFilter(queryExp, array)`
 
 - `queryExp` {Boolean[Expression](#expression)}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arrayIndexOf(value, arrayExp)`
+##### `$arrayFindIndex(queryExp, array)`
+
+- `queryExp` {Boolean[Expression](#expression)}
+- `array` {Array}
+
+##### `$arrayIndexOf(value, array)`
 
 - `value` {*}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arrayFind(queryExp, arrayExp)`
+##### `$arrayFind(queryExp, array)`
 
 - `queryExp` {Boolean[Expression](#expression)}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arrayReverse(arrayExp)`
+##### `$arrayReverse(array)`
 
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arraySort(sortExp, arrayExp)`
+##### `$arraySort(sortExp, array)`
 
 - `sortExp` {number}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arrayPush(arrayExp)`
-
-- `arrayExp` {Array}
-
-##### `$arrayUnshift(valueExp, arrayExp)`
+##### `$arrayPush(valueExp, array)`
 
 - `valueExp` {*}
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arrayShift(arrayExp)`
+##### `$arrayPop(array)`
 
-- `arrayExp` {Array}
+- `array` {Array}
 
-##### `$arraySlice(startExp, endExp, arrayExp)`
+##### `$arrayUnshift(valueExp, array)`
 
-- `startExp` {number}
-- `endExp` {number}
-- `arrayExp` {Array}
+- `valueExp` {*}
+- `array` {Array}
+
+##### `$arrayShift(array)`
+
+- `array` {Array}
+
+##### `$arraySlice(start, end, array)`
+
+- `start` {number}
+- `end` {number}
+- `array` {Array}
 - Returns: {Array} 
 
-##### `$arraySubstitute(startExp, endExp, valuesExp, arrayExp)`
+##### `$arraySubstitute(start, end, values, array)`
 
-- `startExp` {number}
-- `endExp` {number}
-- `valuesExp` {Array}
-- `arrayExp` {Array}
+- `start` {number}
+- `end` {number}
+- `values` {Array}
+- `array` {Array}
 - Returns: {Array} 
 
-##### `$arrayAddAt(indexExp, valuesExp, arrayExp)`
+##### `$arrayAddAt(index, values, array)`
 
 Adds items at the given position.
 
-- `indexExp` {number}
-- `valuesExp` {Array}
-- `arrayExp` {Array}
+- `index` {number}
+- `values` {Array}
+- `array` {Array}
 - Returns: `resultingArray` {Array} The array with items added at position
 
-##### `$arrayRemoveAt(indexExp, countExp, arrayExp)`
+##### `$arrayRemoveAt(index, countExp, array)`
 
-- `indexExp` {number}
+- `index` {number}
 - `countExp` {number}
-- `arrayExp` {Array}
+- `array` {Array}
 - Returns: `resultingArray` {Array} The array without the removed item
 
-##### `$arrayJoin(separatorExp, arrayExp)`
+##### `$arrayJoin(separator, array)`
 
-- `separatorExp` {String[Expression](#expression)}
-- `arrayExp` {Array}
+- `separator` {String}
+- `array` {Array}
 - Returns: {string} 
 
-##### `$arrayAt(indexExp, arrayExp)`
+##### `$arrayAt(index, array)`
 
-- `indexExp` {number}
-- `arrayExp` {Array}
+- `index` {number}
+- `array` {Array}
 - Returns: `value` {*} 
 
 
 ## Boolean
 
-- [`$boolean(valueExp)`](#booleanvalueexp)
+- [`$boolean(value)`](#booleanvalue)
 
 
-##### `$boolean(valueExp)`
+##### `$boolean(value)`
 
-- `valueExp` {*}
+- `value` {*}
 - Returns: {boolean} 
 
 
@@ -374,7 +380,7 @@ Most (if not all) operations are based on and built with [`Luxon`](https://githu
 - [`$dateStartOf(unitExp, date)`](#datestartofunitexp-date)
 - [`$dateEndOf(unitExp, date)`](#dateendofunitexp-date)
 - [`$dateSet(valuesExp, dateExp)`](#datesetvaluesexp-dateexp)
-- [`$$dateSetConfig(configExp, date)`](#datesetconfigconfigexp-date)
+- [`$dateSetConfig(configExp, date)`](#datesetconfigconfigexp-date)
 - [`$dateGt(referenceDateExp, date)`](#dategtreferencedateexp-date)
 - [`$dateGte(referenceDateExp, date)`](#dategtereferencedateexp-date)
 - [`$dateLt(referenceDateExp, date)`](#dateltreferencedateexp-date)
@@ -459,7 +465,7 @@ From Luxon docs:
 > - etc
 See https://github.com/moment/luxon/blob/master/docs/validity.md
 
-- `` {[[ISODate](#isodate)](#isodate)}
+- `` {*}
 - Returns: `isValid` {boolean} 
 
 ##### `$dateStartOf(unitExp, date)`
@@ -499,7 +505,7 @@ and [`DateTime.fromObject`](https://moment.github.io/luxon/docs/class/src/dateti
 - `dateExp` {[[ISODate](#isodate)](#isodate)}
 - Returns: `date` {[[ISODate](#isodate)](#isodate)} 
 
-##### `$$dateSetConfig(configExp, date)`
+##### `$dateSetConfig(configExp, date)`
 
 Modifies a configurations of the date.
 
@@ -572,12 +578,12 @@ Modifies the date by moving it backward the duration specified.
 
 ## Functional
 
-- [`$pipe(expressionsExp)`](#pipeexpressionsexp)
+- [`$pipe(expressions)`](#pipeexpressions)
 
 
-##### `$pipe(expressionsExp)`
+##### `$pipe(expressions)`
 
-- `expressionsExp` {Array[Expression](#expression)}
+- `expressions` {[Expression](#expression)[]}
 - Returns: `pipeResult` {*} 
 
 
@@ -747,40 +753,40 @@ Modifies the date by moving it backward the duration specified.
 
 ## Object
 
-- [`$objectMatches(criteriaByPathExp, valueExp)`](#objectmatchescriteriabypathexp-valueexp)
-- [`$objectFormat(formatExp, sourceExp)`](#objectformatformatexp-sourceexp)
-- [`$objectDefaults(defaultValuesExp, baseExp)`](#objectdefaultsdefaultvaluesexp-baseexp)
-- [`$objectAssign(valuesExp, baseExp)`](#objectassignvaluesexp-baseexp)
+- [`$objectMatches(criteriaByPath, value)`](#objectmatchescriteriabypath-value)
+- [`$objectFormat(format, source)`](#objectformatformat-source)
+- [`$objectDefaults(defaultValuesExp, base)`](#objectdefaultsdefaultvaluesexp-base)
+- [`$objectAssign(values, base)`](#objectassignvalues-base)
 
 
-##### `$objectMatches(criteriaByPathExp, valueExp)`
+##### `$objectMatches(criteriaByPath, value)`
 
-- `criteriaByPathExp` {Object}
-- `valueExp` {Object}
+- `criteriaByPath` {Object}
+- `value` {Object}
 - Returns: `matches` {boolean} 
 
-##### `$objectFormat(formatExp, sourceExp)`
+##### `$objectFormat(format, source)`
 
-- `formatExp` {Object | Array}
-- `sourceExp` {*}
+- `format` {Object | Array}
+- `source` {*}
 - Returns: `object` {Object | Array} 
 
-##### `$objectDefaults(defaultValuesExp, baseExp)`
+##### `$objectDefaults(defaultValuesExp, base)`
 
 - `defaultValuesExp` {Object}
-- `baseExp` {Object}
+- `base` {Object}
 - Returns: {Object} 
 
-##### `$objectAssign(valuesExp, baseExp)`
+##### `$objectAssign(values, base)`
 
-- `valuesExp` {Object}
-- `baseExp` {Object}
+- `values` {Object}
+- `base` {Object}
 - Returns: {Object} 
 
 
 ## String
 
-- [`$string(valueExp)`](#stringvalueexp)
+- [`$string(value)`](#stringvalue)
 - [`$stringStartsWith(query, strExp)`](#stringstartswithquery-strexp)
 - [`$stringLength(strExp)`](#stringlengthstrexp)
 - [`$stringSubstr(startExp, endExp, strExp)`](#stringsubstrstartexp-endexp-strexp)
@@ -796,9 +802,9 @@ Modifies the date by moving it backward the duration specified.
 - [`$stringInterpolate(data, template)`](#stringinterpolatedata-template)
 
 
-##### `$string(valueExp)`
+##### `$string(value)`
 
-- `valueExp` {*}
+- `value` {*}
 - Returns: {string} 
 
 ##### `$stringStartsWith(query, strExp)`
@@ -885,7 +891,24 @@ Modifies the date by moving it backward the duration specified.
 ##### `$type(valueExp)`
 
 - `valueExp` {*}
-- Returns: `type` {string} 
+- Returns: `type` {string} Possible values:
+  - string
+  - regexp
+  - number
+  - bigint
+  - nan
+  - null
+  - undefined
+  - boolean
+  - function
+  - object
+  - array
+  - date
+  - symbol
+  - map
+  - set
+  - weakmap
+  - weakset
 
 
 ## Value

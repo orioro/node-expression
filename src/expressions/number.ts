@@ -1,6 +1,7 @@
 import {
   evaluate,
-  evaluateTyped
+  evaluateTyped,
+  interpreter
 } from '../expression'
 
 import {
@@ -17,41 +18,40 @@ import { $$VALUE } from './value'
  * @param {*} value
  * @returns {number}
  */
-export const $numberInt = (
-  context:EvaluationContext,
-  radixExp:NumberExpression = 10,
-  valueExp:Expression = $$VALUE
-) => {
-  const value = evaluate(context, valueExp)
-
+export const $numberInt = interpreter((
+  radix:number = 10,
+  value:any
+):number => {
   if (typeof value === 'number') {
     return value
   } else if (typeof value === 'string') {
-    return parseInt(value, evaluateTyped('number', context, radixExp))
+    return parseInt(value, radix)
   } else {
-    throw new TypeError(`Invalid valueExp ${JSON.stringify(valueExp)}`)
+    throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
   }
-}
+}, [
+  ['number', 'undefined'],
+  'any'
+])
 
 /**
  * @function $numberFloat
  * @param {*} value
  * @returns {number}
  */
-export const $numberFloat = (
-  context:EvaluationContext,
-  valueExp:Expression = $$VALUE
-) => {
-  const value = evaluate(context, valueExp)
-
+export const $numberFloat = interpreter((
+  value:any
+):number => {
   if (typeof value === 'number') {
     return value
   } else if (typeof value === 'string') {
     return parseFloat(value)
   } else {
-    throw new TypeError(`Invalid valueExp ${JSON.stringify(valueExp)}`)
+    throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
   }
-}
+}, [
+  'any'
+])
 
 export const NUMBER_EXPRESSIONS = {
   $numberInt,

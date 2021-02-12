@@ -5,15 +5,13 @@ import {
 
 import {
   evaluate,
-  evaluateTyped
+  evaluateTyped,
+  interpreter
 } from '../expression'
 
 import {
   Expression,
-  EvaluationContext,
-  NumberExpression,
-  ArrayExpression,
-  PlainObjectExpression
+  EvaluationContext
 } from '../types'
 
 import {
@@ -30,14 +28,13 @@ const _negation = fn => (...args):boolean => !fn(...args)
  * @param {*} valueExp Value being compared.
  * @returns {boolean}
  */
-export const $eq = (
-  context:EvaluationContext,
-  referenceExp:Expression,
-  valueExp:Expression = $$VALUE
-) => isEqual(
-  evaluate(context, referenceExp),
-  evaluate(context, valueExp)
-)
+export const $eq = interpreter((
+  valueB:any,
+  valueA:any
+):boolean => isEqual(valueA, valueB), [
+  'any',
+  'any'
+])
 
 /**
  * @function $notEq
@@ -55,14 +52,13 @@ export const $notEq = _negation($eq)
  * @param {*} valueExp
  * @returns {boolean}
  */
-export const $in = (
-  context:EvaluationContext,
-  arrayExp:ArrayExpression,
-  valueExp:Expression = $$VALUE
-) => {
-  const value = evaluate(context, valueExp)
-  return evaluateTyped('array', context, arrayExp).some(item => isEqual(item, value))
-}
+export const $in = interpreter((
+  array:any[],
+  value:any
+):boolean => array.some(item => isEqual(item, value)), [
+  'array',
+  'any'
+])
 
 /**
  * Checks whether the value is **not** in the given array.
@@ -82,11 +78,13 @@ export const $notIn = _negation($in)
  * @param {number} valueExp
  * @returns {boolean}
  */
-export const $gt = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateTyped('number', context, valueExp) > evaluateTyped('number', context, referenceExp)
+export const $gt = interpreter((
+  reference:number,
+  value:number
+):boolean => value > reference, [
+  'number',
+  'number'
+])
 
 /**
  * Greater than or equal `value >= threshold`
@@ -96,11 +94,13 @@ export const $gt = (
  * @param {number} valueExp
  * @returns {boolean}
  */
-export const $gte = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateTyped('number', context, valueExp) >= evaluateTyped('number', context, referenceExp)
+export const $gte = interpreter((
+  reference:number,
+  value:number
+):boolean => value >= reference, [
+  'number',
+  'number'
+])
 
 /**
  * Lesser than `value < threshold`
@@ -110,11 +110,13 @@ export const $gte = (
  * @param {number} valueExp
  * @returns {boolean}
  */
-export const $lt = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateTyped('number', context, valueExp) < evaluateTyped('number', context, referenceExp)
+export const $lt = interpreter((
+  reference:number,
+  value:number
+):boolean => value < reference, [
+  'number',
+  'number'
+])
 
 /**
  * Lesser than or equal `value <= threshold`
@@ -124,11 +126,13 @@ export const $lt = (
  * @param {number} valueExp
  * @returns {boolean}
  */
-export const $lte = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateTyped('number', context, valueExp) <= evaluateTyped('number', context, referenceExp)
+export const $lte = interpreter((
+  reference:number,
+  value:number
+):boolean => value <= reference, [
+  'number',
+  'number'
+])
 
 /**
  * Checks if the value matches the set of criteria.
@@ -138,14 +142,11 @@ export const $lte = (
  * @param {number} valueExp
  * @returns {boolean}
  */
-export const $matches = (
-  context:EvaluationContext,
-  criteriaExp:PlainObjectExpression,
-  valueExp:Expression = $$VALUE
-) => {
-  const criteria = evaluateTyped('object', context, criteriaExp)
-  const value = evaluate(context, valueExp)
-
+export const $matches = interpreter((
+  criteria:{ [key:string]: any },
+  value:any,
+  context:EvaluationContext
+):boolean => {
   const criteriaKeys = Object.keys(criteria)
 
   if (criteriaKeys.length === 0) {
@@ -172,7 +173,10 @@ export const $matches = (
       [criteriaKey, criteriaValue, $$VALUE]
     )
   })
-}
+}, [
+  'object',
+  'any'
+])
 
 export const COMPARISON_EXPRESSIONS = {
   $eq,

@@ -1273,10 +1273,10 @@
     vinyl-fs "^3.0.3"
     yargs "^16.2.0"
 
-"@orioro/validate-type@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@orioro/validate-type/-/validate-type-1.0.0.tgz#0f6d076ce45fdc78a6a1eb36994c18452e79c392"
-  integrity sha512-4obHYG1iMfFi/HG0Unn9adpkKtsHGnIG9AfZrjpeL6gqKJc8yFHpDEljzbqlt76FEOhDzMiaHOJScrggkGXkCA==
+"@orioro/validate-type@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@orioro/validate-type/-/validate-type-1.1.0.tgz#119664d989b983c34f0f2f24d8df7cc686827fbc"
+  integrity sha512-9nPbDMnTbbGBz/UaWUQs4FNOa4a673Rnv2DxXkqNbu2IpsKTSTZqBVEkmWyqr9/MpprmRQG9X7fOec1YoTqweg==
 
 "@rollup/plugin-babel@^5.2.0":
   version "5.2.1"

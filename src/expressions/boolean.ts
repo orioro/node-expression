@@ -1,5 +1,6 @@
 import {
-  evaluate
+  evaluate,
+  interpreter
 } from '../expression'
 
 import {
@@ -11,13 +12,14 @@ import { $$VALUE } from './value'
 
 /**
  * @function $boolean
- * @param {*} valueExp
+ * @param {*} value
  * @returns {boolean}
  */
-export const $boolean = (
-  context:EvaluationContext,
-  valueExp:Expression = $$VALUE
-) => Boolean(evaluate(context, valueExp))
+export const $boolean = interpreter((
+  value:any
+):boolean => Boolean(value), [
+  'any'
+])
 
 export const BOOLEAN_EXPRESSIONS = {
   $boolean

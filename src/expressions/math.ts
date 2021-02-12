@@ -1,21 +1,13 @@
-import { evaluateTyped } from '../expression'
+import { evaluateTyped, interpreter } from '../expression'
 
 import {
   Expression,
+  ExpressionInterpreter,
   EvaluationContext,
   NumberExpression
 } from '../types'
 
 import { $$VALUE } from './value'
-
-const mathOperation = (op:(base:number, operator:number) => number) => (
-  context:EvaluationContext,
-  operatorExp:NumberExpression,
-  baseExp:NumberExpression = $$VALUE
-):number => op(
-  evaluateTyped('number', context, baseExp),
-  evaluateTyped('number', context, operatorExp)
-)
 
 /**
  * @function $mathSum
@@ -23,7 +15,13 @@ const mathOperation = (op:(base:number, operator:number) => number) => (
  * @param {number} [base=$$VALUE]
  * @returns {number} result
  */
-export const $mathSum = mathOperation((base, sum) => base + sum)
+export const $mathSum = interpreter((
+  sum:number,
+  base:number
+):number => base + sum, [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathSub
@@ -31,7 +29,13 @@ export const $mathSum = mathOperation((base, sum) => base + sum)
  * @param {number} [base=$$VALUE]
  * @returns {number} result
  */
-export const $mathSub = mathOperation((base, sub) => base - sub)
+export const $mathSub = interpreter((
+  sub:number,
+  base:number
+):number => base - sub, [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathMult
@@ -39,7 +43,13 @@ export const $mathSub = mathOperation((base, sub) => base - sub)
  * @param {number} [base=$$VALUE]
  * @returns {number} result
  */
-export const $mathMult = mathOperation((base, mult) => base * mult)
+export const $mathMult = interpreter((
+  mult:number,
+  base:number
+):number => base * mult, [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathDiv
@@ -47,7 +57,13 @@ export const $mathMult = mathOperation((base, mult) => base * mult)
  * @param {number} dividend
  * @returns {number} result
  */
-export const $mathDiv = mathOperation((dividend, divisor) => dividend / divisor)
+export const $mathDiv = interpreter((
+  divisor:number,
+  dividend:number
+):number => dividend / divisor, [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathMod
@@ -55,7 +71,13 @@ export const $mathDiv = mathOperation((dividend, divisor) => dividend / divisor)
  * @param {number} dividend
  * @returns {number} result
  */
-export const $mathMod = mathOperation((dividend, divisor) => dividend % divisor)
+export const $mathMod = interpreter((
+  divisor:number,
+  dividend:number
+):number => dividend % divisor, [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathPow
@@ -63,32 +85,40 @@ export const $mathMod = mathOperation((dividend, divisor) => dividend % divisor)
  * @param {number} [base=$$VALUE]
  * @returns {number} result
  */
-export const $mathPow = mathOperation((base, exponent) => Math.pow(base, exponent))
+export const $mathPow = interpreter((
+  exponent:number,
+  base:number
+):number => Math.pow(base, exponent), [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathAbs
  * @param {number} [value=$$VALUE]
  * @returns {number} result
  */
-export const $mathAbs = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.abs(evaluateTyped('number', context, valueExp))
+export const $mathAbs = interpreter((
+  value:number
+):number => Math.abs(value), [
+  'number'
+])
 
 /**
+ * @todo math Modify interface: take in array of numberExpressions to allow for multi comparison
+ * 
  * @function $mathMax
  * @param {number} otherValue
  * @param {number} [value=$$VALUE]
  * @returns {number} result
  */
-export const $mathMax = (
-  context:EvaluationContext,
-  otherValueExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => Math.max(
-  evaluateTyped('number', context, otherValueExp),
-  evaluateTyped('number', context, valueExp)
-)
+export const $mathMax = interpreter((
+  otherValue:number,
+  value:number
+):number => Math.max(otherValue, value), [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathMin
@@ -96,44 +126,45 @@ export const $mathMax = (
  * @param {number} [value=$$VALUE]
  * @returns {number} result
  */
-export const $mathMin = (
-  context:EvaluationContext,
-  otherValueExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => Math.min(
-  evaluateTyped('number', context, otherValueExp),
-  evaluateTyped('number', context, valueExp)
-)
+export const $mathMin = interpreter((
+  otherValue:number,
+  value:number
+):number => Math.min(otherValue, value), [
+  'number',
+  'number'
+])
 
 /**
  * @function $mathRound
  * @param {number} [value=$$VALUE]
  * @returns {number} result
  */
-export const $mathRound = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.round(evaluateTyped('number', context, valueExp))
+export const $mathRound = interpreter((
+  value:number
+):number => Math.round(value), [
+  'number'
+])
 
 /**
  * @function $mathFloor
  * @param {number} [value=$$VALUE]
  * @returns {number} result
  */
-export const $mathFloor = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.floor(evaluateTyped('number', context, valueExp))
-
+export const $mathFloor = interpreter((
+  value:number
+):number => Math.floor(value), [
+  'number'
+])
 /**
  * @function $mathCeil
  * @param {number} [value=$$VALUE]
  * @returns {number} result
  */
-export const $mathCeil = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.ceil(evaluateTyped('number', context, valueExp))
+export const $mathCeil = interpreter((
+  value:number
+):number => Math.ceil(value), [
+  'number'
+])
 
 export const MATH_EXPRESSIONS = {
   $mathSum,

@@ -62,6 +62,8 @@ export type EvaluationContext = {
  */
 export type ISODate = string
 
+export type PlainObject = { [key:string]: any }
+
 export type AnyExpression = Expression | any
 export type NumberExpression = Expression | number
 export type ArrayExpression = Expression | any[]

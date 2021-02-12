@@ -12,7 +12,8 @@ import {
 
 import {
   evaluate,
-  evaluateTyped
+  evaluateTyped,
+  interpreter
 } from '../expression'
 
 import { $$VALUE } from './value'
@@ -32,6 +33,7 @@ export const DATE_JS_DATE = 'JSDate'
 export const DATE_PLAIN_OBJECT = 'PlainObject'
 export const DATE_LUXON_DATE_TIME = 'LuxonDateTime'
 
+/* istanbul ignore next */
 const parseLuxonDate = (value, format = 'ISO', options?) => {
   if (value instanceof DateTime || format === DATE_LUXON_DATE_TIME) {
     return value
@@ -64,6 +66,7 @@ const parseLuxonDate = (value, format = 'ISO', options?) => {
   }
 }
 
+/* istanbul ignore next */
 const serializeLuxonDate = (value, format = 'ISO', options?) => {
   switch (format) {
     case DATE_LUXON_DATE_TIME:
@@ -128,6 +131,7 @@ const _luxonFmtArgs = args => (
  * 
  * @typedef {string|[string, Object]} DateFormat
  */
+type DateFormat = string | [string, { [key:string]: any }]
 type DateFormatExpression = StringExpression | [StringExpression, PlainObjectExpression]
 
 /**
@@ -166,24 +170,23 @@ type DateFormatExpression = StringExpression | [StringExpression, PlainObjectExp
  *         with the `parseFmtArgs`.
  * @returns {string | number | Object | Date} date Output will vary according to `serializeFmtArgs`
  */
-export const $date = (
-  context:EvaluationContext,
-  parseFmtArgsExp:DateFormatExpression = 'ISO',
-  serializeFmtArgsExp:DateFormatExpression = 'ISO',
-  dateExp:AnyExpression = $$VALUE
-):any => {
-  const parseFmtArgs = _luxonFmtArgs(evaluate(context, parseFmtArgsExp))
-  const serializeFmtArgs = _luxonFmtArgs(evaluate(context, serializeFmtArgsExp))
-  const value = evaluate(context, dateExp)
-
-  return serializeLuxonDate(
+export const $date = interpreter((
+  parseFmtArgs:DateFormat = 'ISO',
+  serializeFmtArgs:DateFormat = 'ISO',
+  value:any
+):any => (
+  serializeLuxonDate(
     parseLuxonDate(
       value,
-      ...parseFmtArgs
+      ..._luxonFmtArgs(parseFmtArgs)
     ),
-    ...serializeFmtArgs
+    ..._luxonFmtArgs(serializeFmtArgs)
   )
-}
+), [
+  ['string', 'array', 'undefined'],
+  ['string', 'array', 'undefined'],
+  'any'
+])
 
 /**
  * Generates a ISO date string from `Date.now`
@@ -192,15 +195,16 @@ export const $date = (
  * @param {DateFormat} [serializeFmtArgs='ISO']
  * @returns {string | number | Object | Date} date
  */
-export const $dateNow = (
-  context:EvaluationContext,
-  serializeFmtArgsExp:DateFormatExpression = 'ISO',
-):any => (
+export const $dateNow = interpreter((
+  serializeFmtArgs:DateFormat = 'ISO'
+):(string | number | Object | Date) => (
   serializeLuxonDate(
     DateTime.fromMillis(Date.now()),
-    ..._luxonFmtArgs(serializeFmtArgsExp)
+    ..._luxonFmtArgs(serializeFmtArgs)
   )
-)
+), [
+  ['string', 'array', 'undefined']
+])
 
 /**
  * Verifies whether the given date is valid.
@@ -213,13 +217,17 @@ export const $dateNow = (
  * See https://github.com/moment/luxon/blob/master/docs/validity.md
  * 
  * @function $dateIsValid
- * @param {ISODate}
+ * @param {*}
  * @returns {boolean} isValid
  */
-export const $dateIsValid = (
-  context:EvaluationContext,
-  dateExp:ISODateExpression = $$VALUE
-):boolean => DateTime.fromISO(evaluateTyped('string', context, dateExp)).isValid
+export const $dateIsValid = interpreter((
+  value:any
+):boolean => (
+  typeof value === 'string' &&
+  DateTime.fromISO(value).isValid
+), [
+  'any'
+])
 
 /**
  * Returns the date at the start of the given `unit` (e.g. `day`, `month`).
@@ -231,15 +239,18 @@ export const $dateIsValid = (
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
-export const $dateStartOf = (
-  context:EvaluationContext,
-  unitExp:StringExpression,
-  dateExp:ISODateExpression = $$VALUE
+export const $dateStartOf = interpreter((
+  unit:string,
+  date:ISODate
 ):ISODate => (
-  DateTime.fromISO(evaluateTyped('string', context, dateExp))
-    .startOf(evaluateTyped('string', context, unitExp))
+  DateTime
+    .fromISO(date)
+    .startOf(unit)
     .toISO()
-)
+), [
+  'string',
+  'string'
+])
 
 /**
  * Returns the date at the end of the given `unit` (e.g. `day`, `month`).
@@ -251,20 +262,25 @@ export const $dateStartOf = (
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
-export const $dateEndOf = (
-  context:EvaluationContext,
-  unitExp:StringExpression,
-  dateExp:ISODateExpression = $$VALUE
+export const $dateEndOf = interpreter((
+  unit:string,
+  date:ISODate
 ):ISODate => (
-  DateTime.fromISO(evaluateTyped('string', context, dateExp))
-    .endOf(evaluateTyped('string', context, unitExp))
+  DateTime
+    .fromISO(date)
+    .endOf(unit)
     .toISO()
-)
+), [
+  'string',
+  'string'
+])
 
 /**
  * Modifies date specific `units` and returns resulting date.
  * See [`DateTime#set`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set)
  * and [`DateTime.fromObject`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject)
+ *
+ * @todo date Watch issue: https://github.com/moment/luxon/issues/870
  * 
  * @function $dateSet
  * @param {Object} valuesExp
@@ -282,20 +298,23 @@ export const $dateEndOf = (
  * @param {ISODate} [dateExp=$$VALUE]
  * @returns {ISODate} date
  */
-export const $dateSet = (
-  context:EvaluationContext,
-  valuesExp:PlainObjectExpression,
-  dateExp:ISODateExpression = $$VALUE
+export const $dateSet = interpreter((
+  values:{ [key:string]: any },
+  date:ISODate
 ):ISODate => (
-  DateTime.fromISO(evaluateTyped('string', context, dateExp))
-    .set(evaluateTyped('object', context, valuesExp))
+  DateTime
+    .fromISO(date)
+    .set(values)
     .toISO()
-)
+), [
+  'object',
+  'string'
+])
 
 const _luxonConfigDate = (dt, config, value) => {
   switch (config) {
-    case 'locale':
-      return dt.setLocale(value)
+    // case 'locale':
+    //   return dt.setLocale(value)
     case 'zone':
       return dt.setZone(value)
     default:
@@ -306,36 +325,39 @@ const _luxonConfigDate = (dt, config, value) => {
 /**
  * Modifies a configurations of the date.
  * 
- * @function $$dateSetConfig
+ * @function $dateSetConfig
  * @param {Object} configExp
  * @param {string} config.locale
  * @param {string} config.zone
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
-export const $$dateSetConfig = (
-  context:EvaluationContext,
-  configExp:PlainObjectExpression,
-  dateExp:ISODateExpression = $$VALUE
+export const $dateSetConfig = interpreter((
+  config:{ [key:string]: any },
+  date:ISODate
 ):ISODate => {
-  const date = DateTime.fromISO(evaluateTyped('string', context, dateExp))
-  const config = evaluateTyped('object', context, configExp)
+  const dt = DateTime.fromISO(date)
 
   return Object.keys(config).reduce(
     (dt, key) => _luxonConfigDate(dt, key, config[key]),
-    date
+    dt
   )
   .toISO()
-}
+}, [
+  'object',
+  'string'
+])
 
-const _dateComparison = compare => (
-  context:EvaluationContext,
-  referenceDateExp:ISODateExpression,
-  dateExp:ISODateExpression = $$VALUE
+const _dateComparison = compare => interpreter((
+  reference:ISODate,
+  date:ISODate
 ):boolean => compare(
-  DateTime.fromISO(evaluateTyped('string', context, referenceDateExp)),
-  DateTime.fromISO(evaluateTyped('string', context, dateExp))
-)
+  DateTime.fromISO(reference),
+  DateTime.fromISO(date)
+), [
+  'string',
+  'string'
+])
 
 /**
  * Greater than `date > reference`
@@ -391,18 +413,21 @@ export const $dateLte = _dateComparison((reference, date) => date <= reference)
  * @param {ISODate} [date=$$VALUE]
  * @returns {boolean}
  */
-export const $dateEq = (
-  context:EvaluationContext,
-  referenceDateExp:ISODateExpression,
-  compareUnitExp:StringExpression = 'millisecond',
-  dateExp:ISODateExpression = $$VALUE
+export const $dateEq = interpreter((
+  reference:ISODate,
+  compareUnit:string = 'millisecond',
+  date:ISODate
 ):boolean => (
-  DateTime.fromISO(evaluateTyped('string', context, referenceDateExp))
+  DateTime.fromISO(reference)
     .hasSame(
-      DateTime.fromISO(evaluateTyped('string', context, dateExp)),
-      evaluateTyped('string', context, compareUnitExp)
+      DateTime.fromISO(date),
+      compareUnit
     )
-)
+), [
+  'string',
+  ['string', 'undefined'],
+  'string'
+])
 
 /**
  * Modifies the date by moving it forward the duration specified.
@@ -412,16 +437,18 @@ export const $dateEq = (
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
-export const $dateMoveForward = (
-  context:EvaluationContext,
-  durationExp:PlainObjectExpression,
-  dateExp:ISODateExpression = $$VALUE
-):ISODate => {
-  const date = DateTime.fromISO(evaluateTyped('string', context, dateExp))
-  const moveForward = evaluateTyped('object', context, durationExp)
-
-  return date.plus(moveForward).toISO()
-}
+export const $dateMoveForward = interpreter((
+  duration:{ [key:string]: any },
+  date:ISODate
+):ISODate => (
+  DateTime
+    .fromISO(date)
+    .plus(duration)
+    .toISO()
+), [
+  'object',
+  'string'
+])
 
 /**
  * Modifies the date by moving it backward the duration specified.
@@ -431,16 +458,18 @@ export const $dateMoveForward = (
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
-export const $dateMoveBackward = (
-  context:EvaluationContext,
-  durationExp:PlainObjectExpression,
-  dateExp:ISODateExpression = $$VALUE
-):ISODate => {
-  const date = DateTime.fromISO(evaluateTyped('string', context, dateExp))
-  const moveBack = evaluateTyped('object', context, durationExp)
-
-  return date.minus(moveBack).toISO()
-}
+export const $dateMoveBackward = interpreter((
+  duration:{ [key:string]: any },
+  date:ISODate
+):ISODate => (
+  DateTime
+    .fromISO(date)
+    .minus(duration)
+    .toISO()
+), [
+  'object',
+  'string'
+])
 
 export const DATE_EXPRESSIONS = {
   $date,
@@ -449,7 +478,7 @@ export const DATE_EXPRESSIONS = {
   $dateStartOf,
   $dateEndOf,
   $dateSet,
-  $$dateSetConfig,
+  $dateSetConfig,
   $dateGt,
   $dateGte,
   $dateLt,
