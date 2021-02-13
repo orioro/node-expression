@@ -1,6 +1,6 @@
 import { evaluateTyped, interpreter } from '../expression'
 import { get } from 'lodash'
-import { EvaluationContext, Expression } from '../types'
+import { EvaluationContext, Expression, PlainObject } from '../types'
 
 import { getType } from '@orioro/validate-type'
 
@@ -44,7 +44,7 @@ const stringifyValue = (value) => {
 /**
  * @function $string
  * @param {*} [value=$$VALUE]
- * @returns {string}
+ * @returns {String}
  */
 export const $string = interpreter(
   (value: any): string => stringifyValue(value),
@@ -53,9 +53,9 @@ export const $string = interpreter(
 
 /**
  * @function $stringStartsWith
- * @param {string} query
- * @param {string} [strExp=$$VALUE]
- * @returns {boolean}
+ * @param {String} query
+ * @param {String} [strExp=$$VALUE]
+ * @returns {Boolean}
  */
 export const $stringStartsWith = interpreter(
   (query: string, str: string): boolean => str.startsWith(query),
@@ -64,8 +64,8 @@ export const $stringStartsWith = interpreter(
 
 /**
  * @function $stringLength
- * @param {string} [strExp=$$VALUE]
- * @returns {number}
+ * @param {String} [strExp=$$VALUE]
+ * @returns {Number}
  */
 export const $stringLength = interpreter((str: string): number => str.length, [
   evaluateTyped.bind(null, 'string'),
@@ -73,9 +73,9 @@ export const $stringLength = interpreter((str: string): number => str.length, [
 
 /**
  * @function $stringSubstr
- * @param {number} startExp
- * @param {number} endExp
- * @param {string} [strExp=$$VALUE]
+ * @param {Number} startExp
+ * @param {Number} endExp
+ * @param {String} [strExp=$$VALUE]
  */
 export const $stringSubstr = interpreter(
   (start: number, end: number | undefined, str: string): string =>
@@ -86,9 +86,9 @@ export const $stringSubstr = interpreter(
 /**
  * @todo string Modify interface to allow for concatenating multiple strings at once
  * @function $stringConcat
- * @param {string} concatExp
- * @param {string} [baseExp=$$VALUE]
- * @returns {string}
+ * @param {String} concatExp
+ * @param {String} [baseExp=$$VALUE]
+ * @returns {String}
  */
 export const $stringConcat = interpreter(
   (concat: string, base: string): string => base.concat(concat),
@@ -97,8 +97,8 @@ export const $stringConcat = interpreter(
 
 /**
  * @function $stringTrim
- * @param {string} [strExp=$$VALUE]
- * @returns {string}
+ * @param {String} [strExp=$$VALUE]
+ * @returns {String}
  */
 export const $stringTrim = interpreter((str: string): string => str.trim(), [
   'string',
@@ -106,10 +106,10 @@ export const $stringTrim = interpreter((str: string): string => str.trim(), [
 
 /**
  * @function $stringPadStart
- * @param {number} targetLengthExp
- * @param {string} padStringExp
- * @param {string} [strExp=$$VALUE]
- * @returns {string}
+ * @param {Number} targetLengthExp
+ * @param {String} padStringExp
+ * @param {String} [strExp=$$VALUE]
+ * @returns {String}
  */
 export const $stringPadStart = interpreter(
   (targetLength: number, padString: string, str: string): string =>
@@ -119,10 +119,10 @@ export const $stringPadStart = interpreter(
 
 /**
  * @function $stringPadEnd
- * @param {number} targetLengthExp
- * @param {string} padStringExp
- * @param {string} [strExp=$$VALUE]
- * @returns {string}
+ * @param {Number} targetLengthExp
+ * @param {String} padStringExp
+ * @param {String} [strExp=$$VALUE]
+ * @returns {String}
  */
 export const $stringPadEnd = interpreter(
   (targetLength: number, padString: string, str: string): string =>
@@ -151,9 +151,9 @@ const _prepareRegExp = (regExpCandidate: RegExpCandidate): RegExp => {
  *              to RegExp DoS attacks. Might want to move away into non-built in.
  *
  * @function $stringMatch
- * @param {string} regExpExp
- * @param {string} [valueExp=$$VALUE]
- * @returns {string[]}
+ * @param {String | [String, String?]} regExp
+ * @param {String} [valueExp=$$VALUE]
+ * @returns {String[]}
  */
 export const $stringMatch = interpreter(
   (regExpCandidate: RegExpCandidate, value: string): string[] => {
@@ -169,9 +169,9 @@ export const $stringMatch = interpreter(
  *              to RegExp DoS attacks. Might want to move away into non-built in.
  *
  * @function $stringTest
- * @param {string} regExpExp
- * @param {string} [valueExp=$$VALUE]
- * @returns {boolean}
+ * @param {String | [String, String?]} regExp
+ * @param {String} [valueExp=$$VALUE]
+ * @returns {Boolean}
  */
 export const $stringTest = interpreter(
   (regExpCandidate: RegExpCandidate, value: string): boolean =>
@@ -184,9 +184,9 @@ export const $stringTest = interpreter(
  *              to RegExp DoS attacks. Might want to move away into non-built in.
  *
  * @function $stringReplace
- * @param {string | [string, string?]} searchExp
- * @param {string | StringExpression} replacementExp
- * @returns {string}
+ * @param {String | [String, String?]} searchExp
+ * @param {String} replacementExp
+ * @returns {String}
  */
 export const $stringReplace = interpreter(
   (
@@ -213,8 +213,8 @@ export const $stringReplace = interpreter(
 
 /**
  * @function $stringToUpperCase
- * @param {string} valueExp
- * @returns {string}
+ * @param {String} valueExp
+ * @returns {String}
  */
 export const $stringToUpperCase = interpreter(
   (str: string): string => str.toUpperCase(),
@@ -223,8 +223,8 @@ export const $stringToUpperCase = interpreter(
 
 /**
  * @function $stringToLowerCase
- * @param {string} valueExp
- * @returns {string}
+ * @param {String} valueExp
+ * @returns {String}
  */
 export const $stringToLowerCase = interpreter(
   (str: string): string => str.toLowerCase(),
@@ -239,15 +239,15 @@ const INTERPOLATABLE_TYPES = ['string', 'number']
  *              RegExp DoS attacks.
  *
  * @function $stringInterpolate
- * @param {object | array} data Data context to be used for interpolation
- * @param {string} template Basic JS template string like `${value.path}` value
+ * @param {Object | Array} data Data context to be used for interpolation
+ * @param {String} template Basic JS template string like `${value.path}` value
  *                          interpolation. It is possible to access nested properties
  *                          through dot `.` notation. Keywords between braces are
  *                          only interpreted as paths to the value. No logic
  *                          supported: loops, conditionals, etc.
  */
 export const $stringInterpolate = interpreter(
-  (data: { [key: string]: any } | any[], template: string): string =>
+  (data: PlainObject | any[], template: string): string =>
     template.replace(INTERPOLATION_RE, (match, path) => {
       const value = get(data, path)
 

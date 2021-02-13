@@ -40,7 +40,7 @@ export const evaluate = (
 
 /**
  * @function evaluateTyped
- * @param {string | string[]} expectedTypes
+ * @param {String | string[]} expectedTypes
  * @param {EvaluationContext} context
  * @param {Expression | any} expOrValue
  * @returns {*}
@@ -149,7 +149,7 @@ const paramResolverNoop = (context: EvaluationContext, arg: any): any => arg
  *                                                convert the arguments given to the
  *                                                expression into the parameters
  *                                                of the interpreter function
- * @param {boolean} [defaultLastArgToScopeValue=true] Whether the last argument of the
+ * @param {Boolean} [defaultLastArgToScopeValue=true] Whether the last argument of the
  *                                                    expression should default to the
  *                                                    context's scope's value
  *                                                    ['$value', '$$VALUE']

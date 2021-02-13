@@ -6,7 +6,7 @@ import { getType } from '@orioro/validate-type'
  *
  * @function $type
  * @param {*} valueExp
- * @returns {string} type Possible values:
+ * @returns {String} type Possible values:
  *   - string
  *   - regexp
  *   - number

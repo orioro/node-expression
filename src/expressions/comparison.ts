@@ -2,7 +2,7 @@ import { isEqual } from 'lodash'
 
 import { evaluate, evaluateTyped, interpreter } from '../expression'
 
-import { EvaluationContext } from '../types'
+import { EvaluationContext, PlainObject } from '../types'
 
 import { $$VALUE } from './value'
 
@@ -14,7 +14,7 @@ const _negation = (fn) => (...args): boolean => !fn(...args)
  * @function $eq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $eq = interpreter(
   (valueB: any, valueA: any): boolean => isEqual(valueA, valueB),
@@ -25,7 +25,7 @@ export const $eq = interpreter(
  * @function $notEq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $notEq = _negation($eq)
 
@@ -35,7 +35,7 @@ export const $notEq = _negation($eq)
  * @function $in
  * @param {Array} arrayExp
  * @param {*} valueExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $in = interpreter(
   (array: any[], value: any): boolean =>
@@ -49,7 +49,7 @@ export const $in = interpreter(
  * @function $notIn
  * @param {Array} arrayExp
  * @param {*} valueExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $notIn = _negation($in)
 
@@ -57,9 +57,9 @@ export const $notIn = _negation($in)
  * Greater than `value > threshold`
  *
  * @function $gt
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
 export const $gt = interpreter(
   (reference: number, value: number): boolean => value > reference,
@@ -70,9 +70,9 @@ export const $gt = interpreter(
  * Greater than or equal `value >= threshold`
  *
  * @function $gte
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
 export const $gte = interpreter(
   (reference: number, value: number): boolean => value >= reference,
@@ -83,9 +83,9 @@ export const $gte = interpreter(
  * Lesser than `value < threshold`
  *
  * @function $lt
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
 export const $lt = interpreter(
   (reference: number, value: number): boolean => value < reference,
@@ -96,9 +96,9 @@ export const $lt = interpreter(
  * Lesser than or equal `value <= threshold`
  *
  * @function $lte
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
 export const $lte = interpreter(
   (reference: number, value: number): boolean => value <= reference,
@@ -110,15 +110,11 @@ export const $lte = interpreter(
  *
  * @function $matches
  * @param {Object} criteriaExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
 export const $matches = interpreter(
-  (
-    criteria: { [key: string]: any },
-    value: any,
-    context: EvaluationContext
-  ): boolean => {
+  (criteria: PlainObject, value: any, context: EvaluationContext): boolean => {
     const criteriaKeys = Object.keys(criteria)
 
     if (criteriaKeys.length === 0) {

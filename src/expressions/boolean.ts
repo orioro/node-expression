@@ -3,7 +3,7 @@ import { interpreter } from '../expression'
 /**
  * @function $boolean
  * @param {*} value
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $boolean = interpreter((value: any): boolean => Boolean(value), [
   'any',

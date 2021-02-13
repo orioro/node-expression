@@ -13,12 +13,12 @@ import { $matches } from './comparison'
  * @function $objectMatches
  * @param {Object} criteriaByPath
  * @param {Object} [value=$$VALUE]
- * @returns {boolean} matches
+ * @returns {Boolean} matches
  */
 export const $objectMatches = interpreter(
   (
-    criteriaByPath: { [key: string]: any },
-    value: { [key: string]: any },
+    criteriaByPath: PlainObject,
+    value: PlainObject,
     context: EvaluationContext
   ): boolean => {
     const paths = Object.keys(criteriaByPath)

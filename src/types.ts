@@ -2,7 +2,7 @@
  * An expression is an array tuple with the first item
  * as a string identifier.
  *
- * @typedef {[string, ...args]} Expression
+ * @typedef {[String, ...rest]} Expression
  */
 export type Expression = [string, ...any[]]
 
@@ -10,7 +10,7 @@ export type Expression = [string, ...any[]]
  * Function that receives as first parameter the EvaluationContext
  * and should return the result for evaluating a given expression.
  *
- * @typedef {function} ExpressionInterpreter
+ * @typedef {Function} ExpressionInterpreter
  */
 export type ExpressionInterpreter = (
   context: EvaluationContext,
@@ -24,7 +24,7 @@ export type ExpressionInterpreter = (
  * @property {*} scope.$$VALUE
  * @property {*[]} scope.$$ARRAY Available only for array iteration expressions
  *                               such as $arrayMap, $arrayFilter, etc.
- * @property {number} scope.$$INDEX
+ * @property {Number} scope.$$INDEX
  * @property {*} scope.$$ACC Available for $arrayReduce
  * @property {*} scope.$$SORT_A Available for $arraySort
  * @property {*} scope.$$SORT_B
@@ -65,12 +65,7 @@ export type EvaluationContext = {
  */
 export type ISODate = string
 
+/**
+ * @typedef {Object} PlainObject
+ */
 export type PlainObject = { [key: string]: any }
-
-export type AnyExpression = Expression | any
-export type NumberExpression = Expression | number
-export type ArrayExpression = Expression | any[]
-export type StringExpression = Expression | string
-export type PlainObjectExpression = Expression | { [key: string]: any }
-export type BooleanExpression = Expression | boolean
-export type ISODateExpression = Expression | ISODate

@@ -1,5 +1,5 @@
 import { evaluate, interpreter } from '../expression'
-import { Expression, EvaluationContext } from '../types'
+import { Expression, EvaluationContext, PlainObject } from '../types'
 
 /**
  * @todo logical Better handle unknown expressions for boolean logical operators
@@ -8,7 +8,7 @@ import { Expression, EvaluationContext } from '../types'
  *
  * @function $and
  * @param {Array} expressionsExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $and = interpreter(
   (expressions: Expression[], context: EvaluationContext): boolean =>
@@ -19,7 +19,7 @@ export const $and = interpreter(
 /**
  * @function $or
  * @param {Array} expressionsExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $or = interpreter(
   (expressions: Expression[], context: EvaluationContext): boolean =>
@@ -30,14 +30,14 @@ export const $or = interpreter(
 /**
  * @function $not
  * @param {Array} expressionsExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $not = interpreter((value: any): boolean => !value, ['any'])
 
 /**
  * @function $nor
  * @param {Array} expressionsExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $nor = interpreter(
   (expressions: Expression[], context: EvaluationContext): boolean =>
@@ -47,9 +47,9 @@ export const $nor = interpreter(
 
 /**
  * @function $xor
- * @param {BooleanExpression} expressionA
- * @param {BooleanExpression} expressionB
- * @returns {boolean}
+ * @param {Boolean} expressionA
+ * @param {Boolean} expressionB
+ * @returns {Boolean}
  */
 export const $xor = interpreter(
   (valueA: any, valueB: any): boolean => Boolean(valueA) !== Boolean(valueB),
@@ -58,7 +58,7 @@ export const $xor = interpreter(
 
 /**
  * @function $if
- * @param {BooleanExpression} conditionExp
+ * @param {Boolean} conditionExp
  * @param {Expression} thenExp
  * @param {Expression} elseExp
  * @returns {*} result
@@ -103,7 +103,7 @@ export const $switch = interpreter(
 /**
  * @function $switchKey
  * @param {Cases[]} cases
- * @param {string} cases[].0 Case key
+ * @param {String} cases[].0 Case key
  * @param {*} cases[].1 Case value
  * @param {*} defaultExp
  * @param {String} ValueExp
@@ -111,7 +111,7 @@ export const $switch = interpreter(
  */
 export const $switchKey = interpreter(
   (
-    cases: { [key: string]: any },
+    cases: PlainObject,
     defaultExp: Expression | undefined = undefined,
     value: any,
     context: EvaluationContext

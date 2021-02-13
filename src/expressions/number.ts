@@ -2,9 +2,9 @@ import { interpreter } from '../expression'
 
 /**
  * @function $numberInt
- * @param {number} radix
+ * @param {Number} radix
  * @param {*} value
- * @returns {number}
+ * @returns {Number}
  */
 export const $numberInt = interpreter(
   (radix: number = 10, value: any): number => {
@@ -22,7 +22,7 @@ export const $numberInt = interpreter(
 /**
  * @function $numberFloat
  * @param {*} value
- * @returns {number}
+ * @returns {Number}
  */
 export const $numberFloat = interpreter(
   (value: any): number => {

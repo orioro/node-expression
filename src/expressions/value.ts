@@ -10,7 +10,7 @@ export const $$VALUE: Expression = ['$value', '$$VALUE']
 
 /**
  * @function $value
- * @param {string} pathExp
+ * @param {String} pathExp
  * @param {*} defaultExp
  * @returns {*} value
  */

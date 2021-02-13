@@ -111,15 +111,15 @@ const _luxonFmtArgs = (args) => (Array.isArray(args) ? args : [args, undefined])
  * - `PlainObject`
  * - `LuxonDateTime`
  *
- * @typedef {string|[string, Object]} DateFormat
+ * @typedef {String|[string, Object]} DateFormat
  */
-type DateFormat = string | [string, { [key: string]: any }]
+type DateFormat = string | [string, PlainObject]
 
 /**
  * String in the full ISO 8601 format:
  * `2017-04-20T11:32:00.000-04:00`
  *
- * @typedef {string} ISODate
+ * @typedef {String} ISODate
  */
 
 /**
@@ -127,15 +127,15 @@ type DateFormat = string | [string, { [key: string]: any }]
  *
  * @typedef {Object} Duration
  * @property {Object} duration
- * @property {number} duration.years
- * @property {number} duration.quarters
- * @property {number} duration.months
- * @property {number} duration.weeks
- * @property {number} duration.days
- * @property {number} duration.hours
- * @property {number} duration.minutes
- * @property {number} duration.seconds
- * @property {number} duration.milliseconds
+ * @property {Number} duration.years
+ * @property {Number} duration.quarters
+ * @property {Number} duration.months
+ * @property {Number} duration.weeks
+ * @property {Number} duration.days
+ * @property {Number} duration.hours
+ * @property {Number} duration.minutes
+ * @property {Number} duration.seconds
+ * @property {Number} duration.milliseconds
  */
 
 /**
@@ -147,9 +147,9 @@ type DateFormat = string | [string, { [key: string]: any }]
  * @param {DateFormat} [parseFmtArgs='ISO']
  * @param {DateFormat} [serializeFmtArgs='ISO'] Same as `parseFmtArgs`
  *         but will be used to format the resulting output
- * @param {string | number | Object | Date} [date=$$VALUE] Input type should be in accordance
+ * @param {String | Number | Object | Date} [date=$$VALUE] Input type should be in accordance
  *         with the `parseFmtArgs`.
- * @returns {string | number | Object | Date} date Output will vary according to `serializeFmtArgs`
+ * @returns {String | Number | Object | Date} date Output will vary according to `serializeFmtArgs`
  */
 export const $date = interpreter(
   (
@@ -169,7 +169,7 @@ export const $date = interpreter(
  *
  * @function $dateNow
  * @param {DateFormat} [serializeFmtArgs='ISO']
- * @returns {string | number | Object | Date} date
+ * @returns {String | Number | Object | Date} date
  */
 export const $dateNow = interpreter(
   (
@@ -194,7 +194,7 @@ export const $dateNow = interpreter(
  *
  * @function $dateIsValid
  * @param {*}
- * @returns {boolean} isValid
+ * @returns {Boolean} isValid
  */
 export const $dateIsValid = interpreter(
   (value: any): boolean =>
@@ -206,7 +206,7 @@ export const $dateIsValid = interpreter(
  * Returns the date at the start of the given `unit` (e.g. `day`, `month`).
  *
  * @function $dateStartOf
- * @param {string} unitExp Unit to be used as basis for calculation:
+ * @param {String} unitExp Unit to be used as basis for calculation:
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
  * @param {ISODate} [date=$$VALUE]
@@ -222,7 +222,7 @@ export const $dateStartOf = interpreter(
  * Returns the date at the end of the given `unit` (e.g. `day`, `month`).
  *
  * @function $dateEndOf
- * @param {string} unitExp Unit to be used as basis for calculation:
+ * @param {String} unitExp Unit to be used as basis for calculation:
  *                         `year`, `quarter`, `month`, `week`, `day`,
  *                         `hour`, `minute`, `second`, or `millisecond`.
  * @param {ISODate} [date=$$VALUE]
@@ -243,22 +243,22 @@ export const $dateEndOf = interpreter(
  *
  * @function $dateSet
  * @param {Object} valuesExp
- * @param {number} valuesExp.year
- * @param {number} valuesExp.month
- * @param {number} valuesExp.day
- * @param {number} valuesExp.ordinal
- * @param {number} valuesExp.weekYear
- * @param {number} valuesExp.weekNumber
- * @param {number} valuesExp.weekday
- * @param {number} valuesExp.hour
- * @param {number} valuesExp.minute
- * @param {number} valuesExp.second
- * @param {number} valuesExp.millisecond
+ * @param {Number} valuesExp.year
+ * @param {Number} valuesExp.month
+ * @param {Number} valuesExp.day
+ * @param {Number} valuesExp.ordinal
+ * @param {Number} valuesExp.weekYear
+ * @param {Number} valuesExp.weekNumber
+ * @param {Number} valuesExp.weekday
+ * @param {Number} valuesExp.hour
+ * @param {Number} valuesExp.minute
+ * @param {Number} valuesExp.second
+ * @param {Number} valuesExp.millisecond
  * @param {ISODate} [dateExp=$$VALUE]
  * @returns {ISODate} date
  */
 export const $dateSet = interpreter(
-  (values: { [key: string]: any }, date: ISODate): ISODate =>
+  (values: PlainObject, date: ISODate): ISODate =>
     DateTime.fromISO(date).set(values).toISO(),
   ['object', 'string']
 )
@@ -279,13 +279,13 @@ const _luxonConfigDate = (dt, config, value) => {
  *
  * @function $dateSetConfig
  * @param {Object} configExp
- * @param {string} config.locale
- * @param {string} config.zone
+ * @param {String} config.locale
+ * @param {String} config.zone
  * @param {ISODate} [date=$$VALUE]
  * @returns {ISODate} date
  */
 export const $dateSetConfig = interpreter(
-  (config: { [key: string]: any }, date: ISODate): ISODate => {
+  (config: PlainObject, date: ISODate): ISODate => {
     const dt = DateTime.fromISO(date)
 
     return Object.keys(config)
@@ -308,7 +308,7 @@ const _dateComparison = (compare) =>
  * @function $dateGt
  * @param {ISODate} referenceDateExp
  * @param {ISODate} [date=$$VALUE]
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $dateGt = _dateComparison((reference, date) => date > reference)
 
@@ -318,7 +318,7 @@ export const $dateGt = _dateComparison((reference, date) => date > reference)
  * @function $dateGte
  * @param {ISODate} referenceDateExp
  * @param {ISODate} [date=$$VALUE]
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $dateGte = _dateComparison((reference, date) => date >= reference)
 
@@ -328,7 +328,7 @@ export const $dateGte = _dateComparison((reference, date) => date >= reference)
  * @function $dateLt
  * @param {ISODate} referenceDateExp
  * @param {ISODate} [date=$$VALUE]
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $dateLt = _dateComparison((reference, date) => date < reference)
 
@@ -338,7 +338,7 @@ export const $dateLt = _dateComparison((reference, date) => date < reference)
  * @function $dateLte
  * @param {ISODate} referenceDateExp
  * @param {ISODate} [date=$$VALUE]
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $dateLte = _dateComparison((reference, date) => date <= reference)
 
@@ -352,9 +352,9 @@ export const $dateLte = _dateComparison((reference, date) => date <= reference)
  *
  * @function $dateEq
  * @param {ISODate} referenceDateExp
- * @param {string} compareUnitExp
+ * @param {String} compareUnitExp
  * @param {ISODate} [date=$$VALUE]
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $dateEq = interpreter(
   (
@@ -375,7 +375,7 @@ export const $dateEq = interpreter(
  * @returns {ISODate} date
  */
 export const $dateMoveForward = interpreter(
-  (duration: { [key: string]: any }, date: ISODate): ISODate =>
+  (duration: PlainObject, date: ISODate): ISODate =>
     DateTime.fromISO(date).plus(duration).toISO(),
   ['object', 'string']
 )
@@ -389,7 +389,7 @@ export const $dateMoveForward = interpreter(
  * @returns {ISODate} date
  */
 export const $dateMoveBackward = interpreter(
-  (duration: { [key: string]: any }, date: ISODate): ISODate =>
+  (duration: PlainObject, date: ISODate): ISODate =>
     DateTime.fromISO(date).minus(duration).toISO(),
   ['object', 'string']
 )

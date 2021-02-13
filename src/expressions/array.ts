@@ -13,7 +13,7 @@ export const $$SORT_B = ['$value', '$$SORT_B']
  * @function $arrayIncludes
  * @param {*} searchValue
  * @param {Array} [array=$$VALUE]
- * @returns {boolean} includes
+ * @returns {Boolean} includes
  */
 export const $arrayIncludes = interpreter(
   (search: any, array: any[]): boolean => array.includes(search),
@@ -28,7 +28,7 @@ export const $arrayIncludes = interpreter(
  * @function $arrayIncludesAll
  * @param {Array} searchValues
  * @param {Array} [array=$$VALUE]
- * @returns {boolean} includesAll
+ * @returns {Boolean} includesAll
  */
 export const $arrayIncludesAll = interpreter(
   (search: any[], array: any[]): boolean =>
@@ -43,7 +43,7 @@ export const $arrayIncludesAll = interpreter(
  * @function $arrayIncludesAny
  * @param {Array} searchValue
  * @param {Array} [array=$$VALUE]
- * @returns {boolean} includesAny
+ * @returns {Boolean} includesAny
  */
 export const $arrayIncludesAny = interpreter(
   (search: any[], array: any[]): boolean =>
@@ -54,7 +54,7 @@ export const $arrayIncludesAny = interpreter(
 /**
  * @function $arrayLength
  * @param {Array} [array=$$VALUE]
- * @returns {number} length
+ * @returns {Number} length
  */
 export const $arrayLength = interpreter(
   (array: any[]): number => array.length,
@@ -148,14 +148,14 @@ export const $arraySome = _arrayIterator('some')
 
 /**
  * @function $arrayFilter
- * @param {BooleanExpression} queryExp
+ * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
  */
 export const $arrayFilter = _arrayIterator('filter')
 
 /**
  * @function $arrayFindIndex
- * @param {BooleanExpression} queryExp
+ * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
  */
 export const $arrayFindIndex = _arrayIterator('findIndex')
@@ -172,7 +172,7 @@ export const $arrayIndexOf = interpreter(
 
 /**
  * @function $arrayFind
- * @param {BooleanExpression} queryExp
+ * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
  */
 export const $arrayFind = _arrayIterator('find')
@@ -194,7 +194,7 @@ export const $arrayReverse = interpreter(
  * @todo array Improve ease of use of the sorting comparison expression.
  *
  * @function $arraySort
- * @param {number} sortExp
+ * @param {Number} sortExp
  * @param {Array} [array=$$VALUE]
  */
 export const $arraySort = interpreter(
@@ -261,8 +261,8 @@ export const $arrayShift = interpreter(
 
 /**
  * @function $arraySlice
- * @param {number} start
- * @param {number} end
+ * @param {Number} start
+ * @param {Number} end
  * @param {Array} [array=$$VALUE]
  * @returns {Array}
  */
@@ -273,8 +273,8 @@ export const $arraySlice = interpreter(
 
 /**
  * @function $arraySubstitute
- * @param {number} start
- * @param {number} end
+ * @param {Number} start
+ * @param {Number} end
  * @param {Array} values
  * @param {Array} [array=$$VALUE]
  * @returns {Array}
@@ -294,7 +294,7 @@ export const $arraySubstitute = interpreter(
  * @todo array Merge with $arraySubstitute, overloading index parameter: number or [number, number]
  *
  * @function $arrayAddAt
- * @param {number} index
+ * @param {Number} index
  * @param {Array} values
  * @param {Array} [array=$$VALUE]
  * @returns {Array} resultingArray The array with items added at position
@@ -312,8 +312,8 @@ export const $arrayAddAt = interpreter(
  * @todo array Merge with $arraySubstitue and $arrayAddAt
  *
  * @function $arrayRemoveAt
- * @param {number} index
- * @param {number} [countExp=1]
+ * @param {Number} index
+ * @param {Number} [countExp=1]
  * @param {Array} [array=$$VALUE]
  * @returns {Array} resultingArray The array without the removed item
  */
@@ -329,7 +329,7 @@ export const $arrayRemoveAt = interpreter(
  * @function $arrayJoin
  * @param {String} separator
  * @param {Array} [array=$$VALUE]
- * @returns {string}
+ * @returns {String}
  */
 export const $arrayJoin = interpreter(
   (separator: string = '', array: any[]): string => array.join(separator),
@@ -338,7 +338,7 @@ export const $arrayJoin = interpreter(
 
 /**
  * @function $arrayAt
- * @param {number} index
+ * @param {Number} index
  * @param {Array} [array=$$VALUE]
  * @returns {*} value
  */
