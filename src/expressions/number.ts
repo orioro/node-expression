@@ -1,16 +1,4 @@
-import {
-  evaluate,
-  evaluateTyped,
-  interpreter
-} from '../expression'
-
-import {
-  EvaluationContext,
-  NumberExpression,
-  Expression,
-} from '../types'
-
-import { $$VALUE } from './value'
+import { interpreter } from '../expression'
 
 /**
  * @function $numberInt
@@ -18,42 +6,38 @@ import { $$VALUE } from './value'
  * @param {*} value
  * @returns {number}
  */
-export const $numberInt = interpreter((
-  radix:number = 10,
-  value:any
-):number => {
-  if (typeof value === 'number') {
-    return value
-  } else if (typeof value === 'string') {
-    return parseInt(value, radix)
-  } else {
-    throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
-  }
-}, [
-  ['number', 'undefined'],
-  'any'
-])
+export const $numberInt = interpreter(
+  (radix: number = 10, value: any): number => {
+    if (typeof value === 'number') {
+      return value
+    } else if (typeof value === 'string') {
+      return parseInt(value, radix)
+    } else {
+      throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
+    }
+  },
+  [['number', 'undefined'], 'any']
+)
 
 /**
  * @function $numberFloat
  * @param {*} value
  * @returns {number}
  */
-export const $numberFloat = interpreter((
-  value:any
-):number => {
-  if (typeof value === 'number') {
-    return value
-  } else if (typeof value === 'string') {
-    return parseFloat(value)
-  } else {
-    throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
-  }
-}, [
-  'any'
-])
+export const $numberFloat = interpreter(
+  (value: any): number => {
+    if (typeof value === 'number') {
+      return value
+    } else if (typeof value === 'string') {
+      return parseFloat(value)
+    } else {
+      throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
+    }
+  },
+  ['any']
+)
 
 export const NUMBER_EXPRESSIONS = {
   $numberInt,
-  $numberFloat
+  $numberFloat,
 }

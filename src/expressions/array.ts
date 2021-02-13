@@ -1,21 +1,5 @@
-import {
-  get
-} from 'lodash'
-
-import {
-  interpreter,
-  evaluate,
-  evaluateTyped
-} from '../expression'
-
-import {
-  EvaluationContext,
-  Expression,
-} from '../types'
-
-import {
-  $$VALUE
-} from './value'
+import { interpreter, evaluate, evaluateTyped } from '../expression'
+import { EvaluationContext, Expression } from '../types'
 
 export const $$INDEX = ['$value', '$$INDEX']
 export const $$ARRAY = ['$value', '$$ARRAY']
@@ -25,19 +9,16 @@ export const $$SORT_B = ['$value', '$$SORT_B']
 
 /**
  * Equivalent of `Array.prototype.includes`.
- * 
+ *
  * @function $arrayIncludes
  * @param {*} searchValue
  * @param {Array} [array=$$VALUE]
  * @returns {boolean} includes
  */
-export const $arrayIncludes = interpreter((
-  search:any,
-  array:any[]
-):boolean => array.includes(search), [
-  'any',
-  'array'
-])
+export const $arrayIncludes = interpreter(
+  (search: any, array: any[]): boolean => array.includes(search),
+  ['any', 'array']
+)
 
 /**
  * Similar to `$arrayIncludes`, but receives an array
@@ -49,13 +30,11 @@ export const $arrayIncludes = interpreter((
  * @param {Array} [array=$$VALUE]
  * @returns {boolean} includesAll
  */
-export const $arrayIncludesAll = interpreter((
-  search:any[],
-  array:any[]
-):boolean => search.every(value => array.includes(value)), [
-  'array',
-  'array'
-])
+export const $arrayIncludesAll = interpreter(
+  (search: any[], array: any[]): boolean =>
+    search.every((value) => array.includes(value)),
+  ['array', 'array']
+)
 
 /**
  * Similar to `$arrayIncludes`, but returns true if
@@ -66,24 +45,21 @@ export const $arrayIncludesAll = interpreter((
  * @param {Array} [array=$$VALUE]
  * @returns {boolean} includesAny
  */
-export const $arrayIncludesAny = interpreter((
-  search:any[],
-  array:any[]
-):boolean => search.some(value => array.includes(value)), [
-  'array',
-  'array'
-])
+export const $arrayIncludesAny = interpreter(
+  (search: any[], array: any[]): boolean =>
+    search.some((value) => array.includes(value)),
+  ['array', 'array']
+)
 
 /**
  * @function $arrayLength
  * @param {Array} [array=$$VALUE]
  * @returns {number} length
  */
-export const $arrayLength = interpreter((
-  array:any[]
-):number => array.length, [
-  'array'
-])
+export const $arrayLength = interpreter(
+  (array: any[]): number => array.length,
+  ['array']
+)
 
 /**
  * @function $arrayReduce
@@ -94,52 +70,47 @@ export const $arrayLength = interpreter((
  * @param {*} start
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayReduce = interpreter((
-  reduceExp:Expression,
-  start:any,
-  array:any[],
-  context
-):any => (
-  array.reduce(($$ACC, $$VALUE, $$INDEX, $$ARRAY) => (
-    evaluate({
-      ...context,
-      scope: {
-        $$PARENT_SCOPE: context.scope,
-        $$VALUE,
-        $$INDEX,
-        $$ARRAY,
-        $$ACC
-      }
-    }, reduceExp)
-  ), start)
-), [
-  null,
-  'any',
-  'array'
-])
+export const $arrayReduce = interpreter(
+  (reduceExp: Expression, start: any, array: any[], context): any =>
+    array.reduce(
+      ($$ACC, $$VALUE, $$INDEX, $$ARRAY) =>
+        evaluate(
+          {
+            ...context,
+            scope: {
+              $$PARENT_SCOPE: context.scope,
+              $$VALUE,
+              $$INDEX,
+              $$ARRAY,
+              $$ACC,
+            },
+          },
+          reduceExp
+        ),
+      start
+    ),
+  [null, 'any', 'array']
+)
 
-const _arrayIterator = (
-  method:string
-) => interpreter((
-  iteratorExp:Expression,
-  array:any[],
-  context:EvaluationContext
-):any => (
-  array[method](($$VALUE, $$INDEX, $$ARRAY) => (
-    evaluate({
-      ...context,
-      scope: {
-        $$PARENT_SCOPE: context.scope,
-        $$VALUE,
-        $$INDEX,
-        $$ARRAY
-      }
-    }, iteratorExp)
-  ))
-), [
-  null,
-  'array'
-])
+const _arrayIterator = (method: string) =>
+  interpreter(
+    (iteratorExp: Expression, array: any[], context: EvaluationContext): any =>
+      array[method](($$VALUE, $$INDEX, $$ARRAY) =>
+        evaluate(
+          {
+            ...context,
+            scope: {
+              $$PARENT_SCOPE: context.scope,
+              $$VALUE,
+              $$INDEX,
+              $$ARRAY,
+            },
+          },
+          iteratorExp
+        )
+      ),
+    [null, 'array']
+  )
 
 /**
  * @function $arrayMap
@@ -154,12 +125,12 @@ export const $arrayMap = _arrayIterator('map')
 
 /**
  * `Array.prototype.every`
- * 
+ *
  * Result is similar to logical operator `$and`. Main difference
  * (and reason for existence as isolate expression) is that
  * $arrayEvery exposes array iteration variables:
  * `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
- * 
+ *
  * @function $arrayEvery
  * @param {Expression} everyExp
  * @param {Array} [array=$$VALUE]
@@ -168,7 +139,7 @@ export const $arrayEvery = _arrayIterator('every')
 
 /**
  * `Array.prototype.some`
- * 
+ *
  * @function $arraySome
  * @param {Expression} someExp
  * @param {Array} [array=$$VALUE]
@@ -194,13 +165,10 @@ export const $arrayFindIndex = _arrayIterator('findIndex')
  * @param {*} value
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayIndexOf = interpreter((
-  value:any,
-  array:any[]
-):number => array.indexOf(value), [
-  'any',
-  'array'
-])
+export const $arrayIndexOf = interpreter(
+  (value: any, array: any[]): number => array.indexOf(value),
+  ['any', 'array']
+)
 
 /**
  * @function $arrayFind
@@ -213,90 +181,83 @@ export const $arrayFind = _arrayIterator('find')
  * @function $arrayReverse
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayReverse = interpreter((
-  array:any[]
-):any[] => {
-  const arr = array.slice()
-  arr.reverse()
-  return arr
-}, [
-  'array'
-])
+export const $arrayReverse = interpreter(
+  (array: any[]): any[] => {
+    const arr = array.slice()
+    arr.reverse()
+    return arr
+  },
+  ['array']
+)
 
 /**
  * @todo array Improve ease of use of the sorting comparison expression.
- * 
+ *
  * @function $arraySort
  * @param {number} sortExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arraySort = interpreter((
-  sortExp:Expression,
-  array:any[],
-  context
-):any[] => {
-  const arr = array.slice()
+export const $arraySort = interpreter(
+  (sortExp: Expression, array: any[], context): any[] => {
+    const arr = array.slice()
 
-  if (sortExp === undefined) {
-    arr.sort()
-  } else {
-    arr.sort(($$SORT_A, $$SORT_B) => evaluateTyped('number', {
-      ...context,
-      scope: { $$VALUE: null, $$SORT_A, $$SORT_B }
-    }, sortExp))
-  }
+    if (sortExp === undefined) {
+      arr.sort()
+    } else {
+      arr.sort(($$SORT_A, $$SORT_B) =>
+        evaluateTyped(
+          'number',
+          {
+            ...context,
+            scope: { $$VALUE: null, $$SORT_A, $$SORT_B },
+          },
+          sortExp
+        )
+      )
+    }
 
-  return arr
-}, [
-  null,
-  'array'
-])
+    return arr
+  },
+  [null, 'array']
+)
 
 /**
  * @function $arrayPush
  * @param {*} valueExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayPush = interpreter((
-  value:any,
-  array:any[]
-):any[] => ([...array, value]), [
-  'any',
-  'array'
-])
+export const $arrayPush = interpreter(
+  (value: any, array: any[]): any[] => [...array, value],
+  ['any', 'array']
+)
 
 /**
  * @function $arrayPop
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayPop = interpreter((
-  array:any[]
-) => (array.slice(0, array.length - 1)), [
-  'array'
-])
+export const $arrayPop = interpreter(
+  (array: any[]) => array.slice(0, array.length - 1),
+  ['array']
+)
 
 /**
  * @function $arrayUnshift
  * @param {*} valueExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayUnshift = interpreter((
-  value:any,
-  array:any[]
-):any[] => ([value, ...array]), [
-  'any',
-  'array'
-])
+export const $arrayUnshift = interpreter(
+  (value: any, array: any[]): any[] => [value, ...array],
+  ['any', 'array']
+)
 
 /**
  * @function $arrayShift
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayShift = interpreter((
-  array:any[]
-):any[] => array.slice(1, array.length), [
-  'array'
-])
+export const $arrayShift = interpreter(
+  (array: any[]): any[] => array.slice(1, array.length),
+  ['array']
+)
 
 /**
  * @function $arraySlice
@@ -305,15 +266,10 @@ export const $arrayShift = interpreter((
  * @param {Array} [array=$$VALUE]
  * @returns {Array}
  */
-export const $arraySlice = interpreter((
-  start:number,
-  end:number,
-  array:any[]
-):any[] => array.slice(start, end), [
-  'number',
-  'number',
-  'array'
-])
+export const $arraySlice = interpreter(
+  (start: number, end: number, array: any[]): any[] => array.slice(start, end),
+  ['number', 'number', 'array']
+)
 
 /**
  * @function $arraySubstitute
@@ -323,68 +279,51 @@ export const $arraySlice = interpreter((
  * @param {Array} [array=$$VALUE]
  * @returns {Array}
  */
-export const $arraySubstitute = interpreter((
-  start:number,
-  end:number,
-  insertValues:any[],
-  array:any[]
-):any[] => ([
-  ...array.slice(0, start),
-  ...insertValues,
-  ...array.slice(end)
-]), [
-  'number',
-  'number',
-  'array',
-  'array'
-])
+export const $arraySubstitute = interpreter(
+  (start: number, end: number, insertValues: any[], array: any[]): any[] => [
+    ...array.slice(0, start),
+    ...insertValues,
+    ...array.slice(end),
+  ],
+  ['number', 'number', 'array', 'array']
+)
 
 /**
  * Adds items at the given position.
  *
  * @todo array Merge with $arraySubstitute, overloading index parameter: number or [number, number]
- * 
+ *
  * @function $arrayAddAt
  * @param {number} index
  * @param {Array} values
  * @param {Array} [array=$$VALUE]
  * @returns {Array} resultingArray The array with items added at position
  */
-export const $arrayAddAt = interpreter((
-  index:number,
-  values:any[],
-  array:any[]
-) => ([
-  ...array.slice(0, index),
-  ...values,
-  ...array.slice(index)
-]), [
-  'number',
-  'array',
-  'array'
-])
+export const $arrayAddAt = interpreter(
+  (index: number, values: any[], array: any[]) => [
+    ...array.slice(0, index),
+    ...values,
+    ...array.slice(index),
+  ],
+  ['number', 'array', 'array']
+)
 
 /**
  * @todo array Merge with $arraySubstitue and $arrayAddAt
- * 
+ *
  * @function $arrayRemoveAt
  * @param {number} index
  * @param {number} [countExp=1]
  * @param {Array} [array=$$VALUE]
  * @returns {Array} resultingArray The array without the removed item
  */
-export const $arrayRemoveAt = interpreter((
-  position:number,
-  count:number = 1,
-  array:any[]
-):any[] => ([
-  ...array.slice(0, position),
-  ...array.slice(position + count)
-]), [
-  'number',
-  ['number', 'undefined'],
-  'array'
-])
+export const $arrayRemoveAt = interpreter(
+  (position: number, count: number = 1, array: any[]): any[] => [
+    ...array.slice(0, position),
+    ...array.slice(position + count),
+  ],
+  ['number', ['number', 'undefined'], 'array']
+)
 
 /**
  * @function $arrayJoin
@@ -392,13 +331,10 @@ export const $arrayRemoveAt = interpreter((
  * @param {Array} [array=$$VALUE]
  * @returns {string}
  */
-export const $arrayJoin = interpreter((
-  separator:string = '',
-  array:any[]
-):string => array.join(separator), [
-  ['string', 'undefined'],
-  'array'
-])
+export const $arrayJoin = interpreter(
+  (separator: string = '', array: any[]): string => array.join(separator),
+  [['string', 'undefined'], 'array']
+)
 
 /**
  * @function $arrayAt
@@ -406,13 +342,10 @@ export const $arrayJoin = interpreter((
  * @param {Array} [array=$$VALUE]
  * @returns {*} value
  */
-export const $arrayAt = interpreter((
-  index:number,
-  array:any[]
-):any => array[index], [
-  'number',
-  'array'
-])
+export const $arrayAt = interpreter(
+  (index: number, array: any[]): any => array[index],
+  ['number', 'array']
+)
 
 export const ARRAY_EXPRESSIONS = {
   $arrayIncludes,
@@ -438,5 +371,5 @@ export const ARRAY_EXPRESSIONS = {
   $arrayAddAt,
   $arrayRemoveAt,
   $arrayJoin,
-  $arrayAt
+  $arrayAt,
 }

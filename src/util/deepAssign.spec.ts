@@ -1,6 +1,4 @@
-import {
-  objectDeepAssign
-} from './deepAssign'
+import { objectDeepAssign } from './deepAssign'
 
 test('objectDeepAssign', () => {
   const base = {
@@ -8,15 +6,15 @@ test('objectDeepAssign', () => {
     propB: 'valueB',
     propC: {
       propCA: 'valueCA',
-      propCB: 'valueCB'
-    }
+      propCB: 'valueCB',
+    },
   }
 
   const extension = {
     propB: 'extendedB',
     propC: {
-      propCB: 'extendedCB'
-    }
+      propCB: 'extendedCB',
+    },
   }
 
   expect(objectDeepAssign(base, extension)).toEqual({
@@ -24,7 +22,7 @@ test('objectDeepAssign', () => {
     propB: 'extendedB',
     propC: {
       propCA: 'valueCA',
-      propCB: 'extendedCB'
-    }
+      propCB: 'extendedCB',
+    },
   })
 })

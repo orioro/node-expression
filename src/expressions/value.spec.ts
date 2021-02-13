@@ -10,27 +10,24 @@ const interpreters = {
   ...LOGICAL_EXPRESSIONS,
   ...COMPARISON_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
-  ...VALUE_EXPRESSIONS
+  ...VALUE_EXPRESSIONS,
 }
 
 describe('$value', () => {
-  test('', () => {
-    const arrayA = ['A', 'B', 'C', 'D']
-    const arrayB = ['X', 'Y', 'Z']
-
+  test('basic', () => {
     const data = {
       key1: 'Value 1',
       key2: 'Value 2',
       key3: {
-        key31: 'Value 31'
-      }
+        key31: 'Value 31',
+      },
     }
 
     const context = {
       interpreters,
       scope: {
-        $$VALUE: data
-      }
+        $$VALUE: data,
+      },
     }
 
     expect(evaluate(context, ['$value'])).toEqual(data)
@@ -40,26 +37,30 @@ describe('$value', () => {
 })
 
 describe('$evaluate', () => {
-  test('', () => {
-    const check = (value) => evaluate({
-      interpreters,
-      scope: {
-        $$VALUE: value
-      }
-    }, [
-      '$arrayMap',
-      [
-        '$if',
-        ['$evaluate', ['$value', '0'], ['$value', '$$PARENT_SCOPE']],
-        ['$value', '1'],
-        '-'
-      ],
-      [
-        [['$gte', 10], '>10'],
-        [['$eq', 0, ['$mathMod', 2]], 'EVEN'],
-        [['$notEq', 0, ['$mathMod', 2]], 'ODD'],
-      ]
-    ])
+  test('basic', () => {
+    const check = (value) =>
+      evaluate(
+        {
+          interpreters,
+          scope: {
+            $$VALUE: value,
+          },
+        },
+        [
+          '$arrayMap',
+          [
+            '$if',
+            ['$evaluate', ['$value', '0'], ['$value', '$$PARENT_SCOPE']],
+            ['$value', '1'],
+            '-',
+          ],
+          [
+            [['$gte', 10], '>10'],
+            [['$eq', 0, ['$mathMod', 2]], 'EVEN'],
+            [['$notEq', 0, ['$mathMod', 2]], 'ODD'],
+          ],
+        ]
+      )
 
     expect(check(6)).toEqual(['-', 'EVEN', '-'])
     expect(check(5)).toEqual(['-', '-', 'ODD'])
@@ -69,16 +70,18 @@ describe('$evaluate', () => {
 })
 
 describe('$literal', () => {
-  test('', () => {
+  test('basic', () => {
     const context = {
       interpreters,
       scope: {
-        $$VALUE: 'SOME_VALUE'
-      }
+        $$VALUE: 'SOME_VALUE',
+      },
     }
 
     expect(evaluate(context, ['$value', '$$VALUE'])).toEqual('SOME_VALUE')
-    expect(evaluate(context, ['$literal', ['$value', '$$VALUE']]))
-      .toEqual(['$value', '$$VALUE'])
+    expect(evaluate(context, ['$literal', ['$value', '$$VALUE']])).toEqual([
+      '$value',
+      '$$VALUE',
+    ])
   })
 })

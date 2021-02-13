@@ -1,13 +1,10 @@
-import {
-  validateType,
-  ExpectedType
-} from '@orioro/validate-type'
+import { validateType } from '@orioro/validate-type'
 
 import {
   Expression,
   ExpressionInterpreter,
   ExpressionInterpreterList,
-  EvaluationContext
+  EvaluationContext,
 } from './types'
 
 /**
@@ -15,12 +12,11 @@ import {
  * @param {ExpressionInterpreterList}
  */
 export const isExpression = (
-  interpreters:ExpressionInterpreterList,
-  candidateExpression:any
-):boolean => (
+  interpreters: ExpressionInterpreterList,
+  candidateExpression: any // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
+): boolean =>
   Array.isArray(candidateExpression) &&
   typeof interpreters[candidateExpression[0]] === 'function'
-)
 
 /**
  * @function evaluate
@@ -29,9 +25,9 @@ export const isExpression = (
  * @returns {*}
  */
 export const evaluate = (
-  context:EvaluationContext,
-  expOrValue:Expression | any
-):any => {
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): any => {
   if (!isExpression(context.interpreters, expOrValue)) {
     return expOrValue
   }
@@ -50,10 +46,10 @@ export const evaluate = (
  * @returns {*}
  */
 export const evaluateTyped = (
-  expectedTypes:(string | string[]),
-  context:EvaluationContext,
-  expOrValue:Expression | any
-):any => {
+  expectedTypes: string | string[],
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): any => {
   const value = evaluate(context, expOrValue)
   validateType(expectedTypes, value)
   return value
@@ -85,7 +81,7 @@ export const evaluateTyped = (
 //     : (context:EvaluationContext, ...args) => fn(...args)
 // )
 
-type ParamResolverFunction = (context:EvaluationContext, arg:any) => any
+type ParamResolverFunction = (context: EvaluationContext, arg: any) => any
 
 /**
  * Defines how an expression argument should be resolved
@@ -112,40 +108,35 @@ type ParamResolverFunction = (context:EvaluationContext, arg:any) => any
  *   - weakmap
  *   - weakset
  *   - any
- * 
+ *
  * @typedef {Function | null | string | string[]} ParamResolver
  */
-type ParamType = (
-  'string' |
-  'regexp' |
-  'number' |
-  'bigint' |
-  'nan' |
-  'null' |
-  'undefined' |
-  'boolean' |
-  'function' |
-  'object' |
-  'array' |
-  'date' |
-  'symbol' |
-  'map' |
-  'set' |
-  'weakmap' |
-  'weakset' |
-  'any'
-)
-export type ParamResolver = (
-  ParamResolverFunction |
-  null |
-  ParamType |
-  ParamType[]
-)
+type ParamType =
+  | 'string'
+  | 'regexp'
+  | 'number'
+  | 'bigint'
+  | 'nan'
+  | 'null'
+  | 'undefined'
+  | 'boolean'
+  | 'function'
+  | 'object'
+  | 'array'
+  | 'date'
+  | 'symbol'
+  | 'map'
+  | 'set'
+  | 'weakmap'
+  | 'weakset'
+  | 'any'
+export type ParamResolver =
+  | ParamResolverFunction
+  | null
+  | ParamType
+  | ParamType[]
 
-const paramResolverNoop = (
-  context:EvaluationContext,
-  arg:any
-):any => arg
+const paramResolverNoop = (context: EvaluationContext, arg: any): any => arg
 
 /**
  * @function interpreter
@@ -153,7 +144,7 @@ const paramResolverNoop = (
  *                                 expression. If `paramResolvers` are not null, the
  *                                 interpreterFn is invoked with the list of resolved
  *                                 parameters + the evaluation context as last
- *                                 argument. 
+ *                                 argument.
  * @param {ParamResolver[] | null} paramResolvers A list of resolvers that will
  *                                                convert the arguments given to the
  *                                                expression into the parameters
@@ -165,10 +156,10 @@ const paramResolverNoop = (
  * @returns {ExpressionInterpreter}
  */
 export const interpreter = (
-  interpreterFn:(...args:any[]) => any,
-  paramResolvers:(ParamResolver[] | null),
+  interpreterFn: (...args: any[]) => any,
+  paramResolvers: ParamResolver[] | null,
   defaultLastArgToScopeValue = true
-) => {
+): ExpressionInterpreter => {
   validateType(['array', 'null'], paramResolvers)
 
   if (Array.isArray(paramResolvers)) {
@@ -176,8 +167,8 @@ export const interpreter = (
     // Bring all evaluation logic that is possible
     // to outside the returned interperter wrapper function
     // in order to minimize expression evaluation performance
-    //  
-    const _paramResolvers = paramResolvers.map(resolver => {
+    //
+    const _paramResolvers = paramResolvers.map((resolver) => {
       if (typeof resolver === 'function') {
         return resolver
       } else if (Array.isArray(resolver) || typeof resolver === 'string') {
@@ -187,7 +178,9 @@ export const interpreter = (
       } else if (resolver === null) {
         return paramResolverNoop
       } else {
-        throw new TypeError(`Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`)
+        throw new TypeError(
+          `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
+        )
       }
     })
 
@@ -196,27 +189,33 @@ export const interpreter = (
     // https://developer.mozilla.org/en-US/docs/Glossary/Parameter
     //
     return defaultLastArgToScopeValue
-      ? (context:EvaluationContext, ...args) => {
-          return interpreterFn(..._paramResolvers.map((resolver, index) => {
-            // Last param defaults to $$VALUE
-            const arg = (args[index] === undefined && index === _paramResolvers.length - 1)
-              ? ['$value', '$$VALUE']
-              : args[index]
-            return resolver(context, arg)
-          }), context)
+      ? (context: EvaluationContext, ...args) => {
+          return interpreterFn(
+            ..._paramResolvers.map((resolver, index) => {
+              // Last param defaults to $$VALUE
+              const arg =
+                args[index] === undefined &&
+                index === _paramResolvers.length - 1
+                  ? ['$value', '$$VALUE']
+                  : args[index]
+              return resolver(context, arg)
+            }),
+            context
+          )
         }
-      : (context:EvaluationContext, ...args) => (
-          interpreterFn(..._paramResolvers.map((resolver, index) => (
-            resolver(context, args[index]))
-          ), context)
-        )
+      : (context: EvaluationContext, ...args) =>
+          interpreterFn(
+            ..._paramResolvers.map((resolver, index) =>
+              resolver(context, args[index])
+            ),
+            context
+          )
   } else {
     //
     // By default all arguments are evaluated before
     // being passed on to the interpreter
     //
-    return (context:EvaluationContext, ...args) => (
-      interpreterFn(...args.map(arg => evaluate(context, arg)))
-    )
+    return (context: EvaluationContext, ...args) =>
+      interpreterFn(...args.map((arg) => evaluate(context, arg)))
   }
 }

@@ -1,7 +1,7 @@
 /**
  * An expression is an array tuple with the first item
  * as a string identifier.
- * 
+ *
  * @typedef {[string, ...args]} Expression
  */
 export type Expression = [string, ...any[]]
@@ -9,10 +9,13 @@ export type Expression = [string, ...any[]]
 /**
  * Function that receives as first parameter the EvaluationContext
  * and should return the result for evaluating a given expression.
- * 
+ *
  * @typedef {function} ExpressionInterpreter
  */
-export type ExpressionInterpreter = (context:EvaluationContext, ...args:any[]) => any
+export type ExpressionInterpreter = (
+  context: EvaluationContext,
+  ...args: any[]
+) => any
 
 /**
  * @typedef {Object} EvaluationScope
@@ -27,13 +30,13 @@ export type ExpressionInterpreter = (context:EvaluationContext, ...args:any[]) =
  * @property {*} scope.$$SORT_B
  */
 export type EvaluationScope = {
-  $$PARENT_SCOPE?: EvaluationScope,
-  $$VALUE: any,
-  $$ARRAY?: any[],
-  $$INDEX?: number,
-  $$ACC?: any,
-  $$SORT_A?: any,
-  $$SORT_B?: any,
+  $$PARENT_SCOPE?: EvaluationScope
+  $$VALUE: any
+  $$ARRAY?: any[]
+  $$INDEX?: number
+  $$ACC?: any
+  $$SORT_A?: any
+  $$SORT_B?: any
   [key: string]: any
 }
 
@@ -53,7 +56,7 @@ export type ExpressionInterpreterList = {
  * @property {EvaluationScope} context.scope
  */
 export type EvaluationContext = {
-  interpreters: ExpressionInterpreterList,
+  interpreters: ExpressionInterpreterList
   scope: EvaluationScope
 }
 
@@ -62,12 +65,12 @@ export type EvaluationContext = {
  */
 export type ISODate = string
 
-export type PlainObject = { [key:string]: any }
+export type PlainObject = { [key: string]: any }
 
 export type AnyExpression = Expression | any
 export type NumberExpression = Expression | number
 export type ArrayExpression = Expression | any[]
 export type StringExpression = Expression | string
-export type PlainObjectExpression = Expression | { [key:string]: any }
+export type PlainObjectExpression = Expression | { [key: string]: any }
 export type BooleanExpression = Expression | boolean
 export type ISODateExpression = Expression | ISODate

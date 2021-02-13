@@ -3,7 +3,7 @@ import { getType } from '@orioro/validate-type'
 
 /**
  * @todo $type Return value for arrays, objects and regexp (move away from typeof)
- * 
+ *
  * @function $type
  * @param {*} valueExp
  * @returns {string} type Possible values:
@@ -25,12 +25,10 @@ import { getType } from '@orioro/validate-type'
  *   - weakmap
  *   - weakset
  */
-export const $type = interpreter((
-  value:any
-):string => getType(value), [
-  'any'
+export const $type = interpreter((value: any): string => getType(value), [
+  'any',
 ])
 
 export const TYPE_EXPRESSIONS = {
-  $type
+  $type,
 }
