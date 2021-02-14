@@ -9,6 +9,8 @@ const interpreters = {
   ...COMPARISON_EXPRESSIONS,
 }
 
+const isoStringToTime = (ISOString) => new Date(ISOString).getTime()
+
 describe('$date', () => {
   test('ISO', () => {
     const context = {
@@ -66,7 +68,7 @@ test('$dateIsValid', () => {
     [10, false],
   ]
 
-  expectations.forEach(([input, result]) => {
+  expectations.forEach(([input, expected]) => {
     expect(
       evaluate(
         {
@@ -75,7 +77,7 @@ test('$dateIsValid', () => {
         },
         ['$dateIsValid']
       )
-    ).toEqual(result)
+    ).toEqual(expected)
   })
 })
 
@@ -94,8 +96,9 @@ test('$dateStartOf', () => {
     ['second', '2021-02-12T12:34:15.000-03:00'],
   ]
 
-  expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateStartOf', input])).toEqual(result)
+  expectations.forEach(([input, expected]) => {
+    const result = evaluate(context, ['$dateStartOf', input])
+    expect(isoStringToTime(result)).toEqual(isoStringToTime(expected))
   })
 })
 
@@ -114,8 +117,9 @@ test('$dateEndOf', () => {
     ['second', '2021-02-12T12:34:15.999-03:00'],
   ]
 
-  expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateEndOf', input])).toEqual(result)
+  expectations.forEach(([input, expected]) => {
+    const result = evaluate(context, ['$dateEndOf', input])
+    expect(isoStringToTime(result)).toEqual(isoStringToTime(expected))
   })
 })
 
@@ -134,8 +138,9 @@ test('$dateSet', () => {
     [{ second: 1 }, '2021-02-12T12:34:01.020-03:00'],
   ]
 
-  expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateSet', input])).toEqual(result)
+  expectations.forEach(([input, expected]) => {
+    const result = evaluate(context, ['$dateSet', input])
+    expect(isoStringToTime(result)).toEqual(isoStringToTime(expected))
   })
 })
 
@@ -150,8 +155,8 @@ test('$dateSetConfig', () => {
     [{ zone: 'UTC+1' }, '2021-02-12T16:34:15.020+01:00'],
   ]
 
-  expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateSetConfig', input])).toEqual(result)
+  expectations.forEach(([input, expected]) => {
+    expect(evaluate(context, ['$dateSetConfig', input])).toEqual(expected)
   })
 
   expect(() => {
@@ -208,8 +213,8 @@ describe('date comparison', () => {
       ['$dateEq', DATE_REFERENCE_OTHER_TZ, true],
     ]
 
-    expectations.forEach(([expression, input, result]) => {
-      expect(evaluate(context, [expression, input])).toEqual(result)
+    expectations.forEach(([expression, input, expected]) => {
+      expect(evaluate(context, [expression, input])).toEqual(expected)
     })
   })
 })
@@ -229,8 +234,9 @@ test('$dateMoveForward', () => {
     [{ second: 1 }, '2021-02-12T12:34:16.020-03:00'],
   ]
 
-  expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateMoveForward', input])).toEqual(result)
+  expectations.forEach(([input, expected]) => {
+    const result = evaluate(context, ['$dateMoveForward', input])
+    expect(isoStringToTime(result)).toEqual(isoStringToTime(expected))
   })
 })
 
@@ -249,7 +255,8 @@ test('$dateMoveBackward', () => {
     [{ second: 1 }, '2021-02-12T12:34:14.020-03:00'],
   ]
 
-  expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateMoveBackward', input])).toEqual(result)
+  expectations.forEach(([input, expected]) => {
+    const result = evaluate(context, ['$dateMoveBackward', input])
+    expect(isoStringToTime(result)).toEqual(isoStringToTime(expected))
   })
 })
