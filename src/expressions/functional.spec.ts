@@ -13,7 +13,7 @@ const interpreters = {
   ...FUNCTIONAL_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
-  ...STRING_EXPRESSIONS
+  ...STRING_EXPRESSIONS,
 }
 
 test('$pipe', () => {
@@ -23,15 +23,19 @@ test('$pipe', () => {
 
   const context = {
     interpreters,
-    scope: { $$VALUE: [10, 20, 30, 40] }
+    scope: { $$VALUE: [10, 20, 30, 40] },
   }
 
-  expect(evaluate(context, ['$pipe', [SUM_2, MULT_2]]))
-    .toEqual([24, 44, 64, 84])
+  expect(evaluate(context, ['$pipe', [SUM_2, MULT_2]])).toEqual([
+    24,
+    44,
+    64,
+    84,
+  ])
 
-  expect(evaluate(context, ['$pipe', [SUM_2, MULT_2, GREATER_THAN_50]]))
-    .toEqual([64, 84])
+  expect(
+    evaluate(context, ['$pipe', [SUM_2, MULT_2, GREATER_THAN_50]])
+  ).toEqual([64, 84])
 
-  expect(evaluate(context, ['$pipe', [SUM_2, GREATER_THAN_50]]))
-    .toEqual([])
+  expect(evaluate(context, ['$pipe', [SUM_2, GREATER_THAN_50]])).toEqual([])
 })

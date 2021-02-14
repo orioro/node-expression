@@ -1,141 +1,133 @@
-import {
-  evaluateNumber,
-} from '../expression'
-
-import {
-  Expression,
-  EvaluationContext,
-  NumberExpression
-} from '../types'
-
-import { $$VALUE } from './value'
-
-const mathOperation = (op:(base:number, operator:number) => number) => (
-  context:EvaluationContext,
-  operatorExp:NumberExpression,
-  baseExp:NumberExpression = $$VALUE
-):number => op(
-  evaluateNumber(context, baseExp),
-  evaluateNumber(context, operatorExp)
-)
+import { interpreter } from '../expression'
 
 /**
  * @function $mathSum
- * @param {number} sum
- * @param {number} [base=$$VALUE]
- * @returns {number} result
+ * @param {Number} sum
+ * @param {Number} [base=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathSum = mathOperation((base, sum) => base + sum)
+export const $mathSum = interpreter(
+  (sum: number, base: number): number => base + sum,
+  ['number', 'number']
+)
 
 /**
  * @function $mathSub
- * @param {number} subtract
- * @param {number} [base=$$VALUE]
- * @returns {number} result
+ * @param {Number} subtract
+ * @param {Number} [base=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathSub = mathOperation((base, sub) => base - sub)
+export const $mathSub = interpreter(
+  (sub: number, base: number): number => base - sub,
+  ['number', 'number']
+)
 
 /**
  * @function $mathMult
- * @param {number} multiplier
- * @param {number} [base=$$VALUE]
- * @returns {number} result
+ * @param {Number} multiplier
+ * @param {Number} [base=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathMult = mathOperation((base, mult) => base * mult)
+export const $mathMult = interpreter(
+  (mult: number, base: number): number => base * mult,
+  ['number', 'number']
+)
 
 /**
  * @function $mathDiv
- * @param {number} divisor
- * @param {number} dividend
- * @returns {number} result
+ * @param {Number} divisor
+ * @param {Number} dividend
+ * @returns {Number} result
  */
-export const $mathDiv = mathOperation((dividend, divisor) => dividend / divisor)
+export const $mathDiv = interpreter(
+  (divisor: number, dividend: number): number => dividend / divisor,
+  ['number', 'number']
+)
 
 /**
  * @function $mathMod
- * @param {number} divisor
- * @param {number} dividend
- * @returns {number} result
+ * @param {Number} divisor
+ * @param {Number} dividend
+ * @returns {Number} result
  */
-export const $mathMod = mathOperation((dividend, divisor) => dividend % divisor)
+export const $mathMod = interpreter(
+  (divisor: number, dividend: number): number => dividend % divisor,
+  ['number', 'number']
+)
 
 /**
  * @function $mathPow
- * @param {number} exponent
- * @param {number} [base=$$VALUE]
- * @returns {number} result
+ * @param {Number} exponent
+ * @param {Number} [base=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathPow = mathOperation((base, exponent) => Math.pow(base, exponent))
+export const $mathPow = interpreter(
+  (exponent: number, base: number): number => Math.pow(base, exponent),
+  ['number', 'number']
+)
 
 /**
  * @function $mathAbs
- * @param {number} [value=$$VALUE]
- * @returns {number} result
+ * @param {Number} [value=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathAbs = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.abs(evaluateNumber(context, valueExp))
+export const $mathAbs = interpreter(
+  (value: number): number => Math.abs(value),
+  ['number']
+)
 
 /**
+ * @todo math Modify interface: take in array of numberExpressions to allow for multi comparison
+ *
  * @function $mathMax
- * @param {number} otherValue
- * @param {number} [value=$$VALUE]
- * @returns {number} result
+ * @param {Number} otherValue
+ * @param {Number} [value=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathMax = (
-  context:EvaluationContext,
-  otherValueExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => Math.max(
-  evaluateNumber(context, otherValueExp),
-  evaluateNumber(context, valueExp)
+export const $mathMax = interpreter(
+  (otherValue: number, value: number): number => Math.max(otherValue, value),
+  ['number', 'number']
 )
 
 /**
  * @function $mathMin
- * @param {number} otherValue
- * @param {number} [value=$$VALUE]
- * @returns {number} result
+ * @param {Number} otherValue
+ * @param {Number} [value=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathMin = (
-  context:EvaluationContext,
-  otherValueExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => Math.min(
-  evaluateNumber(context, otherValueExp),
-  evaluateNumber(context, valueExp)
+export const $mathMin = interpreter(
+  (otherValue: number, value: number): number => Math.min(otherValue, value),
+  ['number', 'number']
 )
 
 /**
  * @function $mathRound
- * @param {number} [value=$$VALUE]
- * @returns {number} result
+ * @param {Number} [value=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathRound = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.round(evaluateNumber(context, valueExp))
+export const $mathRound = interpreter(
+  (value: number): number => Math.round(value),
+  ['number']
+)
 
 /**
  * @function $mathFloor
- * @param {number} [value=$$VALUE]
- * @returns {number} result
+ * @param {Number} [value=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathFloor = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.floor(evaluateNumber(context, valueExp))
-
+export const $mathFloor = interpreter(
+  (value: number): number => Math.floor(value),
+  ['number']
+)
 /**
  * @function $mathCeil
- * @param {number} [value=$$VALUE]
- * @returns {number} result
+ * @param {Number} [value=$$VALUE]
+ * @returns {Number} result
  */
-export const $mathCeil = (
-  context:EvaluationContext,
-  valueExp:NumberExpression = $$VALUE
-) => Math.ceil(evaluateNumber(context, valueExp))
+export const $mathCeil = interpreter(
+  (value: number): number => Math.ceil(value),
+  ['number']
+)
 
 export const MATH_EXPRESSIONS = {
   $mathSum,
@@ -149,5 +141,5 @@ export const MATH_EXPRESSIONS = {
   $mathMin,
   $mathRound,
   $mathFloor,
-  $mathCeil
+  $mathCeil,
 }

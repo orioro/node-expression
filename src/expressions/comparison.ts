@@ -1,188 +1,149 @@
-import {
-  isEqual,
-  isPlainObject
-} from 'lodash'
+import { isEqual } from 'lodash'
 
-import {
-  isValidNumber,
-  validateNumber,
-  validateArray,
-  validatePlainObject
-} from '../util/validate'
+import { evaluate, evaluateTyped, interpreter } from '../expression'
 
-import {
-  evaluate,
-  evaluateBoolean,
-  evaluatePlainObject,
-  evaluateArray,
-  evaluateNumber,
-  evaluateString
-} from '../expression'
+import { EvaluationContext, PlainObject } from '../types'
 
-import {
-  Expression,
-  EvaluationContext,
-  NumberExpression,
-  ArrayExpression,
-  PlainObjectExpression
-} from '../types'
+import { $$VALUE } from './value'
 
-import {
-  $$VALUE
-} from './value'
-
-const _negation = fn => (...args):boolean => !fn(...args)
+const _negation = (fn) => (...args): boolean => !fn(...args)
 
 /**
  * Checks if the two values
- * 
+ *
  * @function $eq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
- * @returns {boolean}
+ * @returns {Boolean}
  */
-export const $eq = (
-  context:EvaluationContext,
-  referenceExp:Expression,
-  valueExp:Expression = $$VALUE
-) => isEqual(
-  evaluate(context, referenceExp),
-  evaluate(context, valueExp)
+export const $eq = interpreter(
+  (valueB: any, valueA: any): boolean => isEqual(valueA, valueB),
+  ['any', 'any']
 )
 
 /**
  * @function $notEq
  * @param {*} referenceExp Value to be compared to.
  * @param {*} valueExp Value being compared.
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $notEq = _negation($eq)
 
 /**
  * Checks whether the value is in the given array.
- * 
+ *
  * @function $in
  * @param {Array} arrayExp
  * @param {*} valueExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
-export const $in = (
-  context:EvaluationContext,
-  arrayExp:ArrayExpression,
-  valueExp:Expression = $$VALUE
-) => {
-  const value = evaluate(context, valueExp)
-  return evaluateArray(context, arrayExp).some(item => isEqual(item, value))
-}
+export const $in = interpreter(
+  (array: any[], value: any): boolean =>
+    array.some((item) => isEqual(item, value)),
+  ['array', 'any']
+)
 
 /**
  * Checks whether the value is **not** in the given array.
- * 
+ *
  * @function $notIn
  * @param {Array} arrayExp
  * @param {*} valueExp
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export const $notIn = _negation($in)
 
 /**
  * Greater than `value > threshold`
- * 
+ *
  * @function $gt
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
-export const $gt = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) > evaluateNumber(context, referenceExp)
+export const $gt = interpreter(
+  (reference: number, value: number): boolean => value > reference,
+  ['number', 'number']
+)
 
 /**
  * Greater than or equal `value >= threshold`
- * 
+ *
  * @function $gte
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
-export const $gte = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) >= evaluateNumber(context, referenceExp)
+export const $gte = interpreter(
+  (reference: number, value: number): boolean => value >= reference,
+  ['number', 'number']
+)
 
 /**
  * Lesser than `value < threshold`
- * 
+ *
  * @function $lt
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
-export const $lt = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) < evaluateNumber(context, referenceExp)
+export const $lt = interpreter(
+  (reference: number, value: number): boolean => value < reference,
+  ['number', 'number']
+)
 
 /**
  * Lesser than or equal `value <= threshold`
- * 
+ *
  * @function $lte
- * @param {number} referenceExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} referenceExp
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
-export const $lte = (
-  context:EvaluationContext,
-  referenceExp:NumberExpression,
-  valueExp:NumberExpression = $$VALUE
-) => evaluateNumber(context, valueExp) <= evaluateNumber(context, referenceExp)
+export const $lte = interpreter(
+  (reference: number, value: number): boolean => value <= reference,
+  ['number', 'number']
+)
 
 /**
  * Checks if the value matches the set of criteria.
- * 
+ *
  * @function $matches
  * @param {Object} criteriaExp
- * @param {number} valueExp
- * @returns {boolean}
+ * @param {Number} valueExp
+ * @returns {Boolean}
  */
-export const $matches = (
-  context:EvaluationContext,
-  criteriaExp:PlainObjectExpression,
-  valueExp:Expression = $$VALUE
-) => {
-  const criteria = evaluatePlainObject(context, criteriaExp)
-  const value = evaluate(context, valueExp)
+export const $matches = interpreter(
+  (criteria: PlainObject, value: any, context: EvaluationContext): boolean => {
+    const criteriaKeys = Object.keys(criteria)
 
-  const criteriaKeys = Object.keys(criteria)
+    if (criteriaKeys.length === 0) {
+      throw new Error(`Invalid criteria: ${JSON.stringify(criteria)}`)
+    }
 
-  if (criteriaKeys.length === 0) {
-    throw new Error(`Invalid criteria: ${JSON.stringify(criteria)}`)
-  }
+    return criteriaKeys.every((criteriaKey) => {
+      //
+      // Criteria value may be an expression.
+      // Evaluate the expression against the original context, not
+      // against the value
+      //
+      const criteriaValue = evaluate(context, criteria[criteriaKey])
 
-  return criteriaKeys.every(criteriaKey => {
-    //
-    // Criteria value may be an expression.
-    // Evaluate the expression against the original context, not
-    // against the value
-    //
-    const criteriaValue = evaluate(context, criteria[criteriaKey])
-
-    return evaluateBoolean(
-      {
-        ...context,
-        scope: {
-          ...context.scope,
-          $$VALUE: value
-        }
-      },
-      [criteriaKey, criteriaValue, $$VALUE]
-    )
-  })
-}
+      return evaluateTyped(
+        'boolean',
+        {
+          ...context,
+          scope: {
+            ...context.scope,
+            $$VALUE: value,
+          },
+        },
+        [criteriaKey, criteriaValue, $$VALUE]
+      )
+    })
+  },
+  ['object', 'any']
+)
 
 export const COMPARISON_EXPRESSIONS = {
   $eq,
@@ -193,5 +154,5 @@ export const COMPARISON_EXPRESSIONS = {
   $gte,
   $lt,
   $lte,
-  $matches
+  $matches,
 }

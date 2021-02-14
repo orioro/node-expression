@@ -1,32 +1,26 @@
-import {
-  EvaluationContext,
-  ArrayExpression
-} from '../types'
+import { EvaluationContext, Expression } from '../types'
 
-import {
-  evaluate,
-  evaluateArray
-} from '../expression'
+import { evaluate, interpreter } from '../expression'
 
 /**
  * @function $pipe
- * @param {ArrayExpression} expressionsExp
+ * @param {Expression[]} expressions
  * @returns {*} pipeResult
  */
-export const $pipe = (
-  context:EvaluationContext,
-  expressionsExp:ArrayExpression
-) => {
-  const expressions = evaluateArray(context, expressionsExp)
-
-  return expressions.reduce((acc, expression) => {
-    return evaluate({
-      ...context,
-      scope: { $$VALUE: acc }
-    }, expression)
-  }, context.scope.$$VALUE)
-}
+export const $pipe = interpreter(
+  (expressions: Expression[], context: EvaluationContext): any =>
+    expressions.reduce((acc, expression) => {
+      return evaluate(
+        {
+          ...context,
+          scope: { $$VALUE: acc },
+        },
+        expression
+      )
+    }, context.scope.$$VALUE),
+  ['array']
+)
 
 export const FUNCTIONAL_EXPRESSIONS = {
-  $pipe
+  $pipe,
 }

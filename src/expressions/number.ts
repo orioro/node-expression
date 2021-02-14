@@ -1,59 +1,43 @@
-import {
-  evaluate,
-  evaluateNumber
-} from '../expression'
-
-import {
-  EvaluationContext,
-  NumberExpression,
-  Expression,
-} from '../types'
-
-import { $$VALUE } from './value'
+import { interpreter } from '../expression'
 
 /**
  * @function $numberInt
- * @param {number} radix
+ * @param {Number} radix
  * @param {*} value
- * @returns {number}
+ * @returns {Number}
  */
-export const $numberInt = (
-  context:EvaluationContext,
-  radixExp:NumberExpression = 10,
-  valueExp:Expression = $$VALUE
-) => {
-  const value = evaluate(context, valueExp)
-
-  if (typeof value === 'number') {
-    return value
-  } else if (typeof value === 'string') {
-    return parseInt(value, evaluateNumber(context, radixExp))
-  } else {
-    throw new TypeError(`Invalid valueExp ${JSON.stringify(valueExp)}`)
-  }
-}
+export const $numberInt = interpreter(
+  (radix: number = 10, value: any): number => {
+    if (typeof value === 'number') {
+      return value
+    } else if (typeof value === 'string') {
+      return parseInt(value, radix)
+    } else {
+      throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
+    }
+  },
+  [['number', 'undefined'], 'any']
+)
 
 /**
  * @function $numberFloat
  * @param {*} value
- * @returns {number}
+ * @returns {Number}
  */
-export const $numberFloat = (
-  context:EvaluationContext,
-  valueExp:Expression = $$VALUE
-) => {
-  const value = evaluate(context, valueExp)
-
-  if (typeof value === 'number') {
-    return value
-  } else if (typeof value === 'string') {
-    return parseFloat(value)
-  } else {
-    throw new TypeError(`Invalid valueExp ${JSON.stringify(valueExp)}`)
-  }
-}
+export const $numberFloat = interpreter(
+  (value: any): number => {
+    if (typeof value === 'number') {
+      return value
+    } else if (typeof value === 'string') {
+      return parseFloat(value)
+    } else {
+      throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
+    }
+  },
+  ['any']
+)
 
 export const NUMBER_EXPRESSIONS = {
   $numberInt,
-  $numberFloat
+  $numberFloat,
 }

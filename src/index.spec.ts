@@ -1,3 +1,5 @@
-import './index.ts'
+import * as api from './index'
 
-test('', () => {})
+test('public api', () => {
+  expect(Object.keys(api)).toMatchSnapshot()
+})

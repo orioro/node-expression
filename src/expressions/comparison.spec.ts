@@ -9,7 +9,7 @@ import {
   $gte,
   $lt,
   $lte,
-  $matches
+  $matches,
 } from './comparison'
 import { $value } from './value'
 
@@ -18,15 +18,15 @@ describe('$eq / $notEq', () => {
     $value,
     $stringSubstr,
     $eq,
-    $notEq
+    $notEq,
   }
 
   test('string', () => {
     const context = {
       interpreters,
       scope: {
-        $$VALUE: 'SOME_STRING'
-      }
+        $$VALUE: 'SOME_STRING',
+      },
     }
 
     expect(evaluate(context, ['$eq', 'SOME_STRING'])).toEqual(true)
@@ -35,7 +35,12 @@ describe('$eq / $notEq', () => {
     expect(evaluate(context, ['$eq', 'OTHER_STRING'])).toEqual(false)
     expect(evaluate(context, ['$notEq', 'OTHER_STRING'])).toEqual(true)
 
-    expect(evaluate(context, ['$eq', ['$stringSubstr', 4, 15, 'PRE_SOME_STRING_POS']])).toEqual(true)
+    expect(
+      evaluate(context, [
+        '$eq',
+        ['$stringSubstr', 4, 15, 'PRE_SOME_STRING_POS'],
+      ])
+    ).toEqual(true)
   })
 })
 
@@ -43,15 +48,15 @@ describe('$in / $notIn', () => {
   const interpreters = {
     $value,
     $in,
-    $notIn
+    $notIn,
   }
 
-  test('', () => {
+  test('basic', () => {
     const context = {
       interpreters,
       scope: {
-        $$VALUE: 'C'
-      }
+        $$VALUE: 'C',
+      },
     }
 
     expect(evaluate(context, ['$in', ['A', 'B', 'C']])).toEqual(true)
@@ -74,8 +79,8 @@ describe('$gt / $gte / $lt / $lte', () => {
   const context = {
     interpreters,
     scope: {
-      $$VALUE: 20
-    }
+      $$VALUE: 20,
+    },
   }
 
   test('$gt', () => {
@@ -114,42 +119,34 @@ describe('$matches', () => {
     $gte,
     $lt,
     $lte,
-    $matches
+    $matches,
   }
 
-  const context = {
-    interpreters,
-    scope: {
-      $$VALUE: {
-        name: 'João Silva',
-        age: 54,
-        children: [
-          { name: 'Maria Joaquina Silva', age: 30 },
-          { name: 'Rafael Guimarães Silva', age: 18 }
-        ],
-        hobbies: [
-          'Cozinhar',
-          'Música'
-        ]
-      }
-    }
-  }
-
-  test('', () => {
+  test('basic', () => {
     const context = {
       interpreters,
       scope: {
-        $$VALUE: 24
-      }
+        $$VALUE: 24,
+      },
     }
 
-    expect(evaluate(context, ['$matches', {
-      $gt: 20,
-      $lt: 30
-    }])).toEqual(true)
-    expect(evaluate(context, ['$matches', {
-      $gt: 20,
-      $lt: 24
-    }])).toEqual(false)
+    expect(
+      evaluate(context, [
+        '$matches',
+        {
+          $gt: 20,
+          $lt: 30,
+        },
+      ])
+    ).toEqual(true)
+    expect(
+      evaluate(context, [
+        '$matches',
+        {
+          $gt: 20,
+          $lt: 24,
+        },
+      ])
+    ).toEqual(false)
   })
 })
