@@ -371,11 +371,12 @@ Set of expressions aimed at solving common date-related operations:
 parse, format, compare, validate, manipulate (e.g. move forward, move back).
 Most (if not all) operations are based on and built with [`Luxon`](https://github.com/moment/luxon/) `DateTime`. If not stated otherwise, date operations return a `string` in ISO 8601 format (`2021-01-27T20:38:12.807Z`).
 
+- [`DateValue`](#datevalue)
 - [`DateFormat`](#dateformat)
 - [`ISODate`](#isodate)
 - [`Duration`](#duration)
-- [`$date(parseFmtArgs, serializeFmtArgs, date)`](#dateparsefmtargs-serializefmtargs-date)
-- [`$dateNow(serializeFmtArgs)`](#datenowserializefmtargs)
+- [`$date(parseFmtArgs, serializeFormat, date)`](#dateparsefmtargs-serializeformat-date)
+- [`$dateNow(serializeFormat)`](#datenowserializeformat)
 - [`$dateIsValid()`](#dateisvalid)
 - [`$dateStartOf(unitExp, date)`](#datestartofunitexp-date)
 - [`$dateEndOf(unitExp, date)`](#dateendofunitexp-date)
@@ -388,6 +389,12 @@ Most (if not all) operations are based on and built with [`Luxon`](https://githu
 - [`$dateEq(referenceDateExp, compareUnitExp, date)`](#dateeqreferencedateexp-compareunitexp-date)
 - [`$dateMoveForward(duration, date)`](#datemoveforwardduration-date)
 - [`$dateMoveBackward(duration, date)`](#datemovebackwardduration-date)
+
+
+##### `DateValue`
+
+Date input for all $date expressions
+
 
 
 ##### `DateFormat`
@@ -436,22 +443,22 @@ Duration represented in an object format:
   - `seconds` {Number}
   - `milliseconds` {Number}
 
-##### `$date(parseFmtArgs, serializeFmtArgs, date)`
+##### `$date(parseFmtArgs, serializeFormat, date)`
 
 Parses a date from a given input format and serializes it into
 another format. Use this expression to convert date formats into
 your requirements. E.g. `UnixEpochMs` into `ISO`.
 
 - `parseFmtArgs` {[DateFormat](#dateformat)}
-- `serializeFmtArgs` {[DateFormat](#dateformat)}
+- `serializeFormat` {[DateFormat](#dateformat)}
 - `date` {String | Number | Object | Date}
-- Returns: `date` {String | Number | Object | Date} Output will vary according to `serializeFmtArgs`
+- Returns: `date` {String | Number | Object | Date} Output will vary according to `serializeFormat`
 
-##### `$dateNow(serializeFmtArgs)`
+##### `$dateNow(serializeFormat)`
 
 Generates a ISO date string from `Date.now`
 
-- `serializeFmtArgs` {[DateFormat](#dateformat)}
+- `serializeFormat` {[DateFormat](#dateformat)}
 - Returns: `date` {String | Number | Object | Date} 
 
 ##### `$dateIsValid()`
