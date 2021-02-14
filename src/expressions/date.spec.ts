@@ -234,16 +234,20 @@ test('$dateMoveForward', () => {
   }
 
   const expectations = [
-    [{ month: 1 }, '2021-03-12T12:34:15.020-03:00'],
-    [{ year: 2 }, '2023-02-12T12:34:15.020-03:00'],
-    [{ day: 1 }, '2021-02-13T12:34:15.020-03:00'],
-    [{ hour: 1 }, '2021-02-12T13:34:15.020-03:00'],
-    [{ minute: 1 }, '2021-02-12T12:35:15.020-03:00'],
-    [{ second: 1 }, '2021-02-12T12:34:16.020-03:00'],
+    [{ month: 1 }, '2021-03-12T15:34:15.020Z'],
+    [{ year: 2 }, '2023-02-12T15:34:15.020Z'],
+    [{ day: 1 }, '2021-02-13T15:34:15.020Z'],
+    [{ hour: 1 }, '2021-02-12T16:34:15.020Z'],
+    [{ minute: 1 }, '2021-02-12T15:35:15.020Z'],
+    [{ second: 1 }, '2021-02-12T15:34:16.020Z'],
   ]
 
   expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateMoveForward', input])).toEqual(result)
+    // Only use zone for formatting, which helps guaranteeing same results
+    // for tests runs on ci and local dev environments
+    expect(
+      evaluate(context, ['$dateMoveForward', input, ['ISO', { zone: 'utc' }]])
+    ).toEqual(result)
   })
 })
 
@@ -254,15 +258,19 @@ test('$dateMoveBackward', () => {
   }
 
   const expectations = [
-    [{ month: 1 }, '2021-01-12T12:34:15.020-03:00'],
-    [{ year: 1 }, '2020-02-12T12:34:15.020-03:00'],
-    [{ day: 1 }, '2021-02-11T12:34:15.020-03:00'],
-    [{ hour: 1 }, '2021-02-12T11:34:15.020-03:00'],
-    [{ minute: 1 }, '2021-02-12T12:33:15.020-03:00'],
-    [{ second: 1 }, '2021-02-12T12:34:14.020-03:00'],
+    [{ month: 1 }, '2021-01-12T15:34:15.020Z'],
+    [{ year: 1 }, '2020-02-12T15:34:15.020Z'],
+    [{ day: 1 }, '2021-02-11T15:34:15.020Z'],
+    [{ hour: 1 }, '2021-02-12T14:34:15.020Z'],
+    [{ minute: 1 }, '2021-02-12T15:33:15.020Z'],
+    [{ second: 1 }, '2021-02-12T15:34:14.020Z'],
   ]
 
   expectations.forEach(([input, result]) => {
-    expect(evaluate(context, ['$dateMoveBackward', input])).toEqual(result)
+    // Only use zone for formatting, which helps guaranteeing same results
+    // for tests runs on ci and local dev environments
+    expect(
+      evaluate(context, ['$dateMoveBackward', input, ['ISO', { zone: 'utc' }]])
+    ).toEqual(result)
   })
 })
