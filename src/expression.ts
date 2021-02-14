@@ -55,32 +55,6 @@ export const evaluateTyped = (
   return value
 }
 
-// /**
-//  * @function interpreter
-//  * @param {Function} fn The function that resolves the expression's value.
-//  *                      This function receives the resolved parameters.
-//  * @param {Function[]} argResolvers List of functions that should be called
-//  *                                  for resolving each of the expression's
-//  *                                  arguments
-//  * @returns {ExpressionInterpreter}
-//  */
-// export const interpreter = (
-//   fn:(...args:any[]) => any,
-//   argResolvers:((context:EvaluationContext, input:any) => any)[] | null = null
-// ) => (
-//   argResolvers !== null && Array.isArray(argResolvers)
-//     ? (context:EvaluationContext, ...args) => (
-//         fn(...argResolvers.map((resolver, index) => {
-//           // Last arg defaults to $$VALUE
-//           const arg = (args[index] === undefined && index === argResolvers.length - 1)
-//             ? ['$value', '$$VALUE']
-//             : args[index]
-//           return resolver(context, arg)
-//         }))
-//       )
-//     : (context:EvaluationContext, ...args) => fn(...args)
-// )
-
 type ParamResolverFunction = (context: EvaluationContext, arg: any) => any
 
 /**
@@ -149,16 +123,18 @@ const paramResolverNoop = (context: EvaluationContext, arg: any): any => arg
  *                                                convert the arguments given to the
  *                                                expression into the parameters
  *                                                of the interpreter function
- * @param {Boolean} [defaultLastArgToScopeValue=true] Whether the last argument of the
- *                                                    expression should default to the
- *                                                    context's scope's value
- *                                                    ['$value', '$$VALUE']
+ * @param {Boolean} [defaultScopeValue=true] Whether the last argument of the
+ *                                           expression should default to the
+ *                                           context's scope's value
+ *                                           ['$value', '$$VALUE']. If given a number,
+ *                                           indicates the index of the parameter
+ *                                           that should get the scope value by default
  * @returns {ExpressionInterpreter}
  */
 export const interpreter = (
   interpreterFn: (...args: any[]) => any,
   paramResolvers: ParamResolver[] | null,
-  defaultLastArgToScopeValue = true
+  defaultScopeValue = true
 ): ExpressionInterpreter => {
   validateType(['array', 'null'], paramResolvers)
 
@@ -184,18 +160,22 @@ export const interpreter = (
       }
     })
 
+    defaultScopeValue = defaultScopeValue === true
+      ? _paramResolvers.length - 1
+      : defaultScopeValue
+
     //
     // For difference between `argument` and `parameter` definitions, see:
     // https://developer.mozilla.org/en-US/docs/Glossary/Parameter
     //
-    return defaultLastArgToScopeValue
+    return (typeof defaultScopeValue === 'number')
       ? (context: EvaluationContext, ...args) => {
           return interpreterFn(
             ..._paramResolvers.map((resolver, index) => {
               // Last param defaults to $$VALUE
               const arg =
                 args[index] === undefined &&
-                index === _paramResolvers.length - 1
+                index === defaultScopeValue
                   ? ['$value', '$$VALUE']
                   : args[index]
               return resolver(context, arg)
