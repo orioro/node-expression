@@ -134,7 +134,7 @@ const paramResolverNoop = (context: EvaluationContext, arg: any): any => arg
 export const interpreter = (
   interpreterFn: (...args: any[]) => any,
   paramResolvers: ParamResolver[] | null,
-  defaultScopeValue = true
+  defaultScopeValue: boolean | number = true
 ): ExpressionInterpreter => {
   validateType(['array', 'null'], paramResolvers)
 
@@ -160,22 +160,22 @@ export const interpreter = (
       }
     })
 
-    defaultScopeValue = defaultScopeValue === true
-      ? _paramResolvers.length - 1
-      : defaultScopeValue
+    defaultScopeValue =
+      defaultScopeValue === true
+        ? _paramResolvers.length - 1
+        : defaultScopeValue
 
     //
     // For difference between `argument` and `parameter` definitions, see:
     // https://developer.mozilla.org/en-US/docs/Glossary/Parameter
     //
-    return (typeof defaultScopeValue === 'number')
+    return typeof defaultScopeValue === 'number'
       ? (context: EvaluationContext, ...args) => {
           return interpreterFn(
             ..._paramResolvers.map((resolver, index) => {
               // Last param defaults to $$VALUE
               const arg =
-                args[index] === undefined &&
-                index === defaultScopeValue
+                args[index] === undefined && index === defaultScopeValue
                   ? ['$value', '$$VALUE']
                   : args[index]
               return resolver(context, arg)

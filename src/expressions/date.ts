@@ -2,7 +2,9 @@ import { DateTime } from 'luxon'
 
 import { ISODate, PlainObject } from '../types'
 
-import { interpreter } from '../expression'
+import { interpreter, ParamResolver } from '../expression'
+
+import { validateType } from '@orioro/validate-type'
 
 export const DATE_ISO = 'ISO'
 export const DATE_ISO_DATE = 'ISODate'
@@ -17,10 +19,64 @@ export const DATE_UNIX_EPOCH_MS = 'UnixEpochMs'
 export const DATE_UNIX_EPOCH_S = 'UnixEpochS'
 export const DATE_JS_DATE = 'JSDate'
 export const DATE_PLAIN_OBJECT = 'PlainObject'
-export const DATE_LUXON_DATE_TIME = 'LuxonDateTime'
+export const DATE_LUXON_DATE_TIME = 'DateTime'
+export const DATE_DATE_TIME_PROP = 'LuxonDateTimeProp'
 
-/* istanbul ignore next */
-const parseLuxonDate = (value, format = 'ISO', options?) => {
+/**
+ * Date input for all $date expressions
+ *
+ * @typedef {ISODate | [ISODate, PlainObject] | [any, string, PlainObject?]} DateValue
+ */
+export type DateValue =
+  | ISODate
+  | [ISODate, PlainObject] //
+  | [any, string, PlainObject?]
+const _VALIDATE_DATE_VALUE: ParamResolver = ['string', 'array']
+
+/**
+ * Arguments to be forwarded to Luxon corresponding DateTime parser.
+ * If a `string`, will be considered as the name of the format.
+ * If an `Array`, will be considered as a tuple consisting of
+ * [format, formatOptions].
+ * Recognized formats (exported as constants `DATE_{FORMAT_IN_CONSTANT_CASE}`):
+ * - `ISO`
+ * - `ISODate`
+ * - `ISOWeekDate`
+ * - `ISOTime`
+ * - `RFC2822`
+ * - `HTTP`
+ * - `SQL`
+ * - `SQLTime`
+ * - `SQLTime`
+ * - `UnixEpochMs`
+ * - `UnixEpochS`
+ * - `JSDate`
+ * - `PlainObject`
+ * - `LuxonDateTime`
+ *
+ * @typedef {String|[string, Object]} DateFormat
+ */
+export type DateFormat = string | [string, PlainObject]
+const _VALIDATE_DATE_FORMAT: ParamResolver = ['string', 'array', 'undefined']
+
+const _destructureDateValue = (input: DateValue) => {
+  if (Array.isArray(input)) {
+    if (typeof input[1] === 'string') {
+      // [any, string, PlainObject?]
+      return input
+    } else {
+      // [ISODate, PlainObject]
+      return [input[0], DATE_ISO, input[1]]
+    }
+  } else {
+    // ISODate
+    return [input, DATE_ISO, undefined]
+  }
+}
+
+const _parseLuxonDate = (dateValue: DateValue) => {
+  const [value, format, options] = _destructureDateValue(dateValue)
+
   if (value instanceof DateTime || format === DATE_LUXON_DATE_TIME) {
     return value
   } else {
@@ -29,31 +85,92 @@ const parseLuxonDate = (value, format = 'ISO', options?) => {
       case DATE_ISO_DATE:
       case DATE_ISO_WEEK_DATE:
       case DATE_ISO_TIME:
+        validateType('string', value)
         return DateTime.fromISO(value, options)
       case DATE_RFC2822:
+        validateType('string', value)
         return DateTime.fromRFC2822(value, options)
       case DATE_HTTP:
+        validateType('string', value)
         return DateTime.fromHTTP(value, options)
       case DATE_SQL:
       case DATE_SQL_DATE:
       case DATE_SQL_TIME:
+        validateType('string', value)
         return DateTime.fromSQL(value, options)
       case DATE_UNIX_EPOCH_MS:
+        validateType('number', value)
         return DateTime.fromMillis(value, options)
       case DATE_UNIX_EPOCH_S:
+        validateType('number', value)
         return DateTime.fromSeconds(value, options)
       case DATE_JS_DATE:
+        validateType('date', value)
         return DateTime.fromJSDate(value, options)
       case DATE_PLAIN_OBJECT:
+        validateType('object', value)
         return DateTime.fromObject(value, options)
       default:
+        validateType('string', value)
         return DateTime.fromFormat(value, format, options)
     }
   }
 }
 
+const _destructureDateFormat = (format: DateFormat) =>
+  Array.isArray(format) ? format : [format, undefined]
+
+const LUXON_DATE_TIME_PUBLIC_PROPERTIES = [
+  'day',
+  'daysInMonth',
+  'daysInYear',
+  'hour',
+  'invalidExplanation',
+  'invalidReason',
+  'isInDST',
+  'isInLeapYear',
+  'isOffsetFixed',
+  'isValid',
+  'locale',
+  'millisecond',
+  'minute',
+  'month',
+  'monthLong',
+  'monthShort',
+  'numberingSystem',
+  'offset',
+  'offsetNameLong',
+  'offsetNameShort',
+  'ordinal',
+  'outputCalendar',
+  'quarter',
+  'second',
+  'weekNumber',
+  'weekYear',
+  'weekday',
+  'weekdayLong',
+  'weekdayShort',
+  'weeksInWeekYear',
+  'year',
+  // 'zone',
+  'zoneName',
+]
+const _luxonDateTimeGet = (value, property) => {
+  if (!LUXON_DATE_TIME_PUBLIC_PROPERTIES.includes(property)) {
+    throw new TypeError(`Invalid DATE_DATE_TIME_PROP property ${property}`)
+  }
+
+  return value[property]
+}
+
 /* istanbul ignore next */
-const serializeLuxonDate = (value, format = 'ISO', options?) => {
+const _serializeLuxonDate = (value, formatRaw: DateFormat) => {
+  const [format, options] = _destructureDateFormat(formatRaw)
+
+  if (typeof options === 'object' && options.zone) {
+    value = value.setZone(options.zone)
+  }
+
   switch (format) {
     case DATE_LUXON_DATE_TIME:
       return value
@@ -83,37 +200,12 @@ const serializeLuxonDate = (value, format = 'ISO', options?) => {
       return value.toJSDate(options)
     case DATE_PLAIN_OBJECT:
       return value.toObject(options)
+    case DATE_DATE_TIME_PROP:
+      return _luxonDateTimeGet(value, options)
     default:
       return value.toFormat(format, options)
   }
 }
-
-const _luxonFmtArgs = (args) => (Array.isArray(args) ? args : [args, undefined])
-
-/**
- * Arguments to be forwarded to Luxon corresponding DateTime parser.
- * If a `string`, will be considered as the name of the format.
- * If an `Array`, will be considered as a tuple consisting of
- * [format, formatOptions].
- * Recognized formats (exported as constants `DATE_{FORMAT_IN_CONSTANT_CASE}`):
- * - `ISO`
- * - `ISODate`
- * - `ISOWeekDate`
- * - `ISOTime`
- * - `RFC2822`
- * - `HTTP`
- * - `SQL`
- * - `SQLTime`
- * - `SQLTime`
- * - `UnixEpochMs`
- * - `UnixEpochS`
- * - `JSDate`
- * - `PlainObject`
- * - `LuxonDateTime`
- *
- * @typedef {String|[string, Object]} DateFormat
- */
-type DateFormat = string | [string, PlainObject]
 
 /**
  * String in the full ISO 8601 format:
@@ -145,41 +237,32 @@ type DateFormat = string | [string, PlainObject]
  *
  * @function $date
  * @param {DateFormat} [parseFmtArgs='ISO']
- * @param {DateFormat} [serializeFmtArgs='ISO'] Same as `parseFmtArgs`
+ * @param {DateFormat} [serializeFormat='ISO'] Same as `parseFmtArgs`
  *         but will be used to format the resulting output
  * @param {String | Number | Object | Date} [date=$$VALUE] Input type should be in accordance
  *         with the `parseFmtArgs`.
- * @returns {String | Number | Object | Date} date Output will vary according to `serializeFmtArgs`
+ * @returns {String | Number | Object | Date} date Output will vary according to `serializeFormat`
  */
 export const $date = interpreter(
   (
-    parseFmtArgs: DateFormat = 'ISO',
-    serializeFmtArgs: DateFormat = 'ISO',
-    value: any
-  ): any =>
-    serializeLuxonDate(
-      parseLuxonDate(value, ..._luxonFmtArgs(parseFmtArgs)),
-      ..._luxonFmtArgs(serializeFmtArgs)
-    ),
-  [['string', 'array', 'undefined'], ['string', 'array', 'undefined'], 'any']
+    serializeFormat: DateFormat = 'ISO',
+    value: DateValue
+  ): string | number | PlainObject | Date =>
+    _serializeLuxonDate(_parseLuxonDate(value), serializeFormat),
+  [_VALIDATE_DATE_FORMAT, _VALIDATE_DATE_VALUE]
 )
 
 /**
  * Generates a ISO date string from `Date.now`
  *
  * @function $dateNow
- * @param {DateFormat} [serializeFmtArgs='ISO']
+ * @param {DateFormat} [serializeFormat='ISO']
  * @returns {String | Number | Object | Date} date
  */
 export const $dateNow = interpreter(
-  (
-    serializeFmtArgs: DateFormat = 'ISO'
-  ): string | number | PlainObject | Date =>
-    serializeLuxonDate(
-      DateTime.fromMillis(Date.now()),
-      ..._luxonFmtArgs(serializeFmtArgs)
-    ),
-  [['string', 'array', 'undefined']]
+  (serializeFormat: DateFormat = 'ISO'): string | number | PlainObject | Date =>
+    _serializeLuxonDate(DateTime.fromMillis(Date.now()), serializeFormat),
+  [_VALIDATE_DATE_FORMAT]
 )
 
 /**
@@ -197,10 +280,25 @@ export const $dateNow = interpreter(
  * @returns {Boolean} isValid
  */
 export const $dateIsValid = interpreter(
-  (value: any): boolean =>
-    typeof value === 'string' && DateTime.fromISO(value).isValid,
+  (value: DateValue): boolean => {
+    try {
+      return _parseLuxonDate(value).isValid
+    } catch (err) {
+      return false
+    }
+  },
   ['any']
 )
+
+/**
+ * @type {string | [string, string?]} DateUnitValue
+ */
+export type DateUnitValue = string | [string, string?]
+const _VALIDATE_DATE_UNIT_VALUE: ParamResolver = ['string', 'array']
+
+type ZoneSensitiveOption = any | [any, string?]
+const _parseZoneSensitiveOption = (unitValue: ZoneSensitiveOption) =>
+  Array.isArray(unitValue) ? unitValue : [unitValue]
 
 /**
  * Returns the date at the start of the given `unit` (e.g. `day`, `month`).
@@ -213,9 +311,18 @@ export const $dateIsValid = interpreter(
  * @returns {ISODate} date
  */
 export const $dateStartOf = interpreter(
-  (unit: string, date: ISODate): ISODate =>
-    DateTime.fromISO(date).startOf(unit).toISO(),
-  ['string', 'string']
+  (
+    unitValue: DateUnitValue,
+    serializeFormat: DateFormat = 'ISO',
+    date: DateValue
+  ): ISODate => {
+    const [unit, zone = 'local'] = _parseZoneSensitiveOption(unitValue)
+    return _serializeLuxonDate(
+      DateTime.fromISO(date).setZone(zone).startOf(unit),
+      serializeFormat
+    )
+  },
+  [_VALIDATE_DATE_UNIT_VALUE, _VALIDATE_DATE_FORMAT, _VALIDATE_DATE_VALUE]
 )
 
 /**
@@ -229,9 +336,18 @@ export const $dateStartOf = interpreter(
  * @returns {ISODate} date
  */
 export const $dateEndOf = interpreter(
-  (unit: string, date: ISODate): ISODate =>
-    DateTime.fromISO(date).endOf(unit).toISO(),
-  ['string', 'string']
+  (
+    unitValue: DateUnitValue,
+    serializeFormat: DateFormat = 'ISO',
+    date: DateValue
+  ): ISODate => {
+    const [unit, zone = 'local'] = _parseZoneSensitiveOption(unitValue)
+    return _serializeLuxonDate(
+      DateTime.fromISO(date).setZone(zone).endOf(unit),
+      serializeFormat
+    )
+  },
+  [_VALIDATE_DATE_UNIT_VALUE, _VALIDATE_DATE_FORMAT, _VALIDATE_DATE_VALUE]
 )
 
 /**
@@ -258,9 +374,19 @@ export const $dateEndOf = interpreter(
  * @returns {ISODate} date
  */
 export const $dateSet = interpreter(
-  (values: PlainObject, date: ISODate): ISODate =>
-    DateTime.fromISO(date).set(values).toISO(),
-  ['object', 'string']
+  (
+    values: ZoneSensitiveOption,
+    serializeFormat: DateFormat = 'ISO',
+    date: DateValue
+  ): ISODate => {
+    const [values_, zone = 'local'] = _parseZoneSensitiveOption(values)
+
+    return _serializeLuxonDate(
+      _parseLuxonDate(date).setZone(zone).set(values_),
+      serializeFormat
+    )
+  },
+  [['object', 'array'], _VALIDATE_DATE_FORMAT, _VALIDATE_DATE_VALUE]
 )
 
 const _luxonConfigDate = (dt, config, value) => {
@@ -285,21 +411,29 @@ const _luxonConfigDate = (dt, config, value) => {
  * @returns {ISODate} date
  */
 export const $dateSetConfig = interpreter(
-  (config: PlainObject, date: ISODate): ISODate => {
-    const dt = DateTime.fromISO(date)
+  (
+    config: PlainObject,
+    serializeFormat: DateFormat = 'ISO',
+    date: DateValue
+  ): ISODate => {
+    const dt = _parseLuxonDate(date)
 
-    return Object.keys(config)
-      .reduce((dt, key) => _luxonConfigDate(dt, key, config[key]), dt)
-      .toISO()
+    return _serializeLuxonDate(
+      Object.keys(config).reduce(
+        (dt, key) => _luxonConfigDate(dt, key, config[key]),
+        dt
+      ),
+      serializeFormat
+    )
   },
-  ['object', 'string']
+  ['object', _VALIDATE_DATE_FORMAT, _VALIDATE_DATE_VALUE]
 )
 
 const _dateComparison = (compare) =>
   interpreter(
-    (reference: ISODate, date: ISODate): boolean =>
-      compare(DateTime.fromISO(reference), DateTime.fromISO(date)),
-    ['string', 'string']
+    (reference: ISODate, date: DateValue): boolean =>
+      compare(_parseLuxonDate(reference), _parseLuxonDate(date)),
+    [_VALIDATE_DATE_VALUE, _VALIDATE_DATE_VALUE]
   )
 
 /**
@@ -360,10 +494,10 @@ export const $dateEq = interpreter(
   (
     reference: ISODate,
     compareUnit: string = 'millisecond',
-    date: ISODate
+    date: DateValue
   ): boolean =>
-    DateTime.fromISO(reference).hasSame(DateTime.fromISO(date), compareUnit),
-  ['string', ['string', 'undefined'], 'string']
+    _parseLuxonDate(reference).hasSame(_parseLuxonDate(date), compareUnit),
+  [_VALIDATE_DATE_VALUE, ['string', 'undefined'], _VALIDATE_DATE_VALUE]
 )
 
 /**
@@ -375,9 +509,13 @@ export const $dateEq = interpreter(
  * @returns {ISODate} date
  */
 export const $dateMoveForward = interpreter(
-  (duration: PlainObject, date: ISODate): ISODate =>
-    DateTime.fromISO(date).plus(duration).toISO(),
-  ['object', 'string']
+  (
+    duration: PlainObject,
+    serializeFormat: DateFormat = 'ISO',
+    date: DateValue
+  ): ISODate =>
+    _serializeLuxonDate(_parseLuxonDate(date).plus(duration), serializeFormat),
+  ['object', _VALIDATE_DATE_FORMAT, _VALIDATE_DATE_VALUE]
 )
 
 /**
@@ -389,9 +527,13 @@ export const $dateMoveForward = interpreter(
  * @returns {ISODate} date
  */
 export const $dateMoveBackward = interpreter(
-  (duration: PlainObject, date: ISODate): ISODate =>
-    DateTime.fromISO(date).minus(duration).toISO(),
-  ['object', 'string']
+  (
+    duration: PlainObject,
+    serializeFormat: DateFormat = 'ISO',
+    date: DateValue
+  ): ISODate =>
+    _serializeLuxonDate(_parseLuxonDate(date).minus(duration), serializeFormat),
+  ['object', _VALIDATE_DATE_FORMAT, _VALIDATE_DATE_VALUE]
 )
 
 export const DATE_EXPRESSIONS = {

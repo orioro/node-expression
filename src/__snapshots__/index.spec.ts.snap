@@ -59,6 +59,7 @@ Array [
   "DATE_JS_DATE",
   "DATE_PLAIN_OBJECT",
   "DATE_LUXON_DATE_TIME",
+  "DATE_DATE_TIME_PROP",
   "$date",
   "$dateNow",
   "$dateIsValid",
