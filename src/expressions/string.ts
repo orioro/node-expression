@@ -54,7 +54,7 @@ export const $string = interpreter(
 /**
  * @function $stringStartsWith
  * @param {String} query
- * @param {String} [strExp=$$VALUE]
+ * @param {String} [str=$$VALUE]
  * @returns {Boolean}
  */
 export const $stringStartsWith = interpreter(
@@ -64,7 +64,7 @@ export const $stringStartsWith = interpreter(
 
 /**
  * @function $stringLength
- * @param {String} [strExp=$$VALUE]
+ * @param {String} [str=$$VALUE]
  * @returns {Number}
  */
 export const $stringLength = interpreter((str: string): number => str.length, [
@@ -73,9 +73,9 @@ export const $stringLength = interpreter((str: string): number => str.length, [
 
 /**
  * @function $stringSubstr
- * @param {Number} startExp
- * @param {Number} endExp
- * @param {String} [strExp=$$VALUE]
+ * @param {Number} start
+ * @param {Number} end
+ * @param {String} [str=$$VALUE]
  */
 export const $stringSubstr = interpreter(
   (start: number, end: number | undefined, str: string): string =>
@@ -84,20 +84,20 @@ export const $stringSubstr = interpreter(
 )
 
 /**
- * @todo string Modify interface to allow for concatenating multiple strings at once
  * @function $stringConcat
- * @param {String} concatExp
- * @param {String} [baseExp=$$VALUE]
+ * @param {String | String[]} concat
+ * @param {String} [base=$$VALUE]
  * @returns {String}
  */
 export const $stringConcat = interpreter(
-  (concat: string, base: string): string => base.concat(concat),
-  ['string', 'string']
+  (concat: string | string[], base: string): string =>
+    Array.isArray(concat) ? base.concat(concat.join('')) : base.concat(concat),
+  [['string', 'array'], 'string']
 )
 
 /**
  * @function $stringTrim
- * @param {String} [strExp=$$VALUE]
+ * @param {String} [str=$$VALUE]
  * @returns {String}
  */
 export const $stringTrim = interpreter((str: string): string => str.trim(), [
@@ -108,7 +108,7 @@ export const $stringTrim = interpreter((str: string): string => str.trim(), [
  * @function $stringPadStart
  * @param {Number} targetLengthExp
  * @param {String} padStringExp
- * @param {String} [strExp=$$VALUE]
+ * @param {String} [str=$$VALUE]
  * @returns {String}
  */
 export const $stringPadStart = interpreter(
@@ -121,7 +121,7 @@ export const $stringPadStart = interpreter(
  * @function $stringPadEnd
  * @param {Number} targetLengthExp
  * @param {String} padStringExp
- * @param {String} [strExp=$$VALUE]
+ * @param {String} [str=$$VALUE]
  * @returns {String}
  */
 export const $stringPadEnd = interpreter(
@@ -152,7 +152,7 @@ const _prepareRegExp = (regExpCandidate: RegExpCandidate): RegExp => {
  *
  * @function $stringMatch
  * @param {String | [String, String?]} regExp
- * @param {String} [valueExp=$$VALUE]
+ * @param {String} [value=$$VALUE]
  * @returns {String[]}
  */
 export const $stringMatch = interpreter(
@@ -170,7 +170,7 @@ export const $stringMatch = interpreter(
  *
  * @function $stringTest
  * @param {String | [String, String?]} regExp
- * @param {String} [valueExp=$$VALUE]
+ * @param {String} [value=$$VALUE]
  * @returns {Boolean}
  */
 export const $stringTest = interpreter(
@@ -213,7 +213,7 @@ export const $stringReplace = interpreter(
 
 /**
  * @function $stringToUpperCase
- * @param {String} valueExp
+ * @param {String} value
  * @returns {String}
  */
 export const $stringToUpperCase = interpreter(
@@ -223,7 +223,7 @@ export const $stringToUpperCase = interpreter(
 
 /**
  * @function $stringToLowerCase
- * @param {String} valueExp
+ * @param {String} value
  * @returns {String}
  */
 export const $stringToLowerCase = interpreter(

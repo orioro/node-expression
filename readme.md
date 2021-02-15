@@ -793,18 +793,18 @@ Modifies the date by moving it backward the duration specified.
 ## String
 
 - [`$string(value)`](#stringvalue)
-- [`$stringStartsWith(query, strExp)`](#stringstartswithquery-strexp)
-- [`$stringLength(strExp)`](#stringlengthstrexp)
-- [`$stringSubstr(startExp, endExp, strExp)`](#stringsubstrstartexp-endexp-strexp)
-- [`$stringConcat(concatExp, baseExp)`](#stringconcatconcatexp-baseexp)
-- [`$stringTrim(strExp)`](#stringtrimstrexp)
-- [`$stringPadStart(targetLengthExp, padStringExp, strExp)`](#stringpadstarttargetlengthexp-padstringexp-strexp)
-- [`$stringPadEnd(targetLengthExp, padStringExp, strExp)`](#stringpadendtargetlengthexp-padstringexp-strexp)
-- [`$stringMatch(regExp, valueExp)`](#stringmatchregexp-valueexp)
-- [`$stringTest(regExp, valueExp)`](#stringtestregexp-valueexp)
+- [`$stringStartsWith(query, str)`](#stringstartswithquery-str)
+- [`$stringLength(str)`](#stringlengthstr)
+- [`$stringSubstr(start, end, str)`](#stringsubstrstart-end-str)
+- [`$stringConcat(concat, base)`](#stringconcatconcat-base)
+- [`$stringTrim(str)`](#stringtrimstr)
+- [`$stringPadStart(targetLengthExp, padStringExp, str)`](#stringpadstarttargetlengthexp-padstringexp-str)
+- [`$stringPadEnd(targetLengthExp, padStringExp, str)`](#stringpadendtargetlengthexp-padstringexp-str)
+- [`$stringMatch(regExp, value)`](#stringmatchregexp-value)
+- [`$stringTest(regExp, value)`](#stringtestregexp-value)
 - [`$stringReplace(searchExp, replacementExp)`](#stringreplacesearchexp-replacementexp)
-- [`$stringToUpperCase(valueExp)`](#stringtouppercasevalueexp)
-- [`$stringToLowerCase(valueExp)`](#stringtolowercasevalueexp)
+- [`$stringToUpperCase(value)`](#stringtouppercasevalue)
+- [`$stringToLowerCase(value)`](#stringtolowercasevalue)
 - [`$stringInterpolate(data, template)`](#stringinterpolatedata-template)
 
 
@@ -813,58 +813,58 @@ Modifies the date by moving it backward the duration specified.
 - `value` {*}
 - Returns: {String} 
 
-##### `$stringStartsWith(query, strExp)`
+##### `$stringStartsWith(query, str)`
 
 - `query` {String}
-- `strExp` {String}
+- `str` {String}
 - Returns: {Boolean} 
 
-##### `$stringLength(strExp)`
+##### `$stringLength(str)`
 
-- `strExp` {String}
+- `str` {String}
 - Returns: {Number} 
 
-##### `$stringSubstr(startExp, endExp, strExp)`
+##### `$stringSubstr(start, end, str)`
 
-- `startExp` {Number}
-- `endExp` {Number}
-- `strExp` {String}
+- `start` {Number}
+- `end` {Number}
+- `str` {String}
 
-##### `$stringConcat(concatExp, baseExp)`
+##### `$stringConcat(concat, base)`
 
-- `concatExp` {String}
-- `baseExp` {String}
+- `concat` {String | String[]}
+- `base` {String}
 - Returns: {String} 
 
-##### `$stringTrim(strExp)`
+##### `$stringTrim(str)`
 
-- `strExp` {String}
+- `str` {String}
 - Returns: {String} 
 
-##### `$stringPadStart(targetLengthExp, padStringExp, strExp)`
+##### `$stringPadStart(targetLengthExp, padStringExp, str)`
 
 - `targetLengthExp` {Number}
 - `padStringExp` {String}
-- `strExp` {String}
+- `str` {String}
 - Returns: {String} 
 
-##### `$stringPadEnd(targetLengthExp, padStringExp, strExp)`
+##### `$stringPadEnd(targetLengthExp, padStringExp, str)`
 
 - `targetLengthExp` {Number}
 - `padStringExp` {String}
-- `strExp` {String}
+- `str` {String}
 - Returns: {String} 
 
-##### `$stringMatch(regExp, valueExp)`
+##### `$stringMatch(regExp, value)`
 
 - `regExp` {String | [String, String?]}
-- `valueExp` {String}
+- `value` {String}
 - Returns: {String[]} 
 
-##### `$stringTest(regExp, valueExp)`
+##### `$stringTest(regExp, value)`
 
 - `regExp` {String | [String, String?]}
-- `valueExp` {String}
+- `value` {String}
 - Returns: {Boolean} 
 
 ##### `$stringReplace(searchExp, replacementExp)`
@@ -873,14 +873,14 @@ Modifies the date by moving it backward the duration specified.
 - `replacementExp` {String}
 - Returns: {String} 
 
-##### `$stringToUpperCase(valueExp)`
+##### `$stringToUpperCase(value)`
 
-- `valueExp` {String}
+- `value` {String}
 - Returns: {String} 
 
-##### `$stringToLowerCase(valueExp)`
+##### `$stringToLowerCase(value)`
 
-- `valueExp` {String}
+- `value` {String}
 - Returns: {String} 
 
 ##### `$stringInterpolate(data, template)`

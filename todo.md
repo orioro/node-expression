@@ -9,4 +9,3 @@
              to RegExp DoS attacks. Might want to move away into non-built in. (src/expressions/string.ts)
 - string  | $stringTest is RegExp dependant, which may open vulnerabilities
              to RegExp DoS attacks. Might want to move away into non-built in. (src/expressions/string.ts)
-- string  | Modify interface to allow for concatenating multiple strings at once (src/expressions/string.ts)

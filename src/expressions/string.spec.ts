@@ -82,15 +82,23 @@ test('$stringSubstr', () => {
   expect(evaluate(context, ['$stringSubstr', 4])).toEqual('_string')
 })
 
-test('$stringConcat', () => {
+describe('$stringConcat', () => {
   const context = {
     interpreters,
     scope: { $$VALUE: 'some_string' },
   }
 
-  expect(evaluate(context, ['$stringConcat', '_another_string'])).toEqual(
-    'some_string_another_string'
-  )
+  test('single string', () => {
+    expect(evaluate(context, ['$stringConcat', '_another_string'])).toEqual(
+      'some_string_another_string'
+    )
+  })
+
+  test('array of strings', () => {
+    expect(
+      evaluate(context, ['$stringConcat', ['some', 'other', 'strings']])
+    ).toEqual('some_stringsomeotherstrings')
+  })
 })
 
 test('$stringTrim', () => {
