@@ -355,8 +355,6 @@ export const $dateEndOf = interpreter(
  * See [`DateTime#set`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#instance-method-set)
  * and [`DateTime.fromObject`](https://moment.github.io/luxon/docs/class/src/datetime.js~DateTime.html#static-method-fromObject)
  *
- * @todo date Watch issue: https://github.com/moment/luxon/issues/870
- *
  * @function $dateSet
  * @param {Object} valuesExp
  * @param {Number} valuesExp.year

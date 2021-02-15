@@ -1,6 +1,3 @@
-- $type   | Return value for arrays, objects and regexp (move away from typeof) (src/expressions/type.ts)
-- array   | Improve ease of use of the sorting comparison expression. (src/expressions/array.ts)
-- date    | Watch issue: https://github.com/moment/luxon/issues/870 (src/expressions/date.ts)
 - logical | Better handle unknown expressions for boolean logical operators
               Uninterpreted expressions are returned as simple arrays, which
               in turn return mistaken true results (src/expressions/logical.ts)

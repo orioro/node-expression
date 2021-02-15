@@ -104,7 +104,7 @@ TODO
 - [`$arrayIndexOf(value, array)`](#arrayindexofvalue-array)
 - [`$arrayFind(queryExp, array)`](#arrayfindqueryexp-array)
 - [`$arrayReverse(array)`](#arrayreversearray)
-- [`$arraySort(sortExp, array)`](#arraysortsortexp-array)
+- [`$arraySort(sort, array)`](#arraysortsort-array)
 - [`$arrayPush(valueExp, array)`](#arraypushvalueexp-array)
 - [`$arrayPop(array)`](#arraypoparray)
 - [`$arrayUnshift(valueExp, array)`](#arrayunshiftvalueexp-array)
@@ -203,9 +203,9 @@ $arrayEvery exposes array iteration variables:
 
 - `array` {Array}
 
-##### `$arraySort(sortExp, array)`
+##### `$arraySort(sort, array)`
 
-- `sortExp` {Number}
+- `sort` {String | [Expression](#expression) | [Expression, string]}
 - `array` {Array}
 
 ##### `$arrayPush(valueExp, array)`

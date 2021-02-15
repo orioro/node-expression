@@ -2,8 +2,6 @@ import { interpreter } from '../expression'
 import { getType } from '@orioro/validate-type'
 
 /**
- * @todo $type Return value for arrays, objects and regexp (move away from typeof)
- *
  * @function $type
  * @param {*} valueExp
  * @returns {String} type Possible values:
