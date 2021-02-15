@@ -1,9 +1,9 @@
 import { evaluate } from '../expression'
-import { $value } from './value'
+import { VALUE_EXPRESSIONS } from './value'
 import { NUMBER_EXPRESSIONS } from './number'
 
 const interpreters = {
-  $value,
+  ...VALUE_EXPRESSIONS,
   ...NUMBER_EXPRESSIONS,
 }
 

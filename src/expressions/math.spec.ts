@@ -1,34 +1,10 @@
 import { evaluate } from '../expression'
-import { $value } from './value'
-import {
-  $mathSum,
-  $mathSub,
-  $mathMult,
-  $mathDiv,
-  $mathMod,
-  $mathPow,
-  $mathAbs,
-  $mathMax,
-  $mathMin,
-  $mathRound,
-  $mathFloor,
-  $mathCeil,
-} from './math'
+import { VALUE_EXPRESSIONS } from './value'
+import { MATH_EXPRESSIONS } from './math'
 
 const interpreters = {
-  $value,
-  $mathSum,
-  $mathSub,
-  $mathMult,
-  $mathDiv,
-  $mathMod,
-  $mathPow,
-  $mathAbs,
-  $mathMax,
-  $mathMin,
-  $mathRound,
-  $mathFloor,
-  $mathCeil,
+  ...VALUE_EXPRESSIONS,
+  ...MATH_EXPRESSIONS,
 }
 
 describe('operations', () => {
@@ -70,46 +46,41 @@ test('$mathAbs', () => {
   ).toEqual(10)
 })
 
-test('$mathMax', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10 },
-      },
-      ['$mathMax', 5]
-    )
-  ).toEqual(10)
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10 },
-      },
-      ['$mathMax', 50]
-    )
-  ).toEqual(50)
+describe('$mathMax', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: 10 },
+  }
+
+  test('single value', () => {
+    expect(evaluate(context, ['$mathMax', 5])).toEqual(10)
+    expect(evaluate(context, ['$mathMax', 15])).toEqual(15)
+  })
+
+  test('array of values', () => {
+    expect(evaluate(context, ['$mathMax', []])).toEqual(10)
+    expect(evaluate(context, ['$mathMax', [0, 5]])).toEqual(10)
+    expect(evaluate(context, ['$mathMax', [5, 15]])).toEqual(15)
+  })
 })
 
-test('$mathMin', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10 },
-      },
-      ['$mathMin', 5]
-    )
-  ).toEqual(5)
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10 },
-      },
-      ['$mathMin', 50]
-    )
-  ).toEqual(10)
+describe('$mathMin', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: 10 },
+  }
+
+  test('single value', () => {
+    expect(evaluate(context, ['$mathMin', 5])).toEqual(5)
+    expect(evaluate(context, ['$mathMin', 15])).toEqual(10)
+  })
+
+  test('array of values', () => {
+    expect(evaluate(context, ['$mathMin', []])).toEqual(10)
+    expect(evaluate(context, ['$mathMin', [0, 5]])).toEqual(0)
+    expect(evaluate(context, ['$mathMin', [5, 15]])).toEqual(5)
+    expect(evaluate(context, ['$mathMin', [25, 15]])).toEqual(10)
+  })
 })
 
 test('$mathRound', () => {
