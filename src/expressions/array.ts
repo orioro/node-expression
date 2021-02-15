@@ -1,5 +1,11 @@
-import { interpreter, evaluate, evaluateTyped } from '../expression'
+import {
+  interpreter,
+  evaluate,
+  evaluateTyped,
+  isExpression,
+} from '../expression'
 import { EvaluationContext, Expression } from '../types'
+import { validateType } from '@orioro/validate-type'
 
 export const $$INDEX = ['$value', '$$INDEX']
 export const $$ARRAY = ['$value', '$$ARRAY']
@@ -190,33 +196,54 @@ export const $arrayReverse = interpreter(
   ['array']
 )
 
+const _sortDefault = (a, b) => {
+  if (a === undefined) {
+    return 1
+  } else if (b === undefined) {
+    return -1
+  } else {
+    a = String(a)
+    b = String(b)
+    return a < b ? -1 : a === b ? 0 : 1
+  }
+}
+
 /**
- * @todo array Improve ease of use of the sorting comparison expression.
- *
  * @function $arraySort
- * @param {Number} sortExp
+ * @param {String | Expression | [Expression, string]} sort
  * @param {Array} [array=$$VALUE]
  */
 export const $arraySort = interpreter(
-  (sortExp: Expression, array: any[], context): any[] => {
-    const arr = array.slice()
+  (
+    sort: string | Expression | [Expression, string] = 'ASC',
+    array: any[],
+    context: EvaluationContext
+  ): any => {
+    const [sortExp, order = 'ASC'] = isExpression(context.interpreters, sort)
+      ? [sort, 'ASC']
+      : typeof sort === 'string'
+      ? [undefined, sort]
+      : sort
 
-    if (sortExp === undefined) {
-      arr.sort()
-    } else {
-      arr.sort(($$SORT_A, $$SORT_B) =>
-        evaluateTyped(
-          'number',
-          {
-            ...context,
-            scope: { $$VALUE: null, $$SORT_A, $$SORT_B },
-          },
-          sortExp
-        )
-      )
-    }
+    validateType(['array', 'undefined'], sortExp)
+    validateType('string', order)
 
-    return arr
+    const sortFn =
+      sortExp === undefined
+        ? _sortDefault
+        : ($$SORT_A, $$SORT_B) =>
+            evaluateTyped(
+              'number',
+              {
+                ...context,
+                scope: { $$VALUE: null, $$SORT_A, $$SORT_B },
+              },
+              sortExp
+            )
+
+    return array
+      .slice()
+      .sort(order === 'DESC' ? (a, b) => -1 * sortFn(a, b) : sortFn)
   },
   [null, 'array']
 )

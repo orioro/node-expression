@@ -247,6 +247,12 @@ describe('$arraySort', () => {
     }
 
     expect(evaluate(context, ['$arraySort'])).toEqual(['A', 'B', 'C', 'D'])
+    expect(evaluate(context, ['$arraySort', 'DESC'])).toEqual([
+      'D',
+      'C',
+      'B',
+      'A',
+    ])
   })
 
   test('with custom comparator', () => {
@@ -255,18 +261,34 @@ describe('$arraySort', () => {
       scope: { $$VALUE: ['9', '1', '12', '11'] },
     }
 
+    const SORT_NUMBERS = [
+      '$mathSub',
+      ['$numberInt', 10, ['$value', '$$SORT_B']],
+      ['$numberInt', 10, ['$value', '$$SORT_A']],
+    ]
+
     expect(evaluate(context, ['$arraySort'])).toEqual(['1', '11', '12', '9'])
 
-    expect(
-      evaluate(context, [
-        '$arraySort',
-        [
-          '$mathSub',
-          ['$numberInt', 10, ['$value', '$$SORT_B']],
-          ['$numberInt', 10, ['$value', '$$SORT_A']],
-        ],
-      ])
-    ).toEqual(['1', '9', '11', '12'])
+    expect(evaluate(context, ['$arraySort', SORT_NUMBERS])).toEqual([
+      '1',
+      '9',
+      '11',
+      '12',
+    ])
+
+    expect(evaluate(context, ['$arraySort', [SORT_NUMBERS]])).toEqual([
+      '1',
+      '9',
+      '11',
+      '12',
+    ])
+
+    expect(evaluate(context, ['$arraySort', [SORT_NUMBERS, 'DESC']])).toEqual([
+      '12',
+      '11',
+      '9',
+      '1',
+    ])
   })
 })
 
