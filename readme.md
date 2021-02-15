@@ -713,13 +713,13 @@ Modifies the date by moving it backward the duration specified.
 
 ##### `$mathMax(otherValue, value)`
 
-- `otherValue` {Number}
+- `otherValue` {Number | Number[]}
 - `value` {Number}
 - Returns: `result` {Number} 
 
 ##### `$mathMin(otherValue, value)`
 
-- `otherValue` {Number}
+- `otherValue` {Number | Number[]}
 - `value` {Number}
 - Returns: `result` {Number} 
 

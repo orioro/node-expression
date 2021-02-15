@@ -77,15 +77,13 @@ export const $mathAbs = interpreter(
 )
 
 /**
- * @todo math Modify interface: take in array of numberExpressions to allow for multi comparison
- *
  * @function $mathMax
  * @param {Number | Number[]} otherValue
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
 export const $mathMax = interpreter(
-  (otherValue: number, value: number): number =>
+  (otherValue: number | number[], value: number): number =>
     Array.isArray(otherValue)
       ? Math.max(value, ...otherValue)
       : Math.max(value, otherValue),
@@ -94,12 +92,12 @@ export const $mathMax = interpreter(
 
 /**
  * @function $mathMin
- * @param {Number} otherValue
+ * @param {Number | Number[]} otherValue
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
 export const $mathMin = interpreter(
-  (otherValue: number, value: number): number =>
+  (otherValue: number | number[], value: number): number =>
     Array.isArray(otherValue)
       ? Math.min(value, ...otherValue)
       : Math.min(value, otherValue),

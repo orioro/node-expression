@@ -1,7 +1,6 @@
 - logical | Better handle unknown expressions for boolean logical operators
               Uninterpreted expressions are returned as simple arrays, which
               in turn return mistaken true results (src/expressions/logical.ts)
-- math    | Modify interface: take in array of numberExpressions to allow for multi comparison (src/expressions/math.ts)
 - string  | $stringInterpolate verify if INTERPOLATION_RE is vulnerable to
              RegExp DoS attacks. (src/expressions/string.ts)
 - string  | $stringMatch is RegExp dependant, which may open vulnerabilities
