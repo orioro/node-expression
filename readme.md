@@ -805,6 +805,7 @@ Modifies the date by moving it backward the duration specified.
 - [`$stringReplace(searchExp, replacementExp)`](#stringreplacesearchexp-replacementexp)
 - [`$stringToUpperCase(value)`](#stringtouppercasevalue)
 - [`$stringToLowerCase(value)`](#stringtolowercasevalue)
+- [`INTERPOLATION_REGEXP`](#interpolation_regexp)
 - [`$stringInterpolate(data, template)`](#stringinterpolatedata-template)
 
 
@@ -882,6 +883,30 @@ Modifies the date by moving it backward the duration specified.
 
 - `value` {String}
 - Returns: {String} 
+
+##### `INTERPOLATION_REGEXP`
+
+/\$\{\s*([\w\$.]+)\s*\}/g
+![](docs/resources/interpolation_regexp.png)
+
+RegExp used for matching interpolation expressions.
+Allows a non-interrupted sequence of alphanumeric chars ([A-Za-z0-9_]),
+dollar signs ($) and dots (.) wrapped in curly braces ({})
+with or without any number of whitespace chars (' ') between braces and the
+value identifier.
+
+Some resources on RegExp safety concerning RegExp Denial of Service (ReDOS)
+through Catastrophic backtracking, for future study and reference:
+
+- [Catastrophic backtracking](https://www.regular-expressions.info/catastrophic.html)
+- [Regular expression visualizer](https://github.com/CJex/regulex)
+- [Validator.js](https://github.com/validatorjs/validator.js)
+- [Stack Overflow interesting question](https://stackoverflow.com/questions/63127145/safe-regex-patterns-from-redos-attack)
+- [Catastrophic backtracking - JavaScript Info](https://javascript.info/regexp-catastrophic-backtracking#preventing-backtracking)
+- [Google re2 library](https://github.com/google/re2)
+- [Google re2 for Node.js - re2](https://github.com/uhop/node-re2/)
+
+
 
 ##### `$stringInterpolate(data, template)`
 

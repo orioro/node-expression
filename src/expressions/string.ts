@@ -231,13 +231,33 @@ export const $stringToLowerCase = interpreter(
   ['string']
 )
 
-const INTERPOLATION_RE = /\$\{\s*(.+?)\s*\}/g
+/**
+ * /\$\{\s*([\w$.]+)\s*\}/g
+ * ![](docs/resources/interpolation_regexp.png)
+ *
+ * RegExp used for matching interpolation expressions.
+ * Allows a non-interrupted sequence of alphanumeric chars ([A-Za-z0-9_]),
+ * dollar signs ($) and dots (.) wrapped in curly braces ({})
+ * with or without any number of whitespace chars (' ') between braces and the
+ * value identifier.
+ *
+ * Some resources on RegExp safety concerning RegExp Denial of Service (ReDOS)
+ * through Catastrophic backtracking, for future study and reference:
+ *
+ * - [Catastrophic backtracking](https://www.regular-expressions.info/catastrophic.html)
+ * - [Regular expression visualizer](https://github.com/CJex/regulex)
+ * - [Validator.js](https://github.com/validatorjs/validator.js)
+ * - [Stack Overflow interesting question](https://stackoverflow.com/questions/63127145/safe-regex-patterns-from-redos-attack)
+ * - [Catastrophic backtracking - JavaScript Info](https://javascript.info/regexp-catastrophic-backtracking#preventing-backtracking)
+ * - [Google re2 library](https://github.com/google/re2)
+ * - [Google re2 for Node.js - re2](https://github.com/uhop/node-re2/)
+ *
+ * @const {RegExp} INTERPOLATION_REGEXP
+ */
+const INTERPOLATION_REGEXP = /\$\{\s*([\w$.]+)\s*\}/g
 const INTERPOLATABLE_TYPES = ['string', 'number']
 
 /**
- * @todo string $stringInterpolate verify if INTERPOLATION_RE is vulnerable to
- *              RegExp DoS attacks.
- *
  * @function $stringInterpolate
  * @param {Object | Array} data Data context to be used for interpolation
  * @param {String} template Basic JS template string like `${value.path}` value
@@ -248,7 +268,7 @@ const INTERPOLATABLE_TYPES = ['string', 'number']
  */
 export const $stringInterpolate = interpreter(
   (data: PlainObject | any[], template: string): string =>
-    template.replace(INTERPOLATION_RE, (match, path) => {
+    template.replace(INTERPOLATION_REGEXP, (match, path) => {
       const value = get(data, path)
 
       return INTERPOLATABLE_TYPES.includes(typeof value) ? value : ''

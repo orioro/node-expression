@@ -229,6 +229,9 @@ describe('$stringInterpolate(data, string)', () => {
       father: {
         name: 'Guilherme',
       },
+
+      $special1: '$$$$$',
+      _special2: '_____',
     }
 
     const template =
@@ -243,6 +246,35 @@ describe('$stringInterpolate(data, string)', () => {
         ['$stringInterpolate', data]
       )
     ).toEqual('Olá, eu sou João. Minha mãe Maria, meu pai Guilherme.')
+
+    const expectations = [
+      ['name: ${ name }', 'name: João'],
+      ['${name}', 'João'],
+      ['${name }', 'João'],
+      ['${ name}', 'João'],
+      ['mother name: ${ mother.name }', 'mother name: Maria'],
+
+      ['${ $special1 }', '$$$$$'],
+      ['${ _special2 }', '_____'],
+
+      // unrecognized
+      ['${ }', '${ }'],
+      ['${ {name} }', '${ {name} }'],
+      ['${ mother. name }', '${ mother. name }'],
+      ['${ [] }', '${ [] }'],
+    ]
+
+    expectations.forEach(([input, expected]) => {
+      expect(
+        evaluate(
+          {
+            interpreters,
+            scope: { $$VALUE: input },
+          },
+          ['$stringInterpolate', data]
+        )
+      ).toEqual(expected)
+    })
   })
 
   test('array', () => {
