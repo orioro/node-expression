@@ -272,45 +272,54 @@ export const $arraySlice = interpreter(
 )
 
 /**
- * @function $arraySubstitute
- * @param {Number} start
- * @param {Number} end
+ * @function $arrayReplace
+ * @param {Number | [Number, Number]} indexOrRange
  * @param {Array} values
  * @param {Array} [array=$$VALUE]
  * @returns {Array}
  */
-export const $arraySubstitute = interpreter(
-  (start: number, end: number, insertValues: any[], array: any[]): any[] => [
-    ...array.slice(0, start),
-    ...insertValues,
-    ...array.slice(end),
-  ],
-  ['number', 'number', 'array', 'array']
+export const $arrayReplace = interpreter(
+  (
+    indexOrRange: number | [number, number],
+    replacement: any,
+    array: any[]
+  ): any[] => {
+    const [start, end] = Array.isArray(indexOrRange)
+      ? indexOrRange
+      : [indexOrRange, indexOrRange + 1]
+
+    const head = array.slice(0, start)
+    const tail = array.slice(end)
+
+    return Array.isArray(replacement)
+      ? [...head, ...replacement, ...tail]
+      : [...head, replacement, ...tail]
+  },
+  [['number', 'array'], 'any', 'array']
 )
 
 /**
  * Adds items at the given position.
  *
- * @todo array Merge with $arraySubstitute, overloading index parameter: number or [number, number]
- *
  * @function $arrayAddAt
  * @param {Number} index
- * @param {Array} values
+ * @param {* | Array} values
  * @param {Array} [array=$$VALUE]
  * @returns {Array} resultingArray The array with items added at position
  */
 export const $arrayAddAt = interpreter(
-  (index: number, values: any[], array: any[]) => [
-    ...array.slice(0, index),
-    ...values,
-    ...array.slice(index),
-  ],
-  ['number', 'array', 'array']
+  (index: number, values: any[], array: any[]) => {
+    const head = array.slice(0, index)
+    const tail = array.slice(index)
+
+    return Array.isArray(values)
+      ? [...head, ...values, ...tail]
+      : [...head, values, ...tail]
+  },
+  ['number', 'any', 'array']
 )
 
 /**
- * @todo array Merge with $arraySubstitue and $arrayAddAt
- *
  * @function $arrayRemoveAt
  * @param {Number} index
  * @param {Number} [countExp=1]
@@ -367,7 +376,7 @@ export const ARRAY_EXPRESSIONS = {
   $arrayUnshift,
   $arrayShift,
   $arraySlice,
-  $arraySubstitute,
+  $arrayReplace,
   $arrayAddAt,
   $arrayRemoveAt,
   $arrayJoin,

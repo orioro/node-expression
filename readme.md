@@ -110,7 +110,7 @@ TODO
 - [`$arrayUnshift(valueExp, array)`](#arrayunshiftvalueexp-array)
 - [`$arrayShift(array)`](#arrayshiftarray)
 - [`$arraySlice(start, end, array)`](#arrayslicestart-end-array)
-- [`$arraySubstitute(start, end, values, array)`](#arraysubstitutestart-end-values-array)
+- [`$arrayReplace(indexOrRange, values, array)`](#arrayreplaceindexorrange-values-array)
 - [`$arrayAddAt(index, values, array)`](#arrayaddatindex-values-array)
 - [`$arrayRemoveAt(index, countExp, array)`](#arrayremoveatindex-countexp-array)
 - [`$arrayJoin(separator, array)`](#arrayjoinseparator-array)
@@ -233,10 +233,9 @@ $arrayEvery exposes array iteration variables:
 - `array` {Array}
 - Returns: {Array} 
 
-##### `$arraySubstitute(start, end, values, array)`
+##### `$arrayReplace(indexOrRange, values, array)`
 
-- `start` {Number}
-- `end` {Number}
+- `indexOrRange` {Number | [Number, Number]}
 - `values` {Array}
 - `array` {Array}
 - Returns: {Array} 
@@ -246,7 +245,7 @@ $arrayEvery exposes array iteration variables:
 Adds items at the given position.
 
 - `index` {Number}
-- `values` {Array}
+- `values` {* | Array}
 - `array` {Array}
 - Returns: `resultingArray` {Array} The array with items added at position
 

@@ -15,6 +15,7 @@ import { VALUE_EXPRESSIONS } from './expressions/value'
  * @todo semantic-release Watch issue related to NPM_TOKEN
  *                        https://github.com/semantic-release/npm/issues/298
  *                        "npm automation tokens cannot create dist-tags #298"
+ *                        Update NPM_TOKEN once issue is resolved.
  */
 
 export const ALL_EXPRESSIONS = {

@@ -337,16 +337,53 @@ describe('$arraySlice', () => {
   })
 })
 
-describe('$arraySubstitute', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
+describe('$arrayReplace', () => {
+  const context = {
+    interpreters,
+    scope: { $$VALUE: ['0', '1', '2', '3'] },
+  }
+
+  test('index', () => {
+    expect(evaluate(context, ['$arrayReplace', 1, 'R'])).toEqual([
+      '0',
+      'R',
+      '2',
+      '3',
+    ])
+    expect(
+      evaluate(context, ['$arrayReplace', 1, ['R1', 'R2', 'R3']])
+    ).toEqual(['0', 'R1', 'R2', 'R3', '2', '3'])
+  })
+
+  test('range', () => {
+    expect(evaluate(context, ['$arrayReplace', [1, 3], 'R'])).toEqual([
+      '0',
+      'R',
+      '3',
+    ])
+    expect(
+      evaluate(context, ['$arrayReplace', [1, 3], ['R1', 'R2', 'R3']])
+    ).toEqual(['0', 'R1', 'R2', 'R3', '3'])
+  })
+
+  test('empty replacement (removal)', () => {
+    expect(evaluate(context, ['$arrayReplace', 1, []])).toEqual(['0', '2', '3'])
+
+    expect(evaluate(context, ['$arrayReplace', [1, 3], []])).toEqual(['0', '3'])
+  })
+
+  test('empty range (add)', () => {
+    expect(evaluate(context, ['$arrayReplace', [1, 1], 'R'])).toEqual([
+      '0',
+      'R',
+      '1',
+      '2',
+      '3',
+    ])
 
     expect(
-      evaluate(context, ['$arraySubstitute', 1, 3, ['$arraySlice', 0, 4]])
-    ).toEqual(['A', 'A', 'B', 'C', 'D', 'D'])
+      evaluate(context, ['$arrayReplace', [1, 1], ['R1', 'R2', 'R3']])
+    ).toEqual(['0', 'R1', 'R2', 'R3', '1', '2', '3'])
   })
 })
 

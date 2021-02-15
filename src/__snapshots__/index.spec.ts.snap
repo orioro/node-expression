@@ -27,7 +27,7 @@ Array [
   "$arrayUnshift",
   "$arrayShift",
   "$arraySlice",
-  "$arraySubstitute",
+  "$arrayReplace",
   "$arrayAddAt",
   "$arrayRemoveAt",
   "$arrayJoin",
