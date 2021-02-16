@@ -1,6 +1,6 @@
-import { evaluateTyped, interpreter } from '../expression'
+import { interpreter } from '../expression'
 import { get } from 'lodash'
-import { EvaluationContext, Expression, PlainObject } from '../types'
+import { PlainObject } from '../types'
 
 import { getType } from '@orioro/validate-type'
 
@@ -59,7 +59,7 @@ export const $string = interpreter(
  */
 export const $stringStartsWith = interpreter(
   (query: string, str: string): boolean => str.startsWith(query),
-  [evaluateTyped.bind(null, 'string'), evaluateTyped.bind(null, 'string')]
+  ['string', 'string']
 )
 
 /**
@@ -68,7 +68,7 @@ export const $stringStartsWith = interpreter(
  * @returns {Number}
  */
 export const $stringLength = interpreter((str: string): number => str.length, [
-  evaluateTyped.bind(null, 'string'),
+  'string',
 ])
 
 /**
@@ -128,87 +128,6 @@ export const $stringPadEnd = interpreter(
   (targetLength: number, padString: string, str: string): string =>
     str.padEnd(targetLength, padString),
   ['number', 'string', 'string']
-)
-
-type RegExpTuple = [string, string?]
-type RegExpCandidate = string | RegExp | RegExpTuple
-
-const _prepareRegExp = (regExpCandidate: RegExpCandidate): RegExp => {
-  switch (getType(regExpCandidate)) {
-    case 'string':
-      return new RegExp(regExpCandidate as string)
-    case 'array':
-      return new RegExp(regExpCandidate[0], regExpCandidate[1])
-    case 'regexp':
-      return regExpCandidate as RegExp
-    default:
-      throw new TypeError(`Invalid RegExp candidate: ${regExpCandidate}`)
-  }
-}
-
-/**
- * @todo string $stringMatch is RegExp dependant, which may open vulnerabilities
- *              to RegExp DoS attacks. Might want to move away into non-built in.
- *
- * @function $stringMatch
- * @param {String | [String, String?]} regExp
- * @param {String} [value=$$VALUE]
- * @returns {String[]}
- */
-export const $stringMatch = interpreter(
-  (regExpCandidate: RegExpCandidate, value: string): string[] => {
-    const match = value.match(_prepareRegExp(regExpCandidate))
-
-    return match === null ? [] : [...match]
-  },
-  [['string', 'regexp', 'array'], 'string']
-)
-
-/**
- * @todo string $stringTest is RegExp dependant, which may open vulnerabilities
- *              to RegExp DoS attacks. Might want to move away into non-built in.
- *
- * @function $stringTest
- * @param {String | [String, String?]} regExp
- * @param {String} [value=$$VALUE]
- * @returns {Boolean}
- */
-export const $stringTest = interpreter(
-  (regExpCandidate: RegExpCandidate, value: string): boolean =>
-    _prepareRegExp(regExpCandidate).test(value),
-  [['string', 'regexp', 'array'], 'string']
-)
-
-/**
- * @todo string $stringReplace is RegExp dependant, which may open vulnerabilities
- *              to RegExp DoS attacks. Might want to move away into non-built in.
- *
- * @function $stringReplace
- * @param {String | [String, String?]} searchExp
- * @param {String} replacementExp
- * @returns {String}
- */
-export const $stringReplace = interpreter(
-  (
-    search: RegExpCandidate,
-    replacementExp: Expression,
-    value: string,
-    context: EvaluationContext
-  ): string =>
-    value.replace(_prepareRegExp(search), (match) =>
-      evaluateTyped(
-        'string',
-        {
-          ...context,
-          scope: {
-            $$VALUE: match,
-            $$PARENT_SCOPE: context.scope,
-          },
-        },
-        replacementExp
-      )
-    ),
-  [['string', 'regexp', 'array'], null, 'string']
 )
 
 /**
@@ -285,9 +204,6 @@ export const STRING_EXPRESSIONS = {
   $stringTrim,
   $stringPadStart,
   $stringPadEnd,
-  $stringMatch,
-  $stringTest,
-  $stringReplace,
   $stringToUpperCase,
   $stringToLowerCase,
   $stringInterpolate,

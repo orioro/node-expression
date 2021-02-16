@@ -76,6 +76,8 @@ TODO
 
 # API
 
+**Built-in expressions:**
+
 - [Array](#Array)
 - [Boolean](#Boolean)
 - [Comparison](#Comparison)
@@ -88,6 +90,10 @@ TODO
 - [String](#String)
 - [Type](#Type)
 - [Value](#Value)
+
+**External expression modules:**
+
+- [RegExp `@orioro/expression-regexp`](https://www.npmjs.com/package/@orioro/expression-regexp)
 
 ## Array
 
@@ -800,9 +806,6 @@ Modifies the date by moving it backward the duration specified.
 - [`$stringTrim(str)`](#stringtrimstr)
 - [`$stringPadStart(targetLengthExp, padStringExp, str)`](#stringpadstarttargetlengthexp-padstringexp-str)
 - [`$stringPadEnd(targetLengthExp, padStringExp, str)`](#stringpadendtargetlengthexp-padstringexp-str)
-- [`$stringMatch(regExp, value)`](#stringmatchregexp-value)
-- [`$stringTest(regExp, value)`](#stringtestregexp-value)
-- [`$stringReplace(searchExp, replacementExp)`](#stringreplacesearchexp-replacementexp)
 - [`$stringToUpperCase(value)`](#stringtouppercasevalue)
 - [`$stringToLowerCase(value)`](#stringtolowercasevalue)
 - [`INTERPOLATION_REGEXP`](#interpolation_regexp)
@@ -856,24 +859,6 @@ Modifies the date by moving it backward the duration specified.
 - `str` {String}
 - Returns: {String} 
 
-##### `$stringMatch(regExp, value)`
-
-- `regExp` {String | [String, String?]}
-- `value` {String}
-- Returns: {String[]} 
-
-##### `$stringTest(regExp, value)`
-
-- `regExp` {String | [String, String?]}
-- `value` {String}
-- Returns: {Boolean} 
-
-##### `$stringReplace(searchExp, replacementExp)`
-
-- `searchExp` {String | [String, String?]}
-- `replacementExp` {String}
-- Returns: {String} 
-
 ##### `$stringToUpperCase(value)`
 
 - `value` {String}
@@ -886,7 +871,7 @@ Modifies the date by moving it backward the duration specified.
 
 ##### `INTERPOLATION_REGEXP`
 
-/\$\{\s*([\w\$.]+)\s*\}/g
+/\$\{\s*([\w$.]+)\s*\}/g
 ![](docs/resources/interpolation_regexp.png)
 
 RegExp used for matching interpolation expressions.
