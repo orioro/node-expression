@@ -155,21 +155,35 @@ describe('$and', () => {
   })
 
   // eslint-disable-next-line jest/no-disabled-tests
-  test.skip('value coercion on unknown expressions', () => {
-    expect(() => {
-      evaluate(
-        {
-          interpreters,
-          scope: {
-            $$VALUE: [
-              ['$unknownExpression', 1, 2],
-              ['$anotherUnknownExpression', null],
-            ],
-          },
+  test('value coercion on unknown expressions / expression-like values should trigger warning', () => {
+    const warn_ = console.warn
+    console.warn = jest.fn()
+
+    evaluate(
+      {
+        interpreters,
+        scope: {
+          $$VALUE: [
+            ['$unknownExpression', 1, 2],
+            ['$anotherUnknownExpression', null],
+          ],
         },
-        ['$and']
-      )
-    }).toThrow(TypeError)
+      },
+      ['$and']
+    )
+
+    expect(console.warn).toHaveBeenNthCalledWith(
+      1,
+      'Possible missing expression error: ["$unknownExpression",1,2]. ' +
+        "No interpreter was found for '$unknownExpression'"
+    )
+    expect(console.warn).toHaveBeenNthCalledWith(
+      2,
+      'Possible missing expression error: ["$anotherUnknownExpression",null]. ' +
+        "No interpreter was found for '$anotherUnknownExpression'"
+    )
+
+    console.warn = warn_
   })
 
   test('w/ comparison', () => {

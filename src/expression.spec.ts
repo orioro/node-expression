@@ -15,6 +15,9 @@ describe('evaluateTyped(expectedTypes, context, value)', () => {
       )
     }).toThrow(TypeError)
 
+    const _warn = console.warn
+    console.warn = jest.fn()
+
     expect(() => {
       console.log(
         evaluateTyped(
@@ -27,6 +30,12 @@ describe('evaluateTyped(expectedTypes, context, value)', () => {
         )
       )
     }).toThrow(TypeError)
+
+    expect(console.warn).toHaveBeenCalledWith(
+      'Possible missing expression error: ["$someUnknownExpression"]. ' +
+        "No interpreter was found for '$someUnknownExpression'"
+    )
+    console.warn = _warn
   })
 
   test('array object type', () => {

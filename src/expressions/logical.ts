@@ -2,10 +2,6 @@ import { evaluate, interpreter } from '../expression'
 import { Expression, EvaluationContext, PlainObject } from '../types'
 
 /**
- * @todo logical Better handle unknown expressions for boolean logical operators
- *               Uninterpreted expressions are returned as simple arrays, which
- *               in turn return mistaken true results
- *
  * @function $and
  * @param {Array} expressionsExp
  * @returns {Boolean}
