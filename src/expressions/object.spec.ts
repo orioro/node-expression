@@ -359,3 +359,21 @@ describe('$objectAssign', () => {
     })
   })
 })
+
+test('$objectKeys', () => {
+  expect(
+    evaluate(
+      {
+        interpreters,
+        scope: {
+          $$VALUE: {
+            key1: 'value1',
+            key2: 'value2',
+            key3: 'value3',
+          },
+        },
+      },
+      ['$objectKeys']
+    )
+  ).toEqual(['key1', 'key2', 'key3'])
+})

@@ -106,6 +106,7 @@ Array [
   "$objectFormat",
   "$objectDefaults",
   "$objectAssign",
+  "$objectKeys",
   "OBJECT_EXPRESSIONS",
   "$string",
   "$stringStartsWith",

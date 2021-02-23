@@ -136,9 +136,20 @@ export const $objectAssign = interpreter(
   ['object', 'object']
 )
 
+/**
+ * @function $objectKeys
+ * @param {Object} object
+ * @returns {String[]}
+ */
+export const $objectKeys = interpreter(
+  (obj: PlainObject): string[] => Object.keys(obj),
+  ['object']
+)
+
 export const OBJECT_EXPRESSIONS = {
   $objectMatches,
   $objectFormat,
   $objectDefaults,
   $objectAssign,
+  $objectKeys,
 }
