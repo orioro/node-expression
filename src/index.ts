@@ -1,7 +1,6 @@
 import { ARRAY_EXPRESSIONS } from './expressions/array'
 import { BOOLEAN_EXPRESSIONS } from './expressions/boolean'
 import { COMPARISON_EXPRESSIONS } from './expressions/comparison'
-import { DATE_EXPRESSIONS } from './expressions/date'
 import { FUNCTIONAL_EXPRESSIONS } from './expressions/functional'
 import { LOGICAL_EXPRESSIONS } from './expressions/logical'
 import { MATH_EXPRESSIONS } from './expressions/math'
@@ -22,7 +21,6 @@ export const ALL_EXPRESSIONS = {
   ...ARRAY_EXPRESSIONS,
   ...BOOLEAN_EXPRESSIONS,
   ...COMPARISON_EXPRESSIONS,
-  ...DATE_EXPRESSIONS,
   ...FUNCTIONAL_EXPRESSIONS,
   ...LOGICAL_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
@@ -38,7 +36,6 @@ export * from './expression'
 export * from './expressions/array'
 export * from './expressions/boolean'
 export * from './expressions/comparison'
-export * from './expressions/date'
 export * from './expressions/functional'
 export * from './expressions/logical'
 export * from './expressions/math'

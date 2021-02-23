@@ -51,8 +51,7 @@
   },
   "dependencies": {
     "@orioro/validate-type": "^1.1.0",
-    "lodash": "^4.17.20",
-    "luxon": "^1.25.0"
+    "lodash": "^4.17.20"
   },
   "config": {
     "commitizen": {
