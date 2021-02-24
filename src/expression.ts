@@ -1,4 +1,6 @@
-import { validateType } from '@orioro/validate-type'
+import { validateType, ExpectedType } from '@orioro/validate-type'
+
+import { isPlainObject } from 'lodash'
 
 import {
   Expression,
@@ -116,32 +118,18 @@ type ParamResolverFunction = (context: EvaluationContext, arg: any) => any
  *
  * @typedef {Function | null | string | string[]} ParamResolver
  */
-type ParamType =
-  | 'string'
-  | 'regexp'
-  | 'number'
-  | 'bigint'
-  | 'nan'
-  | 'null'
-  | 'undefined'
-  | 'boolean'
-  | 'function'
-  | 'object'
-  | 'array'
-  | 'date'
-  | 'symbol'
-  | 'map'
-  | 'set'
-  | 'weakmap'
-  | 'weakset'
-  | 'any'
 export type ParamResolver =
   | ParamResolverFunction
   | null
-  | ParamType
-  | ParamType[]
+  | ExpectedType
+  | ExpectedType[]
 
-const paramResolverNoop = (context: EvaluationContext, arg: any): any => arg
+const _paramResolverNoop = (context: EvaluationContext, arg: any): any => arg
+
+const _isExpectedType = (resolver: ParamResolver): boolean =>
+  Array.isArray(resolver) ||
+  isPlainObject(resolver) ||
+  typeof resolver === 'string'
 
 /**
  * @function interpreter
@@ -178,12 +166,12 @@ export const interpreter = (
     const _paramResolvers = paramResolvers.map((resolver) => {
       if (typeof resolver === 'function') {
         return resolver
-      } else if (Array.isArray(resolver) || typeof resolver === 'string') {
+      } else if (_isExpectedType(resolver)) {
         return resolver === 'any'
           ? evaluate
           : evaluateTyped.bind(null, resolver)
       } else if (resolver === null) {
-        return paramResolverNoop
+        return _paramResolverNoop
       } else {
         throw new TypeError(
           `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
