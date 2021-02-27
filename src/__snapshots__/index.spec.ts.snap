@@ -90,6 +90,7 @@ Array [
   "$stringToLowerCase",
   "$stringInterpolate",
   "STRING_EXPRESSIONS",
+  "CORE_TYPES",
   "typeExpressions",
   "$type",
   "$isType",

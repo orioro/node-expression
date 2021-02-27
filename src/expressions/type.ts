@@ -60,7 +60,7 @@ export const typeExpressions = (
 
 const [$type, $isType] = typeExpressions(CORE_TYPES)
 
-export { $type, $isType }
+export { $type, $isType, CORE_TYPES }
 
 export const TYPE_EXPRESSIONS = {
   $type,
