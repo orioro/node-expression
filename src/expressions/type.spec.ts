@@ -1,6 +1,7 @@
 import { evaluate } from '../expression'
 import { $value } from './value'
-import { TYPE_EXPRESSIONS } from './type'
+import { TYPE_EXPRESSIONS, typeExpressions } from './type'
+import { testCases } from '@orioro/jest-util'
 
 const interpreters = {
   $value,
@@ -8,99 +9,101 @@ const interpreters = {
 }
 
 describe('$type', () => {
-  test('string', () => {
-    expect(
+  testCases(
+    [
+      ['some string', 'string'],
+      [10, 'number'],
+      [true, 'boolean'],
+      [[], 'array'],
+      [{}, 'object'],
+      [new Map(), 'map'],
+      [new Set(), 'set'],
+      [Symbol(), 'symbol'],
+    ],
+    (value) =>
       evaluate(
         {
           interpreters,
-          scope: { $$VALUE: 'some string' },
+          scope: { $$VALUE: value },
         },
         ['$type']
-      )
-    ).toEqual('string')
+      ),
+    '$type'
+  )
+})
+
+describe('$isType', () => {
+  testCases(
+    [
+      ['string', 'Some str', true],
+      ['string', 9, false],
+      ['number', 9, true],
+    ],
+    (type, value) =>
+      evaluate({ interpreters, scope: { $$VALUE: value } }, ['$isType', type]),
+    '$isType'
+  )
+})
+
+describe('typeExpressions(types)', () => {
+  const [$customType, $customIsType] = typeExpressions({
+    numericOnlyString: (value) =>
+      typeof value === 'string' && /^[0-9]+$/.test(value),
+    alphaOnlyString: (value) =>
+      typeof value === 'string' && /^[a-zA-Z]+$/.test(value),
+    alphaNumericString: (value) =>
+      typeof value === 'string' && /^[a-zA-Z0-9]+$/.test(value),
+    normalString: (value) => typeof value === 'string',
   })
 
-  test('number', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 10 },
-        },
-        ['$type']
-      )
-    ).toEqual('number')
+  describe('$customType', () => {
+    testCases(
+      [
+        ['abc123', 'alphaNumericString'],
+        ['abc123-', 'normalString'],
+        ['abc', 'alphaOnlyString'],
+        ['abc123', 'alphaNumericString'],
+        ['123', 'numericOnlyString'],
+      ],
+      (value) =>
+        evaluate(
+          {
+            interpreters: {
+              ...interpreters,
+              $customType,
+              $customIsType,
+            },
+            scope: { $$VALUE: value },
+          },
+          ['$customType']
+        ),
+      '$customType'
+    )
   })
 
-  test('boolean', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: true },
-        },
-        ['$type']
-      )
-    ).toEqual('boolean')
-  })
-
-  test('array', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [] },
-        },
-        ['$type']
-      )
-    ).toEqual('array')
-  })
-
-  test('object', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: {} },
-        },
-        ['$type']
-      )
-    ).toEqual('object')
-  })
-
-  test('map', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: new Map() },
-        },
-        ['$type']
-      )
-    ).toEqual('map')
-  })
-
-  test('set', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: new Set() },
-        },
-        ['$type']
-      )
-    ).toEqual('set')
-  })
-
-  test('symbol', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: Symbol() },
-        },
-        ['$type']
-      )
-    ).toEqual('symbol')
+  describe('$customIsType', () => {
+    testCases(
+      [
+        ['alphaNumericString', 'abc123', true],
+        ['alphaNumericString', 'abc123-', false],
+        ['alphaOnlyString', 'abc', true],
+        ['alphaOnlyString', 'abc123', false],
+        ['numericOnlyString', '123', true],
+        ['numericOnlyString', 'abc123', false],
+      ],
+      (type, value) =>
+        evaluate(
+          {
+            interpreters: {
+              ...interpreters,
+              $customType,
+              $customIsType,
+            },
+            scope: { $$VALUE: value },
+          },
+          ['$customIsType', type]
+        ),
+      '$customIsType'
+    )
   })
 })

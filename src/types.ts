@@ -1,3 +1,7 @@
+import { TypeAlternatives, TypeMap } from '@orioro/typing'
+
+export { TypeAlternatives, TypeMap }
+
 /**
  * An expression is an array tuple with the first item
  * as a string identifier.

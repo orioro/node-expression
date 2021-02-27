@@ -1,4 +1,4 @@
-import { validateType, ExpectedType } from '@orioro/validate-type'
+import { validateType, ExpectedType } from '@orioro/typing'
 
 import { isPlainObject } from 'lodash'
 

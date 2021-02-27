@@ -5,7 +5,7 @@ import {
   isExpression,
 } from '../expression'
 import { EvaluationContext, Expression } from '../types'
-import { validateType } from '@orioro/validate-type'
+import { validateType } from '@orioro/typing'
 
 export const $$INDEX = ['$value', '$$INDEX']
 export const $$ARRAY = ['$value', '$$ARRAY']

@@ -2,7 +2,7 @@ import { interpreter } from '../expression'
 import { get } from 'lodash'
 import { PlainObject } from '../types'
 
-import { getType } from '@orioro/validate-type'
+import { getType } from '@orioro/typing'
 
 const stringifyValue = (value) => {
   switch (getType(value)) {

@@ -4,6 +4,8 @@
 npm install @orioro/expression
 ```
 
+Framework of expression interpreters.
+
 # Use cases
 
 ## Data querying
@@ -691,6 +693,7 @@ through Catastrophic backtracking, for future study and reference:
 ## Type
 
 - [`$type(valueExp)`](#typevalueexp)
+- [`$isType(type, value)`](#istypetype-value)
 
 
 ##### `$type(valueExp)`
@@ -714,6 +717,12 @@ through Catastrophic backtracking, for future study and reference:
   - set
   - weakmap
   - weakset
+
+##### `$isType(type, value)`
+
+- `type` {ExpectedType}
+- `value` {*}
+- Returns: {Boolean} 
 
 
 ## Value
