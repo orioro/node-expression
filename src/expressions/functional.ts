@@ -1,6 +1,7 @@
 import { EvaluationContext, Expression } from '../types'
 
-import { evaluate, interpreter } from '../expression'
+import { evaluate } from '../evaluate'
+import { interpreter } from '../interpreter'
 
 /**
  * @function $pipe

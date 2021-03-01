@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash'
 
-import { evaluate, evaluateTyped, interpreter } from '../expression'
+import { interpreter } from '../interpreter'
+import { evaluate, evaluateTyped } from '../evaluate'
 
 import { EvaluationContext, PlainObject } from '../types'
 

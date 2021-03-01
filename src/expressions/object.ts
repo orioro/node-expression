@@ -1,6 +1,7 @@
 import { get, set, isPlainObject } from 'lodash'
 
-import { evaluate, isExpression, interpreter } from '../expression'
+import { evaluate, isExpression } from '../evaluate'
+import { interpreter } from '../interpreter'
 
 import { objectDeepApplyDefaults } from '../util/deepApplyDefaults'
 import { objectDeepAssign } from '../util/deepAssign'

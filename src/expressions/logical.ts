@@ -1,4 +1,5 @@
-import { evaluate, interpreter } from '../expression'
+import { interpreter } from '../interpreter'
+import { evaluate } from '../evaluate'
 import { Expression, EvaluationContext, PlainObject } from '../types'
 
 /**

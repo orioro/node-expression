@@ -1,6 +1,7 @@
 import { get } from 'lodash'
 
-import { evaluate, interpreter } from '../expression'
+import { evaluate } from '../evaluate'
+import { interpreter } from '../interpreter'
 
 import { Expression, EvaluationContext } from '../types'
 

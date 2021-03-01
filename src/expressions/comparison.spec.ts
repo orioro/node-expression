@@ -1,4 +1,4 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
 import { $stringSubstr } from './string'
 import {
   $eq,

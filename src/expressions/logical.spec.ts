@@ -1,4 +1,4 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
 import { LOGICAL_EXPRESSIONS } from './logical'

@@ -1,4 +1,4 @@
-import { interpreter } from '../expression'
+import { interpreter } from '../interpreter'
 
 /**
  * @function $numberInt

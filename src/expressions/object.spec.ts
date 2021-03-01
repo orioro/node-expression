@@ -1,4 +1,4 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
 import { $value } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { ARRAY_EXPRESSIONS } from './array'

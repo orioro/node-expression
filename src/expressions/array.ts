@@ -1,9 +1,6 @@
-import {
-  interpreter,
-  evaluate,
-  evaluateTyped,
-  isExpression,
-} from '../expression'
+import { evaluate, evaluateTyped, isExpression } from '../evaluate'
+
+import { interpreter } from '../interpreter'
 import { EvaluationContext, Expression } from '../types'
 import { validateType } from '@orioro/typing'
 

@@ -1,4 +1,4 @@
-import { interpreter } from '../expression'
+import { interpreter } from '../interpreter'
 import { typing, CORE_TYPES } from '@orioro/typing'
 import { TypeAlternatives, TypeMap, ExpressionInterpreter } from '../types'
 
