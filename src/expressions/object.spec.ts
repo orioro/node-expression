@@ -1,18 +1,19 @@
 import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { $value } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { ARRAY_EXPRESSIONS } from './array'
 import { OBJECT_EXPRESSIONS } from './object'
 import { STRING_EXPRESSIONS } from './string'
 
-const interpreters = {
+const interpreters = syncInterpreterList({
   $value,
   ...STRING_EXPRESSIONS,
   ...COMPARISON_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
 
   ...OBJECT_EXPRESSIONS,
-}
+})
 
 const context = {
   interpreters,

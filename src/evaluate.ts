@@ -22,20 +22,6 @@ const _maybeExpression = (value) =>
   typeof value[0] === 'string' &&
   value[0].startsWith('$')
 
-const _evaluateProd = (
-  context: EvaluationContext,
-  expOrValue: Expression | any
-): any => {
-  if (!isExpression(context.interpreters, expOrValue)) {
-    return expOrValue
-  }
-
-  const [interpreterId, ...interpreterArgs] = expOrValue
-  const interpreter = context.interpreters[interpreterId]
-
-  return interpreter(context, ...interpreterArgs)
-}
-
 const _ellipsis = (str, maxlen = 50) =>
   str.length > maxlen ? str.substr(0, maxlen - 1).concat('...') : str
 
@@ -54,7 +40,21 @@ const _evaluateDev = (
     )
   }
 
-  return _evaluateProd(context, expOrValue)
+  return _evaluate(context, expOrValue)
+}
+
+const _evaluate = (
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): any => {
+  if (!isExpression(context.interpreters, expOrValue)) {
+    return expOrValue
+  }
+
+  const [interpreterId, ...interpreterArgs] = expOrValue
+  const interpreter = context.interpreters[interpreterId]
+
+  return interpreter(context, ...interpreterArgs)
 }
 
 /**
@@ -66,7 +66,7 @@ const _evaluateDev = (
 export const evaluate =
   process && process.env && process.env.NODE_ENV !== 'production'
     ? _evaluateDev
-    : _evaluateProd
+    : _evaluate
 
 /**
  * @function evaluateTyped
@@ -84,3 +84,20 @@ export const evaluateTyped = (
   validateType(expectedTypes, value)
   return value
 }
+
+/**
+ * @function evaluateTypedAsync
+ * @param {String | string[]} expectedTypes
+ * @param {EvaluationContext} context
+ * @param {Expression | any} expOrValue
+ * @returns {Promise<*>}
+ */
+export const evaluateTypedAsync = (
+  expectedTypes: string | string[],
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): Promise<any> =>
+  Promise.resolve(evaluate(context, expOrValue)).then((value) => {
+    validateType(expectedTypes, value)
+    return value
+  })

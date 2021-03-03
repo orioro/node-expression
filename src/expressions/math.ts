@@ -1,4 +1,4 @@
-import { interpreter } from '../interpreter'
+import { ExpressionInterpreterSpec } from '../types'
 
 /**
  * @function $mathSum
@@ -6,10 +6,10 @@ import { interpreter } from '../interpreter'
  * @param {Number} [base=$$VALUE]
  * @returns {Number} result
  */
-export const $mathSum = interpreter(
+export const $mathSum: ExpressionInterpreterSpec = [
   (sum: number, base: number): number => base + sum,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * @function $mathSub
@@ -17,10 +17,10 @@ export const $mathSum = interpreter(
  * @param {Number} [base=$$VALUE]
  * @returns {Number} result
  */
-export const $mathSub = interpreter(
+export const $mathSub: ExpressionInterpreterSpec = [
   (sub: number, base: number): number => base - sub,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * @function $mathMult
@@ -28,10 +28,10 @@ export const $mathSub = interpreter(
  * @param {Number} [base=$$VALUE]
  * @returns {Number} result
  */
-export const $mathMult = interpreter(
+export const $mathMult: ExpressionInterpreterSpec = [
   (mult: number, base: number): number => base * mult,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * @function $mathDiv
@@ -39,10 +39,10 @@ export const $mathMult = interpreter(
  * @param {Number} dividend
  * @returns {Number} result
  */
-export const $mathDiv = interpreter(
+export const $mathDiv: ExpressionInterpreterSpec = [
   (divisor: number, dividend: number): number => dividend / divisor,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * @function $mathMod
@@ -50,10 +50,10 @@ export const $mathDiv = interpreter(
  * @param {Number} dividend
  * @returns {Number} result
  */
-export const $mathMod = interpreter(
+export const $mathMod: ExpressionInterpreterSpec = [
   (divisor: number, dividend: number): number => dividend % divisor,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * @function $mathPow
@@ -61,20 +61,20 @@ export const $mathMod = interpreter(
  * @param {Number} [base=$$VALUE]
  * @returns {Number} result
  */
-export const $mathPow = interpreter(
+export const $mathPow: ExpressionInterpreterSpec = [
   (exponent: number, base: number): number => Math.pow(base, exponent),
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * @function $mathAbs
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
-export const $mathAbs = interpreter(
+export const $mathAbs: ExpressionInterpreterSpec = [
   (value: number): number => Math.abs(value),
-  ['number']
-)
+  ['number'],
+]
 
 /**
  * @function $mathMax
@@ -82,13 +82,13 @@ export const $mathAbs = interpreter(
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
-export const $mathMax = interpreter(
+export const $mathMax: ExpressionInterpreterSpec = [
   (otherValue: number | number[], value: number): number =>
     Array.isArray(otherValue)
       ? Math.max(value, ...otherValue)
       : Math.max(value, otherValue),
-  [['number', 'array'], 'number']
-)
+  [['number', 'array'], 'number'],
+]
 
 /**
  * @function $mathMin
@@ -96,42 +96,42 @@ export const $mathMax = interpreter(
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
-export const $mathMin = interpreter(
+export const $mathMin: ExpressionInterpreterSpec = [
   (otherValue: number | number[], value: number): number =>
     Array.isArray(otherValue)
       ? Math.min(value, ...otherValue)
       : Math.min(value, otherValue),
-  [['number', 'array'], 'number']
-)
+  [['number', 'array'], 'number'],
+]
 
 /**
  * @function $mathRound
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
-export const $mathRound = interpreter(
+export const $mathRound: ExpressionInterpreterSpec = [
   (value: number): number => Math.round(value),
-  ['number']
-)
+  ['number'],
+]
 
 /**
  * @function $mathFloor
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
-export const $mathFloor = interpreter(
+export const $mathFloor: ExpressionInterpreterSpec = [
   (value: number): number => Math.floor(value),
-  ['number']
-)
+  ['number'],
+]
 /**
  * @function $mathCeil
  * @param {Number} [value=$$VALUE]
  * @returns {Number} result
  */
-export const $mathCeil = interpreter(
+export const $mathCeil: ExpressionInterpreterSpec = [
   (value: number): number => Math.ceil(value),
-  ['number']
-)
+  ['number'],
+]
 
 export const MATH_EXPRESSIONS = {
   $mathSum,

@@ -1,4 +1,4 @@
-import { interpreter } from '../interpreter'
+import { ExpressionInterpreterSpec } from '../types'
 
 /**
  * @function $numberInt
@@ -6,7 +6,8 @@ import { interpreter } from '../interpreter'
  * @param {*} value
  * @returns {Number}
  */
-export const $numberInt = interpreter(
+export const $numberInt: ExpressionInterpreterSpec = [
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (radix: number = 10, value: any): number => {
     if (typeof value === 'number') {
       return value
@@ -16,15 +17,16 @@ export const $numberInt = interpreter(
       throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
     }
   },
-  [['number', 'undefined'], 'any']
-)
+  [['number', 'undefined'], 'any'],
+]
 
 /**
  * @function $numberFloat
  * @param {*} value
  * @returns {Number}
  */
-export const $numberFloat = interpreter(
+export const $numberFloat: ExpressionInterpreterSpec = [
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): number => {
     if (typeof value === 'number') {
       return value
@@ -34,8 +36,8 @@ export const $numberFloat = interpreter(
       throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
     }
   },
-  ['any']
-)
+  ['any'],
+]
 
 export const NUMBER_EXPRESSIONS = {
   $numberInt,

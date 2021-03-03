@@ -1,11 +1,12 @@
 import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { STRING_EXPRESSIONS } from './string'
 
-const interpreters = {
+const interpreters = syncInterpreterList({
   ...VALUE_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
-}
+})
 
 test('$string', () => {
   const expectations = [

@@ -1,14 +1,15 @@
 import { get, set, isPlainObject } from 'lodash'
 
 import { evaluate, isExpression } from '../evaluate'
-import { interpreter } from '../interpreter'
 
 import { objectDeepApplyDefaults } from '../util/deepApplyDefaults'
 import { objectDeepAssign } from '../util/deepAssign'
 
-import { EvaluationContext, PlainObject } from '../types'
-
-import { $matches } from './comparison'
+import {
+  EvaluationContext,
+  PlainObject,
+  ExpressionInterpreterSpec,
+} from '../types'
 
 /**
  * @function $objectMatches
@@ -16,7 +17,7 @@ import { $matches } from './comparison'
  * @param {Object} [value=$$VALUE]
  * @returns {Boolean} matches
  */
-export const $objectMatches = interpreter(
+export const $objectMatches: ExpressionInterpreterSpec = [
   (
     criteriaByPath: PlainObject,
     value: PlainObject,
@@ -40,17 +41,17 @@ export const $objectMatches = interpreter(
         ? criteriaByPath[path]
         : { $eq: criteriaByPath[path] }
 
-      return $matches(
+      return evaluate(
         {
           ...context,
           scope: { $$VALUE: get(value, path) },
         },
-        pathCriteria
+        ['$matches', pathCriteria]
       )
     })
   },
-  ['object', 'object']
-)
+  ['object', 'object'],
+]
 
 const _formatEvaluate = (context, targetValue, source) => {
   targetValue =
@@ -100,9 +101,10 @@ const _formatObject = (
  * @param {*} [source=$$VALUE]
  * @returns {Object | Array} object
  */
-export const $objectFormat = interpreter(
+export const $objectFormat: ExpressionInterpreterSpec = [
   (
     format: PlainObject | any[],
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     source: any,
     context: EvaluationContext
   ): PlainObject | any[] => {
@@ -110,8 +112,8 @@ export const $objectFormat = interpreter(
       ? _formatArray(context, format, source)
       : _formatObject(context, format, source)
   },
-  [['object', 'array'], 'any']
-)
+  [['object', 'array'], 'any'],
+]
 
 /**
  * @function $objectDefaults
@@ -119,11 +121,11 @@ export const $objectFormat = interpreter(
  * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectDefaults = interpreter(
+export const $objectDefaults: ExpressionInterpreterSpec = [
   (defaultValues: PlainObject, base: PlainObject): PlainObject =>
     objectDeepApplyDefaults(base, defaultValues),
-  ['object', 'object']
-)
+  ['object', 'object'],
+]
 
 /**
  * @function $objectAssign
@@ -131,21 +133,21 @@ export const $objectDefaults = interpreter(
  * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectAssign = interpreter(
+export const $objectAssign: ExpressionInterpreterSpec = [
   (values: PlainObject, base: PlainObject): PlainObject =>
     objectDeepAssign(base, values),
-  ['object', 'object']
-)
+  ['object', 'object'],
+]
 
 /**
  * @function $objectKeys
  * @param {Object} object
  * @returns {String[]}
  */
-export const $objectKeys = interpreter(
+export const $objectKeys: ExpressionInterpreterSpec = [
   (obj: PlainObject): string[] => Object.keys(obj),
-  ['object']
-)
+  ['object'],
+]
 
 export const OBJECT_EXPRESSIONS = {
   $objectMatches,

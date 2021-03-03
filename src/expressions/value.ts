@@ -1,9 +1,13 @@
 import { get } from 'lodash'
 
 import { evaluate } from '../evaluate'
-import { interpreter } from '../interpreter'
 
-import { Expression, EvaluationContext } from '../types'
+import {
+  Expression,
+  EvaluationContext,
+  EvaluationScope,
+  ExpressionInterpreterSpec,
+} from '../types'
 
 const PATH_VARIABLE_RE = /^\$\$.+/
 
@@ -15,7 +19,7 @@ export const $$VALUE: Expression = ['$value', '$$VALUE']
  * @param {*} defaultExp
  * @returns {*} value
  */
-export const $value = interpreter(
+export const $value: ExpressionInterpreterSpec = [
   (
     path: string = '$$VALUE',
     defaultExp: Expression,
@@ -32,15 +36,22 @@ export const $value = interpreter(
       : value
   },
   [['string', 'undefined'], null],
-  false
-)
+  {
+    defaultParam: -1,
+  },
+]
 
 /**
  * @function $literal
  * @param {*} value
  * @returns {*}
  */
-export const $literal = interpreter((value: any): any => value, [null], false)
+export const $literal: ExpressionInterpreterSpec = [
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  (value: any): any => value,
+  [null],
+  { defaultParam: -1 },
+]
 
 /**
  * @function $evaluate
@@ -48,8 +59,12 @@ export const $literal = interpreter((value: any): any => value, [null], false)
  * @param {Object | null} scopeExp
  * @returns {*}
  */
-export const $evaluate = interpreter(
-  (expression: Expression, scope, context: EvaluationContext): any =>
+export const $evaluate: ExpressionInterpreterSpec = [
+  (
+    expression: Expression,
+    scope: EvaluationScope,
+    context: EvaluationContext
+  ): any =>
     evaluate(
       {
         ...context,
@@ -58,12 +73,16 @@ export const $evaluate = interpreter(
       expression
     ),
   [
-    (context, expExp) => evaluate(context, expExp),
-    (context, scopeExp = null) =>
+    (context: EvaluationContext, expExp: Expression | any): Expression =>
+      evaluate(context, expExp),
+    (
+      context: EvaluationContext,
+      scopeExp: Expression | null = null
+    ): EvaluationScope =>
       scopeExp === null ? context.scope : evaluate(context, scopeExp),
   ],
-  false
-)
+  { defaultParam: -1 },
+]
 
 export const VALUE_EXPRESSIONS = {
   $value,

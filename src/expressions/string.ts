@@ -1,6 +1,5 @@
-import { interpreter } from '../interpreter'
 import { get } from 'lodash'
-import { PlainObject } from '../types'
+import { PlainObject, ExpressionInterpreterSpec } from '../types'
 
 import { getType } from '@orioro/typing'
 
@@ -46,10 +45,11 @@ const stringifyValue = (value) => {
  * @param {*} [value=$$VALUE]
  * @returns {String}
  */
-export const $string = interpreter(
+export const $string: ExpressionInterpreterSpec = [
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): string => stringifyValue(value),
-  ['any']
-)
+  ['any'],
+]
 
 /**
  * @function $stringStartsWith
@@ -57,19 +57,20 @@ export const $string = interpreter(
  * @param {String} [str=$$VALUE]
  * @returns {Boolean}
  */
-export const $stringStartsWith = interpreter(
+export const $stringStartsWith: ExpressionInterpreterSpec = [
   (query: string, str: string): boolean => str.startsWith(query),
-  ['string', 'string']
-)
+  ['string', 'string'],
+]
 
 /**
  * @function $stringLength
  * @param {String} [str=$$VALUE]
  * @returns {Number}
  */
-export const $stringLength = interpreter((str: string): number => str.length, [
-  'string',
-])
+export const $stringLength: ExpressionInterpreterSpec = [
+  (str: string): number => str.length,
+  ['string'],
+]
 
 /**
  * @function $stringSubstr
@@ -77,11 +78,11 @@ export const $stringLength = interpreter((str: string): number => str.length, [
  * @param {Number} end
  * @param {String} [str=$$VALUE]
  */
-export const $stringSubstr = interpreter(
+export const $stringSubstr: ExpressionInterpreterSpec = [
   (start: number, end: number | undefined, str: string): string =>
     str.substring(start, end),
-  ['number', ['number', 'undefined'], 'string']
-)
+  ['number', ['number', 'undefined'], 'string'],
+]
 
 /**
  * @function $stringConcat
@@ -89,20 +90,21 @@ export const $stringSubstr = interpreter(
  * @param {String} [base=$$VALUE]
  * @returns {String}
  */
-export const $stringConcat = interpreter(
+export const $stringConcat: ExpressionInterpreterSpec = [
   (concat: string | string[], base: string): string =>
     Array.isArray(concat) ? base.concat(concat.join('')) : base.concat(concat),
-  [['string', 'array'], 'string']
-)
+  [['string', 'array'], 'string'],
+]
 
 /**
  * @function $stringTrim
  * @param {String} [str=$$VALUE]
  * @returns {String}
  */
-export const $stringTrim = interpreter((str: string): string => str.trim(), [
-  'string',
-])
+export const $stringTrim: ExpressionInterpreterSpec = [
+  (str: string): string => str.trim(),
+  ['string'],
+]
 
 /**
  * @function $stringPadStart
@@ -111,11 +113,11 @@ export const $stringTrim = interpreter((str: string): string => str.trim(), [
  * @param {String} [str=$$VALUE]
  * @returns {String}
  */
-export const $stringPadStart = interpreter(
+export const $stringPadStart: ExpressionInterpreterSpec = [
   (targetLength: number, padString: string, str: string): string =>
     str.padStart(targetLength, padString),
-  ['number', 'string', 'string']
-)
+  ['number', 'string', 'string'],
+]
 
 /**
  * @function $stringPadEnd
@@ -124,31 +126,31 @@ export const $stringPadStart = interpreter(
  * @param {String} [str=$$VALUE]
  * @returns {String}
  */
-export const $stringPadEnd = interpreter(
+export const $stringPadEnd: ExpressionInterpreterSpec = [
   (targetLength: number, padString: string, str: string): string =>
     str.padEnd(targetLength, padString),
-  ['number', 'string', 'string']
-)
+  ['number', 'string', 'string'],
+]
 
 /**
  * @function $stringToUpperCase
  * @param {String} value
  * @returns {String}
  */
-export const $stringToUpperCase = interpreter(
+export const $stringToUpperCase: ExpressionInterpreterSpec = [
   (str: string): string => str.toUpperCase(),
-  ['string']
-)
+  ['string'],
+]
 
 /**
  * @function $stringToLowerCase
  * @param {String} value
  * @returns {String}
  */
-export const $stringToLowerCase = interpreter(
+export const $stringToLowerCase: ExpressionInterpreterSpec = [
   (str: string): string => str.toLowerCase(),
-  ['string']
-)
+  ['string'],
+]
 
 /**
  * /\$\{\s*([\w$.]+)\s*\}/g
@@ -185,15 +187,15 @@ const INTERPOLATABLE_TYPES = ['string', 'number']
  *                          only interpreted as paths to the value. No logic
  *                          supported: loops, conditionals, etc.
  */
-export const $stringInterpolate = interpreter(
+export const $stringInterpolate: ExpressionInterpreterSpec = [
   (data: PlainObject | any[], template: string): string =>
     template.replace(INTERPOLATION_REGEXP, (match, path) => {
       const value = get(data, path)
 
       return INTERPOLATABLE_TYPES.includes(typeof value) ? value : ''
     }),
-  [['object', 'array'], 'string']
-)
+  [['object', 'array'], 'string'],
+]
 
 export const STRING_EXPRESSIONS = {
   $string,

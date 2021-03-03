@@ -1,4 +1,5 @@
 import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { $stringSubstr } from './string'
 import {
   $eq,
@@ -14,12 +15,12 @@ import {
 import { $value } from './value'
 
 describe('$eq / $notEq', () => {
-  const interpreters = {
+  const interpreters = syncInterpreterList({
     $value,
     $stringSubstr,
     $eq,
     $notEq,
-  }
+  })
 
   test('string', () => {
     const context = {
@@ -45,11 +46,11 @@ describe('$eq / $notEq', () => {
 })
 
 describe('$in / $notIn', () => {
-  const interpreters = {
+  const interpreters = syncInterpreterList({
     $value,
     $in,
     $notIn,
-  }
+  })
 
   test('basic', () => {
     const context = {
@@ -68,13 +69,13 @@ describe('$in / $notIn', () => {
 })
 
 describe('$gt / $gte / $lt / $lte', () => {
-  const interpreters = {
+  const interpreters = syncInterpreterList({
     $value,
     $gt,
     $gte,
     $lt,
     $lte,
-  }
+  })
 
   const context = {
     interpreters,
@@ -109,7 +110,7 @@ describe('$gt / $gte / $lt / $lte', () => {
 })
 
 describe('$matches', () => {
-  const interpreters = {
+  const interpreters = syncInterpreterList({
     $value,
     $eq,
     $notEq,
@@ -120,7 +121,7 @@ describe('$matches', () => {
     $lt,
     $lte,
     $matches,
-  }
+  })
 
   test('basic', () => {
     const context = {

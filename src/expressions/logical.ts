@@ -1,46 +1,55 @@
-import { interpreter } from '../interpreter'
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 import { evaluate } from '../evaluate'
-import { Expression, EvaluationContext, PlainObject } from '../types'
+import {
+  Expression,
+  EvaluationContext,
+  PlainObject,
+  ExpressionInterpreterSpec,
+} from '../types'
 
 /**
  * @function $and
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $and = interpreter(
+export const $and: ExpressionInterpreterSpec = [
   (expressions: Expression[], context: EvaluationContext): boolean =>
     expressions.every((exp) => Boolean(evaluate(context, exp))),
-  [['array', 'undefined']]
-)
+  [['array', 'undefined']],
+]
 
 /**
  * @function $or
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $or = interpreter(
+export const $or: ExpressionInterpreterSpec = [
   (expressions: Expression[], context: EvaluationContext): boolean =>
     expressions.some((exp) => Boolean(evaluate(context, exp))),
-  [['array', 'undefined']]
-)
+  [['array', 'undefined']],
+]
 
 /**
  * @function $not
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $not = interpreter((value: any): boolean => !value, ['any'])
+export const $not: ExpressionInterpreterSpec = [
+  (value: any): boolean => !value,
+  ['any'],
+]
 
 /**
  * @function $nor
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $nor = interpreter(
+export const $nor: ExpressionInterpreterSpec = [
   (expressions: Expression[], context: EvaluationContext): boolean =>
     expressions.every((exp) => !evaluate(context, exp)),
-  ['array']
-)
+  ['array'],
+]
 
 /**
  * @function $xor
@@ -48,10 +57,10 @@ export const $nor = interpreter(
  * @param {Boolean} expressionB
  * @returns {Boolean}
  */
-export const $xor = interpreter(
+export const $xor: ExpressionInterpreterSpec = [
   (valueA: any, valueB: any): boolean => Boolean(valueA) !== Boolean(valueB),
-  ['any', 'any']
-)
+  ['any', 'any'],
+]
 
 /**
  * @function $if
@@ -60,7 +69,7 @@ export const $xor = interpreter(
  * @param {Expression} elseExp
  * @returns {*} result
  */
-export const $if = interpreter(
+export const $if: ExpressionInterpreterSpec = [
   (
     condition: any,
     thenExp: Expression,
@@ -72,8 +81,8 @@ export const $if = interpreter(
     'any',
     null, // Only evaluate if condition is satisfied
     null, // Only evaluate if condition is not satisfied
-  ]
-)
+  ],
+]
 
 type Case = [Expression, Expression]
 
@@ -83,7 +92,7 @@ type Case = [Expression, Expression]
  * @param {Expression} defaultExp
  * @returns {*} result
  */
-export const $switch = interpreter(
+export const $switch: ExpressionInterpreterSpec = [
   (cases: Case[], defaultExp: Expression, context: EvaluationContext): any => {
     const correspondingCase = cases.find(([conditionExp]) =>
       Boolean(evaluate(context, conditionExp))
@@ -94,8 +103,10 @@ export const $switch = interpreter(
       : evaluate(context, defaultExp)
   },
   ['array', null],
-  false
-)
+  {
+    defaultParam: -1,
+  },
+]
 
 /**
  * @function $switchKey
@@ -106,7 +117,7 @@ export const $switch = interpreter(
  * @param {String} ValueExp
  * @returns {*}
  */
-export const $switchKey = interpreter(
+export const $switchKey: ExpressionInterpreterSpec = [
   (
     cases: PlainObject,
     defaultExp: Expression | undefined = undefined,
@@ -119,8 +130,8 @@ export const $switchKey = interpreter(
       ? evaluate(context, correspondingCase)
       : evaluate(context, defaultExp)
   },
-  ['object', null, 'any']
-)
+  ['object', null, 'any'],
+]
 
 export const LOGICAL_EXPRESSIONS = {
   $and,

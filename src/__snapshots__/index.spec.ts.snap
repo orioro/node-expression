@@ -105,6 +105,10 @@ Array [
   "isExpression",
   "evaluate",
   "evaluateTyped",
-  "interpreter",
+  "evaluateTypedAsync",
+  "syncInterpreter",
+  "syncInterpreterList",
+  "asyncInterpreter",
+  "asyncInterpreterList",
 ]
 `;

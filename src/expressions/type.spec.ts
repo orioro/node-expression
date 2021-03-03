@@ -1,12 +1,13 @@
 import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { $value } from './value'
 import { TYPE_EXPRESSIONS, typeExpressions } from './type'
 import { testCases } from '@orioro/jest-util'
 
-const interpreters = {
+const interpreters = syncInterpreterList({
   $value,
   ...TYPE_EXPRESSIONS,
-}
+})
 
 describe('$type', () => {
   testCases(
@@ -56,6 +57,11 @@ describe('typeExpressions(types)', () => {
     normalString: (value) => typeof value === 'string',
   })
 
+  const customTypeInterpreters = syncInterpreterList({
+    $customType,
+    $customIsType,
+  })
+
   describe('$customType', () => {
     testCases(
       [
@@ -70,8 +76,7 @@ describe('typeExpressions(types)', () => {
           {
             interpreters: {
               ...interpreters,
-              $customType,
-              $customIsType,
+              ...customTypeInterpreters,
             },
             scope: { $$VALUE: value },
           },
@@ -96,8 +101,7 @@ describe('typeExpressions(types)', () => {
           {
             interpreters: {
               ...interpreters,
-              $customType,
-              $customIsType,
+              ...customTypeInterpreters,
             },
             scope: { $$VALUE: value },
           },
