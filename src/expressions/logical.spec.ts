@@ -1,4 +1,5 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
 import { LOGICAL_EXPRESSIONS } from './logical'
@@ -7,7 +8,7 @@ import { COMPARISON_EXPRESSIONS } from './comparison'
 import { STRING_EXPRESSIONS } from './string'
 import { MATH_EXPRESSIONS } from './math'
 
-const interpreters = {
+const interpreters = syncInterpreterList({
   ...VALUE_EXPRESSIONS,
   ...BOOLEAN_EXPRESSIONS,
   ...LOGICAL_EXPRESSIONS,
@@ -15,7 +16,7 @@ const interpreters = {
   ...COMPARISON_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
-}
+})
 
 describe('$and', () => {
   test('error situations', () => {

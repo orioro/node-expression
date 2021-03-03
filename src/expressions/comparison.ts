@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 import { isEqual } from 'lodash'
 
-import { evaluate, evaluateTyped, interpreter } from '../expression'
+import { evaluate, evaluateTyped } from '../evaluate'
 
-import { EvaluationContext, PlainObject } from '../types'
+import {
+  EvaluationContext,
+  PlainObject,
+  ExpressionInterpreterSpec,
+} from '../types'
 
 import { $$VALUE } from './value'
-
-const _negation = (fn) => (...args): boolean => !fn(...args)
 
 /**
  * Checks if the two values
@@ -16,10 +20,10 @@ const _negation = (fn) => (...args): boolean => !fn(...args)
  * @param {*} valueExp Value being compared.
  * @returns {Boolean}
  */
-export const $eq = interpreter(
+export const $eq: ExpressionInterpreterSpec = [
   (valueB: any, valueA: any): boolean => isEqual(valueA, valueB),
-  ['any', 'any']
-)
+  ['any', 'any'],
+]
 
 /**
  * @function $notEq
@@ -27,7 +31,10 @@ export const $eq = interpreter(
  * @param {*} valueExp Value being compared.
  * @returns {Boolean}
  */
-export const $notEq = _negation($eq)
+export const $notEq: ExpressionInterpreterSpec = [
+  (valueB: any, valueA: any): boolean => !isEqual(valueA, valueB),
+  ['any', 'any'],
+]
 
 /**
  * Checks whether the value is in the given array.
@@ -37,11 +44,11 @@ export const $notEq = _negation($eq)
  * @param {*} valueExp
  * @returns {Boolean}
  */
-export const $in = interpreter(
+export const $in: ExpressionInterpreterSpec = [
   (array: any[], value: any): boolean =>
     array.some((item) => isEqual(item, value)),
-  ['array', 'any']
-)
+  ['array', 'any'],
+]
 
 /**
  * Checks whether the value is **not** in the given array.
@@ -51,7 +58,11 @@ export const $in = interpreter(
  * @param {*} valueExp
  * @returns {Boolean}
  */
-export const $notIn = _negation($in)
+export const $notIn: ExpressionInterpreterSpec = [
+  (array: any[], value: any): boolean =>
+    array.every((item) => !isEqual(item, value)),
+  ['array', 'any'],
+]
 
 /**
  * Greater than `value > threshold`
@@ -61,10 +72,10 @@ export const $notIn = _negation($in)
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $gt = interpreter(
+export const $gt: ExpressionInterpreterSpec = [
   (reference: number, value: number): boolean => value > reference,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * Greater than or equal `value >= threshold`
@@ -74,10 +85,10 @@ export const $gt = interpreter(
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $gte = interpreter(
+export const $gte: ExpressionInterpreterSpec = [
   (reference: number, value: number): boolean => value >= reference,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * Lesser than `value < threshold`
@@ -87,10 +98,10 @@ export const $gte = interpreter(
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $lt = interpreter(
+export const $lt: ExpressionInterpreterSpec = [
   (reference: number, value: number): boolean => value < reference,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * Lesser than or equal `value <= threshold`
@@ -100,10 +111,10 @@ export const $lt = interpreter(
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $lte = interpreter(
+export const $lte: ExpressionInterpreterSpec = [
   (reference: number, value: number): boolean => value <= reference,
-  ['number', 'number']
-)
+  ['number', 'number'],
+]
 
 /**
  * Checks if the value matches the set of criteria.
@@ -113,7 +124,7 @@ export const $lte = interpreter(
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $matches = interpreter(
+export const $matches: ExpressionInterpreterSpec = [
   (criteria: PlainObject, value: any, context: EvaluationContext): boolean => {
     const criteriaKeys = Object.keys(criteria)
 
@@ -142,8 +153,8 @@ export const $matches = interpreter(
       )
     })
   },
-  ['object', 'any']
-)
+  ['object', 'any'],
+]
 
 export const COMPARISON_EXPRESSIONS = {
   $eq,

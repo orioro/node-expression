@@ -1,11 +1,12 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { MATH_EXPRESSIONS } from './math'
 
-const interpreters = {
+const interpreters = syncInterpreterList({
   ...VALUE_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
-}
+})
 
 describe('operations', () => {
   const context = {

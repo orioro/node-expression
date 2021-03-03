@@ -1,10 +1,9 @@
-import { interpreter } from '../expression'
 import { typing, CORE_TYPES } from '@orioro/typing'
-import { TypeAlternatives, TypeMap, ExpressionInterpreter } from '../types'
+import { TypeAlternatives, TypeMap, ExpressionInterpreterSpec } from '../types'
 
 export const typeExpressions = (
   types: TypeAlternatives | TypeMap
-): [ExpressionInterpreter, ExpressionInterpreter] => {
+): [ExpressionInterpreterSpec, ExpressionInterpreterSpec] => {
   const {
     getType,
     isType,
@@ -33,7 +32,10 @@ export const typeExpressions = (
    *   - weakmap
    *   - weakset
    */
-  const $type = interpreter((value: any): string => getType(value), ['any'])
+  const $type: ExpressionInterpreterSpec = [
+    (value: any): string => getType(value),
+    ['any'],
+  ]
 
   /**
    * @function $isType
@@ -41,19 +43,19 @@ export const typeExpressions = (
    * @param {*} value
    * @returns {Boolean}
    */
-  const $isType = interpreter(
+  const $isType: ExpressionInterpreterSpec = [
     (type: string, value: any): boolean => isType(type, value),
-    [['string', 'array', 'object'], 'any']
-  )
+    [['string', 'array', 'object'], 'any'],
+  ]
 
   //
   // The usage of $validateType expression is not clear, we've opted for not
   // exposing it for now
   //
-  // const $validateType = interpreter(
+  // const $validateType = [
   //   (type: string, value: any): void => validateType(type, value),
   //   [['string', 'array', 'object'], 'any']
-  // )
+  // ]
 
   return [$type, $isType]
 }

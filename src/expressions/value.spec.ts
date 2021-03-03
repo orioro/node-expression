@@ -1,17 +1,18 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { MATH_EXPRESSIONS } from './math'
 import { LOGICAL_EXPRESSIONS } from './logical'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { ARRAY_EXPRESSIONS } from './array'
 import { VALUE_EXPRESSIONS } from './value'
 
-const interpreters = {
+const interpreters = syncInterpreterList({
   ...MATH_EXPRESSIONS,
   ...LOGICAL_EXPRESSIONS,
   ...COMPARISON_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
   ...VALUE_EXPRESSIONS,
-}
+})
 
 describe('$value', () => {
   test('basic', () => {

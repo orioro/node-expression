@@ -1,4 +1,4 @@
-import { evaluateTyped } from './expression'
+import { evaluateTyped } from './evaluate'
 
 describe('evaluateTyped(expectedTypes, context, value)', () => {
   test('simple type - example: number', () => {

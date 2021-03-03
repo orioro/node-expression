@@ -1,13 +1,14 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { $value } from './value'
 import { $boolean } from './boolean'
 
-describe('$boolean', () => {
-  const interpreters = {
-    $value,
-    $boolean,
-  }
+const interpreters = syncInterpreterList({
+  $value,
+  $boolean,
+})
 
+describe('$boolean', () => {
   test('numbers', () => {
     expect(
       evaluate(

@@ -1,11 +1,12 @@
-import { evaluate } from '../expression'
+import { evaluate } from '../evaluate'
+import { syncInterpreterList } from '../interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { NUMBER_EXPRESSIONS } from './number'
 
-const interpreters = {
+const interpreters = syncInterpreterList({
   ...VALUE_EXPRESSIONS,
   ...NUMBER_EXPRESSIONS,
-}
+})
 
 test('$numberInt', () => {
   expect(
