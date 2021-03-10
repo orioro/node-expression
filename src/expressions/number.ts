@@ -1,4 +1,4 @@
-import { ExpressionInterpreterSpec } from '../types'
+import { InterpreterSpec } from '../types'
 
 /**
  * @function $numberInt
@@ -6,7 +6,7 @@ import { ExpressionInterpreterSpec } from '../types'
  * @param {*} value
  * @returns {Number}
  */
-export const $numberInt: ExpressionInterpreterSpec = [
+export const $numberInt: InterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (radix: number = 10, value: any): number => {
     if (typeof value === 'number') {
@@ -25,7 +25,7 @@ export const $numberInt: ExpressionInterpreterSpec = [
  * @param {*} value
  * @returns {Number}
  */
-export const $numberFloat: ExpressionInterpreterSpec = [
+export const $numberFloat: InterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): number => {
     if (typeof value === 'number') {

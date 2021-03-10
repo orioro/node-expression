@@ -1,8 +1,8 @@
-import { TypeAlternatives, TypeMap, ExpectedType } from '@orioro/typing'
+import type { TypeAlternatives, TypeMap, TypeSpec } from '@orioro/typing'
 
-export { TypeAlternatives, TypeMap }
+export type { TypeAlternatives, TypeMap, TypeSpec }
 
-type ParamResolverFunction = (context: EvaluationContext, arg: any) => any
+export type ParamResolver = (context: EvaluationContext, arg: any) => any
 
 /**
  * Defines how an expression argument should be resolved
@@ -32,7 +32,7 @@ type ParamResolverFunction = (context: EvaluationContext, arg: any) => any
  *
  * @typedef {Function | null | string | string[]} ParamResolver
  */
-export type ParamResolver = ParamResolverFunction | null | ExpectedType
+// export type ParamResolver = TypeSpec
 
 /**
  * An expression is an array tuple with the first item
@@ -48,7 +48,7 @@ export type Expression = [string, ...any[]]
  * `syncInterpreter`, `syncInterpreterList`, `asyncInterpreter` or
  * `asyncInterpreterList`) may be compatible with sync and async formats.
  *
- * @typedef {[Function, ParamResolver[] | null, Object]} ExpressionInterpreterSpec
+ * @typedef {[Function, ParamResolver[] | null, Object]} InterpreterSpec
  * @param {Function} interpreterFn Function that executes logic for interpreting the
  *                                 expression. If `paramResolvers` are not null, the
  *                                 interpreterFn is invoked with the list of resolved
@@ -65,26 +65,47 @@ export type Expression = [string, ...any[]]
  *                                                                   In case the defaultParameter should not
  *                                                                   be used, use `defaultParam = -1`
  */
-export type ExpressionInterpreterSpec = [
+export type InterpreterSpecSingle = [
   (...args: any) => any,
-  ParamResolver[],
+  TypeSpec[],
   { defaultParam?: number }?
 ]
+export type InterpreterSpec =
+  | InterpreterSpecSingle
+  | InterpreterFunction
+  | {
+      sync: InterpreterSpecSingle | InterpreterFunction | null
+      async: InterpreterSpecSingle | InterpreterFunction | null
+    }
+
+export type InterpreterSpecList = {
+  [key: string]: InterpreterSpec
+}
 
 /**
  * Function that receives as first parameter the EvaluationContext
  * and should return the result for evaluating a given expression.
  *
- * @typedef {Function} ExpressionInterpreterFunction
+ * @typedef {Function} InterpreterFunction
  */
-export type ExpressionInterpreterFunction = (
+export type InterpreterFunction = (
   context: EvaluationContext,
   ...args: any[]
 ) => any
 
-export type ExpressionInterpreter =
-  | ExpressionInterpreterSpec
-  | ExpressionInterpreterFunction
+export type Interpreter = {
+  sync: InterpreterFunction
+  async: InterpreterFunction
+}
+
+/**
+ * @typedef {Object} InterpreterList
+ * @property {Object} interpreterList
+ * @property {Interpreter} interpreterList.{{ expressionName }}
+ */
+export type InterpreterList = {
+  [key: string]: Interpreter
+}
 
 /**
  * @typedef {Object} EvaluationScope
@@ -110,27 +131,15 @@ export type EvaluationScope = {
 }
 
 /**
- * @typedef {Object} ExpressionInterpreterList
- * @property {Object} interpreterList
- * @property {ExpressionInterpreter} interpreterList.{{ expressionName }}
- */
-export type ExpressionInterpreterList = {
-  [key: string]: ExpressionInterpreter
-}
-
-export type ExpressionInterpreterFunctionList = {
-  [key: string]: ExpressionInterpreterFunction
-}
-
-/**
  * @typedef {Object} EvaluationContext
  * @property {Object} context
- * @property {ExpressionInterpreterFunctionList} context.interpreters
+ * @property {InterpreterFunctionList} context.interpreters
  * @property {EvaluationScope} context.scope
  */
 export type EvaluationContext = {
-  interpreters: ExpressionInterpreterFunctionList
+  interpreters: InterpreterList
   scope: EvaluationScope
+  async?: boolean
 }
 
 /**

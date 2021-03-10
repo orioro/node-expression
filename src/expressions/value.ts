@@ -1,12 +1,13 @@
 import { get } from 'lodash'
 
 import { evaluate } from '../evaluate'
+import { anyType } from '@orioro/typing'
 
 import {
   Expression,
   EvaluationContext,
   EvaluationScope,
-  ExpressionInterpreterSpec,
+  InterpreterSpec,
 } from '../types'
 
 const PATH_VARIABLE_RE = /^\$\$.+/
@@ -15,11 +16,11 @@ export const $$VALUE: Expression = ['$value', '$$VALUE']
 
 /**
  * @function $value
- * @param {String} pathExp
+ * @param {String} path
  * @param {*} defaultExp
  * @returns {*} value
  */
-export const $value: ExpressionInterpreterSpec = [
+export const $value: InterpreterSpec = [
   (
     path: string = '$$VALUE',
     defaultExp: Expression,
@@ -35,7 +36,7 @@ export const $value: ExpressionInterpreterSpec = [
       ? evaluate(context, defaultExp)
       : value
   },
-  [['string', 'undefined'], null],
+  [['string', 'undefined'], anyType({ delayEvaluation: true })],
   {
     defaultParam: -1,
   },
@@ -46,20 +47,22 @@ export const $value: ExpressionInterpreterSpec = [
  * @param {*} value
  * @returns {*}
  */
-export const $literal: ExpressionInterpreterSpec = [
+export const $literal: InterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): any => value,
-  [null],
+  [anyType({ delayEvaluation: true })],
   { defaultParam: -1 },
 ]
 
 /**
+ * @todo value Consider adding 'expression' type
+ *
  * @function $evaluate
- * @param {Expression} expExp
- * @param {Object | null} scopeExp
+ * @param {Expression} expression
+ * @param {Object} scope
  * @returns {*}
  */
-export const $evaluate: ExpressionInterpreterSpec = [
+export const $evaluate: InterpreterSpec = [
   (
     expression: Expression,
     scope: EvaluationScope,
@@ -72,15 +75,7 @@ export const $evaluate: ExpressionInterpreterSpec = [
       },
       expression
     ),
-  [
-    (context: EvaluationContext, expExp: Expression | any): Expression =>
-      evaluate(context, expExp),
-    (
-      context: EvaluationContext,
-      scopeExp: Expression | null = null
-    ): EvaluationScope =>
-      scopeExp === null ? context.scope : evaluate(context, scopeExp),
-  ],
+  ['any', 'object'],
   { defaultParam: -1 },
 ]
 

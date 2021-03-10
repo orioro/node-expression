@@ -1,5 +1,6 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter'
+import { SyncModeUnsupportedError } from '../errors'
+import { interpreterList } from '../interpreter/interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
 import { LOGICAL_EXPRESSIONS } from './logical'
@@ -8,7 +9,12 @@ import { COMPARISON_EXPRESSIONS } from './comparison'
 import { STRING_EXPRESSIONS } from './string'
 import { MATH_EXPRESSIONS } from './math'
 
-const interpreters = syncInterpreterList({
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
+
+const delayValue = (value, ms = 100) =>
+  new Promise((resolve) => setTimeout(resolve.bind(null, value), ms))
+
+const EXP = {
   ...VALUE_EXPRESSIONS,
   ...BOOLEAN_EXPRESSIONS,
   ...LOGICAL_EXPRESSIONS,
@@ -16,143 +22,45 @@ const interpreters = syncInterpreterList({
   ...COMPARISON_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
-})
+  $asyncValue: (context, ...args) =>
+    delayValue(evaluate(context, ['$value', ...args])),
+  $asyncNum50: () => delayValue(50),
+  $asyncNum100: () => delayValue(100),
+  $asyncStr1: () => delayValue('str1'),
+  $asyncStr2: () => delayValue('str2'),
+  $asyncFalse: () => delayValue(false),
+  $asyncTrue: () => delayValue(true),
+}
+
+const _evTestCases = _prepareEvaluateTestCases(EXP)
 
 describe('$and', () => {
-  test('error situations', () => {
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: undefined },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: null },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: true },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 8 },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: {} },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
+  describe('error situations', () => {
+    _evTestCases([
+      [undefined, ['$and'], TypeError],
+      [null, ['$and'], TypeError],
+      [true, ['$and'], TypeError],
+      [8, ['$and'], TypeError],
+      [{}, ['$and'], TypeError],
+    ])
   })
 
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [true, true, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [true, false, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, 'string', true] },
-        },
-        ['$and', ['$arrayMap', ['$boolean']]]
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, '', true] },
-        },
-        ['$and', ['$arrayMap', ['$boolean']]]
-      )
-    ).toEqual(false)
+  describe('basic', () => {
+    _evTestCases([
+      [[true, true, true], ['$and'], true],
+      [[true, false, true], ['$and'], false],
+      [[1, 'string', true], ['$and'], true],
+      [[1, '', true], ['$and'], false],
+    ])
   })
 
-  test('value coercion', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, 0, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, 'some-string', true] },
-        },
-        ['$and']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, '', true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, null, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
+  describe('value coercion', () => {
+    _evTestCases([
+      [[1, 0, true], ['$and'], false],
+      [[1, 'some-string', true], ['$and'], true],
+      [[1, '', true], ['$and'], false],
+      [[1, null, true], ['$and'], false],
+    ])
   })
 
   // eslint-disable-next-line jest/no-disabled-tests
@@ -162,7 +70,7 @@ describe('$and', () => {
 
     evaluate(
       {
-        interpreters,
+        interpreters: interpreterList(EXP),
         scope: {
           $$VALUE: [
             ['$unknownExpression', 1, 2],
@@ -187,245 +95,252 @@ describe('$and', () => {
     console.warn = warn_
   })
 
-  test('w/ comparison', () => {
-    const context = {
-      interpreters,
-      scope: {
-        $$VALUE: {
-          name: 'João Maranhão',
-          age: 25,
-        },
-      },
+  describe('w/ comparison', () => {
+    const data = {
+      name: 'João Maranhão',
+      age: 25,
     }
 
-    expect(
-      evaluate(context, [
-        '$and',
+    _evTestCases([
+      [
+        data,
         [
-          ['$eq', 'João', ['$stringSubstr', 0, 4, ['$value', 'name']]],
-          ['$gt', 20, ['$value', 'age']],
-          ['$lt', 30, ['$value', 'age']],
+          '$and',
+          [
+            ['$eq', 'João', ['$stringSubstr', 0, 4, ['$value', 'name']]],
+            ['$gt', 20, ['$value', 'age']],
+            ['$lt', 30, ['$value', 'age']],
+          ],
         ],
-      ])
-    ).toEqual(true)
+        true,
+      ],
+      [
+        data,
+        [
+          '$and',
+          [
+            ['$gt', 20, ['$value', 'age']],
+            ['$lt', 30, ['$value', 'age']],
+          ],
+        ],
+        true,
+      ],
+      [
+        data,
+        [
+          '$and',
+          [
+            ['$eq', 'Fernando', ['$stringSubstr', 0, 8, ['$value', 'name']]],
+            ['$gt', 20, ['$value', 'age']],
+            ['$lt', 30, ['$value', 'age']],
+          ],
+        ],
+        false,
+      ],
+      [
+        data,
+        [
+          '$and',
+          [
+            ['$gt', 20, ['$value', 'age']],
+            ['$lt', 30, ['$value', 'age']],
+          ],
+        ],
+        true,
+      ],
+    ])
+  })
 
-    expect(
-      evaluate(context, [
-        '$and',
-        [
-          ['$gt', 20, ['$value', 'age']],
-          ['$lt', 30, ['$value', 'age']],
-        ],
-      ])
-    ).toEqual(true)
+  describe('using async getters', () => {
+    const MIN_VALUE = 20
+    const MAX_VALUE = 50
 
-    expect(
-      evaluate(context, [
-        '$and',
-        [
-          ['$eq', 'Fernando', ['$stringSubstr', 0, 8, ['$value', 'name']]],
-          ['$gt', 20, ['$value', 'age']],
-          ['$lt', 30, ['$value', 'age']],
-        ],
-      ])
-    ).toEqual(false)
+    // const interpreters = interpreterList({
+    //   ...VALUE_EXPRESSIONS,
+    //   ...LOGICAL_EXPRESSIONS,
+    //   ...COMPARISON_EXPRESSIONS,
+    //   $asyncGetMinValue: () =>
+    //     new Promise((resolve) => {
+    //       setTimeout(resolve.bind(null, MIN_VALUE), 100)
+    //     }),
+    //   $asyncGetMaxValue: () =>
+    //     new Promise((resolve) => {
+    //       setTimeout(resolve.bind(null, MAX_VALUE), 100)
+    //     }),
+    // })
 
-    expect(
-      evaluate(context, [
-        '$and',
-        [
-          ['$gt', 20, ['$value', 'age']],
-          ['$lt', 30, ['$value', 'age']],
-        ],
-      ])
-    ).toEqual(true)
+    const _evTestCases = _prepareEvaluateTestCases({
+      ...VALUE_EXPRESSIONS,
+      ...LOGICAL_EXPRESSIONS,
+      ...COMPARISON_EXPRESSIONS,
+      $asyncGetMinValue: {
+        sync: null,
+        async: () =>
+          new Promise((resolve) => {
+            setTimeout(resolve.bind(null, MIN_VALUE), 100)
+          }),
+      },
+      $asyncGetMaxValue: {
+        sync: null,
+        async: () =>
+          new Promise((resolve) => {
+            setTimeout(resolve.bind(null, MAX_VALUE), 100)
+          }),
+      },
+    })
+
+    const exp = [
+      '$and',
+      [
+        ['$gte', ['$asyncGetMinValue']],
+        ['$lte', ['$asyncGetMaxValue']],
+      ],
+    ]
+
+    _evTestCases.testSyncCases([
+      [30, exp, new SyncModeUnsupportedError('$asyncGetMinValue')],
+      [20, exp, new SyncModeUnsupportedError('$asyncGetMinValue')],
+      [10, exp, new SyncModeUnsupportedError('$asyncGetMinValue')],
+    ])
+
+    _evTestCases.testAsyncCases([
+      [30, exp, true],
+      [20, exp, true],
+      [10, exp, false],
+    ])
   })
 })
 
 describe('$or', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [false, true, false] },
-        },
-        ['$or']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [false, false, false] },
-        },
-        ['$or']
-      )
-    ).toEqual(false)
-  })
+  _evTestCases([
+    [[false, true, false], ['$or'], true],
+    [[false, false, false], ['$or'], false],
+    [
+      10,
+      [
+        '$or',
+        [
+          ['$eq', 0, ['$mathMod', 5]],
+          ['$eq', 0, ['$mathMod', 3]],
+        ],
+      ],
+      true,
+    ],
+    [
+      7,
+      [
+        '$or',
+        [
+          ['$eq', 0, ['$mathMod', 5]],
+          ['$eq', 0, ['$mathMod', 3]],
+        ],
+      ],
+      false,
+    ],
+  ])
 })
 
 describe('$not', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'some-value' },
-        },
-        ['$not', ['$eq', 'some-value']]
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'some-value' },
-        },
-        ['$not', ['$eq', 'some-other-value']]
-      )
-    ).toEqual(true)
-  })
+  _evTestCases([
+    ['some-value', ['$not', ['$eq', 'some-value']], false],
+    ['some-value', ['$not', ['$eq', 'some-other-value']], true],
+  ])
 })
 
 describe('$nor', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '1234567890' },
-        },
+  _evTestCases([
+    [
+      '1234567890',
+      [
+        '$nor',
         [
-          '$nor',
-          [
-            ['$stringStartsWith', '123'], // true
-            ['$gt', 15, ['$stringLength']], // false
-          ],
-        ]
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '1234567890' },
-        },
+          ['$stringStartsWith', '123'], // true
+          ['$gt', 15, ['$stringLength']], // false
+        ],
+      ],
+      false,
+    ],
+    [
+      '1234567890',
+      [
+        '$nor',
         [
-          '$nor',
-          [
-            ['$stringStartsWith', '0000'], // false
-            ['$gt', 15, ['$stringLength']], // false
-          ],
-        ]
-      )
-    ).toEqual(true)
-  })
+          ['$stringStartsWith', '0000'], // false
+          ['$gt', 15, ['$stringLength']], // false
+        ],
+      ],
+      true,
+    ],
+  ])
 })
 
 describe('$xor', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '1234567890' },
-        },
-        [
-          '$xor',
-          ['$stringStartsWith', '123'], // true
-          ['$gt', 15, ['$stringLength']], // false
-        ]
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '1234567890' },
-        },
-        [
-          '$xor',
-          ['$stringStartsWith', '0000'], // false
-          ['$gt', 15, ['$stringLength']], // false
-        ]
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '1234567890' },
-        },
-        [
-          '$xor',
-          ['$stringStartsWith', '123'], // true
-          ['$gt', 5, ['$stringLength']], // true
-        ]
-      )
-    ).toEqual(false)
-  })
+  _evTestCases([
+    [
+      '1234567890',
+      [
+        '$xor',
+        ['$stringStartsWith', '123'], // true
+        ['$gt', 15, ['$stringLength']], // false
+      ],
+      true,
+    ],
+    [
+      '1234567890',
+      [
+        '$xor',
+        ['$stringStartsWith', '0000'], // false
+        ['$gt', 15, ['$stringLength']], // false
+      ],
+      false,
+    ],
+    [
+      '1234567890',
+      [
+        '$xor',
+        ['$stringStartsWith', '123'], // true
+        ['$gt', 5, ['$stringLength']], // true
+      ],
+      false,
+    ],
+  ])
 })
 
 describe('$if', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 15 },
-        },
-        ['$if', ['$gt', 10], 100, 0]
-      )
-    ).toEqual(100)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 8 },
-        },
-        ['$if', ['$gt', 10], 100, 0]
-      )
-    ).toEqual(0)
+  describe('basic', () => {
+    _evTestCases([
+      [15, ['$if', ['$gt', 10], 100, 0], 100],
+      [8, ['$if', ['$gt', 10], 100, 0], 0],
+      [15, ['$if', ['$gt', 10], ['$mathMult', 10], ['$mathMult', -10]], 150],
+      [8, ['$if', ['$gt', 10], ['$mathMult', 10], ['$mathMult', -10]], -80],
+    ])
   })
 
   test('then and else expressions should be evaluated only after condition evaluation', () => {
-    let expAExecuted = false
-    let expBExecuted = false // eslint-disable-line prefer-const
+    const $expA = jest.fn(() => 'expA-result')
+    const $expB = jest.fn(() => 'expB-result')
 
     expect(
       evaluate(
         {
-          interpreters: {
-            ...interpreters,
-            $expA: () => {
-              expAExecuted = true
-              return 'expA-result'
-            },
-            $expB: () => {
-              expAExecuted = false
-              return 'expB-result'
-            },
-          },
+          interpreters: interpreterList({
+            ...EXP,
+            $expA,
+            $expB,
+          }),
           scope: { $$VALUE: 15 },
         },
         ['$if', ['$gt', 10], ['$expA'], ['$expB']]
       )
     ).toEqual('expA-result')
 
-    expect(expAExecuted).toEqual(true)
-    expect(expBExecuted).toEqual(false)
+    expect($expA).toHaveBeenCalledTimes(1)
+    expect($expB).not.toHaveBeenCalled()
   })
 })
 
 describe('$switch', () => {
-  test('simple comparison', () => {
+  describe('simple comparison', () => {
     const expNoDefault = [
       '$switch',
       [
@@ -437,39 +352,15 @@ describe('$switch', () => {
 
     const expWithDefault = [...expNoDefault, 'DEFAULT_VALUE']
 
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'CASE_B' },
-        },
-        expNoDefault
-      )
-    ).toEqual('VALUE_B')
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'CASE_D' },
-        },
-        expNoDefault
-      )
-    ).toEqual(undefined)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'CASE_D' },
-        },
-        expWithDefault
-      )
-    ).toEqual('DEFAULT_VALUE')
+    _evTestCases([
+      ['CASE_B', expNoDefault, 'VALUE_B'],
+      ['CASE_D', expNoDefault, undefined],
+      ['CASE_D', expWithDefault, 'DEFAULT_VALUE'],
+    ])
   })
 
-  test('more complex condition', () => {
-    const $expr = [
+  describe('more complex condition', () => {
+    const $switchExpr = [
       '$switch',
       [
         [
@@ -506,45 +397,12 @@ describe('$switch', () => {
       ['$mathMult', -1],
     ]
 
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 5 },
-        },
-        $expr
-      )
-    ).toEqual(0)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 15 },
-        },
-        $expr
-      )
-    ).toEqual(150)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 25 },
-        },
-        $expr
-      )
-    ).toEqual(500)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 30 },
-        },
-        $expr
-      )
-    ).toEqual(-30)
+    _evTestCases([
+      [5, $switchExpr, 0],
+      [15, $switchExpr, 150],
+      [25, $switchExpr, 500],
+      [30, $switchExpr, -30],
+    ])
   })
 })
 
@@ -554,29 +412,14 @@ describe('$switchKey', () => {
     key2: 'value2',
     key3: 'value3',
   }
+  const exp = ['$switchKey', options, 'DEFAULT_VALUE']
 
-  test('basic', () => {
-    const exp = ['$switchKey', options, 'DEFAULT_VALUE']
-
-    const expected = [
-      [undefined, 'DEFAULT_VALUE'],
-      [null, 'DEFAULT_VALUE'],
-      ['key1', 'value1'],
-      ['key2', 'value2'],
-      ['key3', 'value3'],
-      ['key4', 'DEFAULT_VALUE'],
-    ]
-
-    expected.forEach(([input, result]) => {
-      expect(
-        evaluate(
-          {
-            interpreters,
-            scope: { $$VALUE: input },
-          },
-          exp
-        )
-      ).toEqual(result)
-    })
-  })
+  _evTestCases([
+    [undefined, exp, 'DEFAULT_VALUE'],
+    [null, exp, 'DEFAULT_VALUE'],
+    ['key1', exp, 'value1'],
+    ['key2', exp, 'value2'],
+    ['key3', exp, 'value3'],
+    ['key4', exp, 'DEFAULT_VALUE'],
+  ])
 })

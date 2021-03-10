@@ -1,15 +1,13 @@
-import { get, set, isPlainObject } from 'lodash'
+import { get, isPlainObject } from 'lodash'
 
-import { evaluate, isExpression } from '../evaluate'
+import { evaluate } from '../evaluate'
+
+import { $objectFormatSync, $objectFormatAsync } from './object/objectFormat'
 
 import { objectDeepApplyDefaults } from '../util/deepApplyDefaults'
 import { objectDeepAssign } from '../util/deepAssign'
 
-import {
-  EvaluationContext,
-  PlainObject,
-  ExpressionInterpreterSpec,
-} from '../types'
+import { EvaluationContext, PlainObject, InterpreterSpec } from '../types'
 
 /**
  * @function $objectMatches
@@ -17,7 +15,7 @@ import {
  * @param {Object} [value=$$VALUE]
  * @returns {Boolean} matches
  */
-export const $objectMatches: ExpressionInterpreterSpec = [
+export const $objectMatches: InterpreterSpec = [
   (
     criteriaByPath: PlainObject,
     value: PlainObject,
@@ -31,69 +29,38 @@ export const $objectMatches: ExpressionInterpreterSpec = [
       )
     }
 
-    return paths.every((path) => {
-      //
-      // pathCriteria is either:
-      // - a literal value to be compared against (array, string, number)
-      // - or an expression to be evaluated against the value
-      //
-      const pathCriteria = isPlainObject(criteriaByPath[path])
-        ? criteriaByPath[path]
-        : { $eq: criteriaByPath[path] }
+    return evaluate(context, [
+      '$and',
+      paths.map((path) => [
+        '$matches',
+        isPlainObject(criteriaByPath[path])
+          ? criteriaByPath[path]
+          : { $eq: criteriaByPath[path] },
+        get(value, path),
+      ]),
+    ])
 
-      return evaluate(
-        {
-          ...context,
-          scope: { $$VALUE: get(value, path) },
-        },
-        ['$matches', pathCriteria]
-      )
-    })
+    // return paths.every((path) => {
+    //   //
+    //   // pathCriteria is either:
+    //   // - a literal value to be compared against (array, string, number)
+    //   // - or an expression to be evaluated against the value
+    //   //
+    //   const pathCriteria = isPlainObject(criteriaByPath[path])
+    //     ? criteriaByPath[path]
+    //     : { $eq: criteriaByPath[path] }
+
+    //   return evaluate(
+    //     {
+    //       ...context,
+    //       scope: { $$VALUE: get(value, path) },
+    //     },
+    //     ['$matches', pathCriteria]
+    //   )
+    // })
   },
   ['object', 'object'],
 ]
-
-const _formatEvaluate = (context, targetValue, source) => {
-  targetValue =
-    typeof targetValue === 'string' ? ['$value', targetValue] : targetValue
-
-  if (isExpression(context.interpreters, targetValue)) {
-    return evaluate(
-      {
-        ...context,
-        scope: { $$VALUE: source },
-      },
-      targetValue
-    )
-  } else if (Array.isArray(targetValue)) {
-    return _formatArray(context, targetValue, source)
-  } else if (isPlainObject(targetValue)) {
-    return _formatObject(context, targetValue, source)
-  } else {
-    throw `Invalid $objectFormat item: ${targetValue}`
-  }
-}
-
-const _formatArray = (
-  context: EvaluationContext,
-  format: any[],
-  source: any
-): any[] =>
-  format.map((targetValue) => _formatEvaluate(context, targetValue, source))
-
-const _formatObject = (
-  context: EvaluationContext,
-  format: PlainObject,
-  source: any
-): PlainObject => {
-  const targetPaths = Object.keys(format)
-
-  return targetPaths.reduce((acc, targetPath) => {
-    set(acc, targetPath, _formatEvaluate(context, format[targetPath], source))
-
-    return acc
-  }, {})
-}
 
 /**
  * @function $objectFormat
@@ -101,19 +68,10 @@ const _formatObject = (
  * @param {*} [source=$$VALUE]
  * @returns {Object | Array} object
  */
-export const $objectFormat: ExpressionInterpreterSpec = [
-  (
-    format: PlainObject | any[],
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    source: any,
-    context: EvaluationContext
-  ): PlainObject | any[] => {
-    return Array.isArray(format)
-      ? _formatArray(context, format, source)
-      : _formatObject(context, format, source)
-  },
-  [['object', 'array'], 'any'],
-]
+export const $objectFormat = {
+  sync: $objectFormatSync,
+  async: $objectFormatAsync,
+}
 
 /**
  * @function $objectDefaults
@@ -121,7 +79,7 @@ export const $objectFormat: ExpressionInterpreterSpec = [
  * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectDefaults: ExpressionInterpreterSpec = [
+export const $objectDefaults: InterpreterSpec = [
   (defaultValues: PlainObject, base: PlainObject): PlainObject =>
     objectDeepApplyDefaults(base, defaultValues),
   ['object', 'object'],
@@ -133,7 +91,7 @@ export const $objectDefaults: ExpressionInterpreterSpec = [
  * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectAssign: ExpressionInterpreterSpec = [
+export const $objectAssign: InterpreterSpec = [
   (values: PlainObject, base: PlainObject): PlainObject =>
     objectDeepAssign(base, values),
   ['object', 'object'],
@@ -144,7 +102,7 @@ export const $objectAssign: ExpressionInterpreterSpec = [
  * @param {Object} object
  * @returns {String[]}
  */
-export const $objectKeys: ExpressionInterpreterSpec = [
+export const $objectKeys: InterpreterSpec = [
   (obj: PlainObject): string[] => Object.keys(obj),
   ['object'],
 ]

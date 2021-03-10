@@ -3,17 +3,22 @@ import { testCases, asyncResult } from '@orioro/jest-util'
 
 import { ALL_EXPRESSIONS } from './'
 
-import { asyncInterpreterList } from './interpreter'
+import { interpreterList } from './interpreter/interpreter'
 
-import { evaluate } from './evaluate'
+import { evaluateAsync } from './evaluate'
+
+import { InterpreterSpec } from './types'
 
 const wait = (ms, result) =>
   new Promise((resolve) => setTimeout(resolve.bind(null, result), ms))
 
-const $asyncLoadStr = [() => wait(100, 'async-str'), []]
-const $asyncLoadNum = [() => wait(100, 9), []]
-const $asyncLoadArr = [() => wait(100, ['str-1', 'str-2', 'str-3']), []]
-const $asyncLoadObj = [
+const $asyncLoadStr: InterpreterSpec = [() => wait(100, 'async-str'), []]
+const $asyncLoadNum: InterpreterSpec = [() => wait(100, 9), []]
+const $asyncLoadArr: InterpreterSpec = [
+  () => wait(100, ['str-1', 'str-2', 'str-3']),
+  [],
+]
+const $asyncLoadObj: InterpreterSpec = [
   () =>
     wait(100, {
       key1: 'value1',
@@ -21,10 +26,10 @@ const $asyncLoadObj = [
     }),
   [],
 ]
-const $asyncLoadTrue = [() => wait(100, true), []]
-const $asyncLoadFalse = [() => wait(100, false), []]
+const $asyncLoadTrue: InterpreterSpec = [() => wait(100, true), []]
+const $asyncLoadFalse: InterpreterSpec = [() => wait(100, false), []]
 
-const interpreters = asyncInterpreterList({
+const interpreters = interpreterList({
   ...ALL_EXPRESSIONS,
   $asyncLoadStr,
   $asyncLoadNum,
@@ -45,14 +50,14 @@ describe('async - immediate async expression', () => {
       ['$asyncLoadFalse', asyncResult(false)],
     ],
     (expression) =>
-      evaluate({ interpreters, scope: { $$VALUE: null } }, [expression])
+      evaluateAsync({ interpreters, scope: { $$VALUE: null } }, [expression])
   )
 })
 
 describe('async - nested async expression', () => {
   test('simple scenario - string concat', () => {
     return expect(
-      evaluate(
+      evaluateAsync(
         {
           interpreters,
           scope: {
@@ -68,7 +73,7 @@ describe('async - nested async expression', () => {
 describe('async - syncronous expressions only get converted to async as well', () => {
   test('simple scenario - string concat', () => {
     return expect(
-      evaluate(
+      evaluateAsync(
         {
           interpreters,
           scope: {

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import { evaluate, evaluateTyped, isExpression } from '../evaluate'
+import { evaluate, evaluateTypedSync, isExpression } from '../evaluate'
 import {
   EvaluationContext,
   Expression,
-  ExpressionInterpreterSpec,
+  InterpreterSpec,
+  InterpreterSpecSingle,
 } from '../types'
-import { validateType } from '@orioro/typing'
+import { validateType, anyType } from '@orioro/typing'
 
 export const $$INDEX = ['$value', '$$INDEX']
 export const $$ARRAY = ['$value', '$$ARRAY']
@@ -22,7 +23,7 @@ export const $$SORT_B = ['$value', '$$SORT_B']
  * @param {Array} [array=$$VALUE]
  * @returns {Boolean} includes
  */
-export const $arrayIncludes: ExpressionInterpreterSpec = [
+export const $arrayIncludes: InterpreterSpec = [
   (search: any, array: any[]): boolean => array.includes(search),
   ['any', 'array'],
 ]
@@ -37,7 +38,7 @@ export const $arrayIncludes: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {Boolean} includesAll
  */
-export const $arrayIncludesAll: ExpressionInterpreterSpec = [
+export const $arrayIncludesAll: InterpreterSpec = [
   (search: any[], array: any[]): boolean =>
     search.every((value) => array.includes(value)),
   ['array', 'array'],
@@ -52,7 +53,7 @@ export const $arrayIncludesAll: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {Boolean} includesAny
  */
-export const $arrayIncludesAny: ExpressionInterpreterSpec = [
+export const $arrayIncludesAny: InterpreterSpec = [
   (search: any[], array: any[]): boolean =>
     search.some((value) => array.includes(value)),
   ['array', 'array'],
@@ -63,7 +64,7 @@ export const $arrayIncludesAny: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {Number} length
  */
-export const $arrayLength: ExpressionInterpreterSpec = [
+export const $arrayLength: InterpreterSpec = [
   (array: any[]): number => array.length,
   ['array'],
 ]
@@ -77,7 +78,7 @@ export const $arrayLength: ExpressionInterpreterSpec = [
  * @param {*} start
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayReduce: ExpressionInterpreterSpec = [
+export const $arrayReduce: InterpreterSpec = [
   (reduceExp: Expression, start: any, array: any[], context): any =>
     array.reduce(
       ($$ACC, $$VALUE, $$INDEX, $$ARRAY) =>
@@ -96,26 +97,33 @@ export const $arrayReduce: ExpressionInterpreterSpec = [
         ),
       start
     ),
-  [null, 'any', 'array'],
+  [anyType({ delayEvaluation: true }), 'any', 'array'],
 ]
 
-const _arrayIterator = (method: string): ExpressionInterpreterSpec => [
+const _iteratorContext = (
+  parentContext: EvaluationContext,
+  $$VALUE: any,
+  $$INDEX: number,
+  $$ARRAY: any[]
+): EvaluationContext => ({
+  ...parentContext,
+  scope: {
+    $$PARENT_SCOPE: parentContext.scope,
+    $$VALUE,
+    $$INDEX,
+    $$ARRAY,
+  },
+})
+
+const _arraySyncIterator = (method: string): InterpreterSpecSingle => [
   (iteratorExp: Expression, array: any[], context: EvaluationContext): any =>
     array[method](($$VALUE, $$INDEX, $$ARRAY) =>
       evaluate(
-        {
-          ...context,
-          scope: {
-            $$PARENT_SCOPE: context.scope,
-            $$VALUE,
-            $$INDEX,
-            $$ARRAY,
-          },
-        },
+        _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
         iteratorExp
       )
     ),
-  [null, 'array'],
+  [anyType({ delayEvaluation: true }), 'array'],
 ]
 
 /**
@@ -127,7 +135,25 @@ const _arrayIterator = (method: string): ExpressionInterpreterSpec => [
  *                            `$$INDEX`, `$$ARRAY`, `$$ACC`
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayMap: ExpressionInterpreterSpec = _arrayIterator('map')
+export const $arrayMap: InterpreterSpec = {
+  sync: _arraySyncIterator('map'),
+  async: [
+    (
+      iteratorExp: Expression,
+      array: any[],
+      context: EvaluationContext
+    ): Promise<any[]> =>
+      Promise.all(
+        array.map(($$VALUE, $$INDEX, $$ARRAY) =>
+          evaluate(
+            _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+            iteratorExp
+          )
+        )
+      ),
+    [anyType({ delayEvaluation: true }), 'array'],
+  ],
+}
 
 /**
  * `Array.prototype.every`
@@ -137,43 +163,145 @@ export const $arrayMap: ExpressionInterpreterSpec = _arrayIterator('map')
  * $arrayEvery exposes array iteration variables:
  * `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
  *
+ * @todo array $arrayEvery write tests with async conditions
  * @function $arrayEvery
- * @param {Expression} everyExp
+ * @param {Expression} testExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayEvery: ExpressionInterpreterSpec = _arrayIterator('every')
+export const $arrayEvery: InterpreterSpec = {
+  sync: _arraySyncIterator('every'),
+  async: [
+    (
+      testExp: Expression,
+      array: any[],
+      context: EvaluationContext
+    ): Promise<boolean> =>
+      array.reduce(
+        (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+          accPromise.then((acc) =>
+            acc === true
+              ? evaluate(
+                  _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                  testExp
+                ).then((result) => Boolean(result))
+              : false
+          ),
+        Promise.resolve(true)
+      ),
+    [anyType({ delayEvaluation: true }), 'array'],
+  ],
+}
 
 /**
  * `Array.prototype.some`
  *
+ * @todo array $arraySome write tests with async conditions
  * @function $arraySome
  * @param {Expression} someExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arraySome: ExpressionInterpreterSpec = _arrayIterator('some')
+export const $arraySome: InterpreterSpec = {
+  sync: _arraySyncIterator('some'),
+  async: [
+    (
+      testExp: Expression,
+      array: any[],
+      context: EvaluationContext
+    ): Promise<boolean> =>
+      array.reduce(
+        (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+          accPromise.then((acc) =>
+            acc === false
+              ? evaluate(
+                  _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                  testExp
+                ).then((result) => Boolean(result))
+              : true
+          ),
+        Promise.resolve(false)
+      ),
+    [anyType({ delayEvaluation: true }), 'array'],
+  ],
+}
+
+export const $arrayFilterAsyncParallel: InterpreterSpecSingle = [
+  (filterExp: Expression, array: any[], context: EvaluationContext) =>
+    Promise.all(
+      array.map(($$VALUE, $$INDEX, $$ARRAY) =>
+        evaluate(
+          _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+          filterExp
+        )
+      )
+    ).then((results) =>
+      results.reduce(
+        (acc, result, index) => (result ? [...acc, array[index]] : acc),
+        []
+      )
+    ),
+  [anyType({ delayEvaluation: true }), 'array'],
+]
+
+export const $arrayFilterAsyncSerial: InterpreterSpecSingle = [
+  (filterExp: Expression, array: any[], context: EvaluationContext) =>
+    array.reduce(
+      (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+        accPromise.then((acc) =>
+          Promise.resolve(
+            evaluate(
+              _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+              filterExp
+            )
+          ).then((itemCondition) => (itemCondition ? [...acc, $$VALUE] : acc))
+        ),
+      Promise.resolve([])
+    ),
+  [anyType({ delayEvaluation: true }), 'array'],
+]
 
 /**
  * @function $arrayFilter
  * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayFilter: ExpressionInterpreterSpec = _arrayIterator('filter')
+export const $arrayFilter: InterpreterSpec = {
+  sync: _arraySyncIterator('filter'),
+  async: $arrayFilterAsyncSerial,
+}
 
 /**
  * @function $arrayFindIndex
  * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayFindIndex: ExpressionInterpreterSpec = _arrayIterator(
-  'findIndex'
-)
+export const $arrayFindIndex: InterpreterSpec = {
+  sync: _arraySyncIterator('findIndex'),
+  async: [
+    (queryExp: Expression, array: any[], context: EvaluationContext) =>
+      array.reduce((accPromise, $$VALUE, $$INDEX, $$ARRAY) => {
+        return accPromise.then((acc) => {
+          if (acc === undefined) {
+            return Promise.resolve(
+              evaluate(
+                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                queryExp
+              )
+            ).then((matchesQuery) => (matchesQuery ? $$INDEX : undefined))
+          } else {
+            return acc
+          }
+        })
+      }, Promise.resolve(undefined)),
+    [anyType({ delayEvaluation: true }), 'array'],
+  ],
+}
 
 /**
  * @function $arrayIndexOf
  * @param {*} value
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayIndexOf: ExpressionInterpreterSpec = [
+export const $arrayIndexOf: InterpreterSpec = [
   (value: any, array: any[]): number => array.indexOf(value),
   ['any', 'array'],
 ]
@@ -183,13 +311,13 @@ export const $arrayIndexOf: ExpressionInterpreterSpec = [
  * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayFind: ExpressionInterpreterSpec = _arrayIterator('find')
+export const $arrayFind: InterpreterSpec = _arraySyncIterator('find')
 
 /**
  * @function $arrayReverse
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayReverse: ExpressionInterpreterSpec = [
+export const $arrayReverse: InterpreterSpec = [
   (array: any[]): any[] => {
     const arr = array.slice()
     arr.reverse()
@@ -211,11 +339,14 @@ const _sortDefault = (a, b) => {
 }
 
 /**
+ * @todo array Make it possible for the same set of expression interpreters
+ *             to be called synchronously or asynchronously. E.g. sort comparator
+ *             expression should only support Synchronous
  * @function $arraySort
  * @param {String | Expression | [Expression, string]} sort
  * @param {Array} [array=$$VALUE]
  */
-export const $arraySort: ExpressionInterpreterSpec = [
+export const $arraySort: InterpreterSpec = [
   (
     sort: string | Expression | [Expression, string] = 'ASC',
     array: any[],
@@ -234,7 +365,7 @@ export const $arraySort: ExpressionInterpreterSpec = [
       sortExp === undefined
         ? _sortDefault
         : ($$SORT_A, $$SORT_B) =>
-            evaluateTyped(
+            evaluateTypedSync(
               'number',
               {
                 ...context,
@@ -247,7 +378,7 @@ export const $arraySort: ExpressionInterpreterSpec = [
       .slice()
       .sort(order === 'DESC' ? (a, b) => -1 * sortFn(a, b) : sortFn)
   },
-  [null, 'array'],
+  [anyType({ delayEvaluation: true }), 'array'],
 ]
 
 /**
@@ -255,7 +386,7 @@ export const $arraySort: ExpressionInterpreterSpec = [
  * @param {*} valueExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayPush: ExpressionInterpreterSpec = [
+export const $arrayPush: InterpreterSpec = [
   (value: any, array: any[]): any[] => [...array, value],
   ['any', 'array'],
 ]
@@ -264,7 +395,7 @@ export const $arrayPush: ExpressionInterpreterSpec = [
  * @function $arrayPop
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayPop: ExpressionInterpreterSpec = [
+export const $arrayPop: InterpreterSpec = [
   (array: any[]) => array.slice(0, array.length - 1),
   ['array'],
 ]
@@ -274,7 +405,7 @@ export const $arrayPop: ExpressionInterpreterSpec = [
  * @param {*} valueExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayUnshift: ExpressionInterpreterSpec = [
+export const $arrayUnshift: InterpreterSpec = [
   (value: any, array: any[]): any[] => [value, ...array],
   ['any', 'array'],
 ]
@@ -283,7 +414,7 @@ export const $arrayUnshift: ExpressionInterpreterSpec = [
  * @function $arrayShift
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayShift: ExpressionInterpreterSpec = [
+export const $arrayShift: InterpreterSpec = [
   (array: any[]): any[] => array.slice(1, array.length),
   ['array'],
 ]
@@ -295,7 +426,7 @@ export const $arrayShift: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {Array}
  */
-export const $arraySlice: ExpressionInterpreterSpec = [
+export const $arraySlice: InterpreterSpec = [
   (start: number, end: number, array: any[]): any[] => array.slice(start, end),
   ['number', 'number', 'array'],
 ]
@@ -307,7 +438,7 @@ export const $arraySlice: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {Array}
  */
-export const $arrayReplace: ExpressionInterpreterSpec = [
+export const $arrayReplace: InterpreterSpec = [
   (
     indexOrRange: number | [number, number],
     replacement: any,
@@ -336,7 +467,7 @@ export const $arrayReplace: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {Array} resultingArray The array with items added at position
  */
-export const $arrayAddAt: ExpressionInterpreterSpec = [
+export const $arrayAddAt: InterpreterSpec = [
   (index: number, values: any[], array: any[]) => {
     const head = array.slice(0, index)
     const tail = array.slice(index)
@@ -355,7 +486,7 @@ export const $arrayAddAt: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {Array} resultingArray The array without the removed item
  */
-export const $arrayRemoveAt: ExpressionInterpreterSpec = [
+export const $arrayRemoveAt: InterpreterSpec = [
   (position: number, count: number = 1, array: any[]): any[] => [
     ...array.slice(0, position),
     ...array.slice(position + count),
@@ -369,7 +500,7 @@ export const $arrayRemoveAt: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {String}
  */
-export const $arrayJoin: ExpressionInterpreterSpec = [
+export const $arrayJoin: InterpreterSpec = [
   (separator: string = '', array: any[]): string => array.join(separator),
   [['string', 'undefined'], 'array'],
 ]
@@ -380,7 +511,7 @@ export const $arrayJoin: ExpressionInterpreterSpec = [
  * @param {Array} [array=$$VALUE]
  * @returns {*} value
  */
-export const $arrayAt: ExpressionInterpreterSpec = [
+export const $arrayAt: InterpreterSpec = [
   (index: number, array: any[]): any => array[index],
   ['number', 'array'],
 ]

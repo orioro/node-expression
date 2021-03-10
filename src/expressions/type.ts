@@ -1,9 +1,9 @@
 import { typing, CORE_TYPES } from '@orioro/typing'
-import { TypeAlternatives, TypeMap, ExpressionInterpreterSpec } from '../types'
+import { TypeAlternatives, TypeMap, InterpreterSpec } from '../types'
 
 export const typeExpressions = (
   types: TypeAlternatives | TypeMap
-): [ExpressionInterpreterSpec, ExpressionInterpreterSpec] => {
+): [InterpreterSpec, InterpreterSpec] => {
   const {
     getType,
     isType,
@@ -32,7 +32,7 @@ export const typeExpressions = (
    *   - weakmap
    *   - weakset
    */
-  const $type: ExpressionInterpreterSpec = [
+  const $type: InterpreterSpec = [
     (value: any): string => getType(value),
     ['any'],
   ]
@@ -43,7 +43,7 @@ export const typeExpressions = (
    * @param {*} value
    * @returns {Boolean}
    */
-  const $isType: ExpressionInterpreterSpec = [
+  const $isType: InterpreterSpec = [
     (type: string, value: any): boolean => isType(type, value),
     [['string', 'array', 'object'], 'any'],
   ]
