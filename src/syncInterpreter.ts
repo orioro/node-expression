@@ -28,26 +28,49 @@ import { ParamResolver } from './types'
 const _syncParamResolverNoop = (context: EvaluationContext, arg: any): any =>
   arg
 
-const _syncParamResolver = (evaluateTyped, resolver) => {
+/**
+ * @function _syncParamResolver
+ * @private
+ * @param {ParamResolver} resolver
+ * @returns {ParamResolverFunction}
+ */
+export const _syncParamResolver = (resolver: ParamResolver): ParamResolverFunction => {
   const expectedType = castTypeSpec(resolver)
 
   if (expectedType !== null) {
     switch (expectedType.specType) {
       case ANY_TYPE:
+        return expectedType.delayEvaluation
+          ? (context, value) => value
+          : evaluate
       case SINGLE_TYPE:
       case ONE_OF_TYPES:
       case ENUM_TYPE:
         return evaluateTyped.bind(null, expectedType)
-      case TUPLE_TYPE:
-      case INDEFINITE_ARRAY_OF_TYPE:
+      case TUPLE_TYPE: {
+        const itemParamResolvers = expectedType.items.map(itemResolver =>
+          _syncParamResolver(itemResolver)
+        )
+
         return (context, value) => {
-          const array = evaluateTyped('array', context, value).map((item) =>
-            evaluate(context, item)
+          const array = evaluateTyped('array', context, value).map((item, index) =>
+            itemParamResolvers[index](context, item)
           )
 
-          validateType(expectedType, array)
           return array
         }
+      }
+      case INDEFINITE_ARRAY_OF_TYPE: {
+        const itemParamResolver = _syncParamResolver(expectedType.itemType)
+
+        return (context, value) => {
+          const array = evaluateTyped('array', context, value).map((item) =>
+            itemParamResolver(context, item)
+          )
+
+          return array
+        }
+      }
       case OBJECT_TYPE:
       case INDEFINITE_OBJECT_OF_TYPE:
         return (context, value) => {
@@ -69,7 +92,9 @@ const _syncParamResolver = (evaluateTyped, resolver) => {
     if (typeof resolver === 'function') {
       return resolver
     } else if (resolver === null) {
-      return _syncParamResolverNoop
+      throw new TypeError(
+        `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
+      )
     } else {
       throw new TypeError(
         `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
@@ -101,7 +126,7 @@ export const syncInterpreter = (
   // in order to minimize expression evaluation performance
   //
   const _syncParamResolvers = paramResolvers.map((resolver) =>
-    _syncParamResolver(evaluateTyped, resolver)
+    _syncParamResolver(resolver)
   )
 
   return (context, ...args) =>

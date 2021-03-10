@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { indefiniteArrayOfType } from '@orioro/typing'
+import { indefiniteArrayOfType, tupleType, anyType } from '@orioro/typing'
 import { evaluate } from '../evaluate'
 import {
   Expression,
@@ -14,8 +14,7 @@ import {
  * @returns {Boolean}
  */
 export const $and: ExpressionInterpreterSpec = [
-  (values: any[]): boolean =>
-    values.every((value) => Boolean(value)),
+  (values: any[]): boolean => values.every((value) => Boolean(value)),
   [indefiniteArrayOfType('any')],
 ]
 
@@ -25,9 +24,9 @@ export const $and: ExpressionInterpreterSpec = [
  * @returns {Boolean}
  */
 export const $or: ExpressionInterpreterSpec = [
-  (expressions: Expression[], context: EvaluationContext): boolean =>
-    expressions.some((exp) => Boolean(evaluate(context, exp))),
-  [['array', 'undefined']],
+  (values: Expression[], context: EvaluationContext): boolean =>
+    values.some((value) => Boolean(value)),
+  [indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -46,9 +45,9 @@ export const $not: ExpressionInterpreterSpec = [
  * @returns {Boolean}
  */
 export const $nor: ExpressionInterpreterSpec = [
-  (expressions: Expression[], context: EvaluationContext): boolean =>
-    expressions.every((exp) => !evaluate(context, exp)),
-  ['array'],
+  (values: Expression[], context: EvaluationContext): boolean =>
+    values.every((value) => !value),
+  [indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -76,17 +75,27 @@ export const $if: ExpressionInterpreterSpec = [
     elseExp: Expression,
     context: EvaluationContext
   ): any =>
+    // Usage of `evaluate` inside the expression does not affect
+    // its sync/async usage, as the logic of the expression operation
+    // does not depend on any evaluation ran inside itself.
+    // For example: condition MUST be evaluated outside expression
+    // interpreter logic by the argument resolvers because otherwise
+    // the logic for handling promises would have to be inside
+    // the expression interpreter.
+    // On the other hand, the return value is ignored by the expression interpreter:
+    // whether it returns a value or a promise is not important to its logic
     condition ? evaluate(context, thenExp) : evaluate(context, elseExp),
   [
     'any',
-    null, // Only evaluate if condition is satisfied
-    null, // Only evaluate if condition is not satisfied
+    anyType({ delayEvaluation: true }), // Only evaluate if condition is satisfied
+    anyType({ delayEvaluation: true }), // Only evaluate if condition is not satisfied
   ],
 ]
 
 type Case = [Expression, Expression]
 
 /**
+ * @todo logical Write test to ensure delayed evaluation
  * @function $switch
  * @param {Array} cases
  * @param {Expression} defaultExp
@@ -94,15 +103,18 @@ type Case = [Expression, Expression]
  */
 export const $switch: ExpressionInterpreterSpec = [
   (cases: Case[], defaultExp: Expression, context: EvaluationContext): any => {
-    const correspondingCase = cases.find(([conditionExp]) =>
-      Boolean(evaluate(context, conditionExp))
-    )
+    const correspondingCase = cases.find(([condition]) => Boolean(condition))
 
     return correspondingCase
       ? evaluate(context, correspondingCase[1])
       : evaluate(context, defaultExp)
   },
-  ['array', null],
+  [
+    indefiniteArrayOfType(
+      tupleType(['any', anyType({ delayEvaluation: true })])
+    ),
+    anyType({ delayEvaluation: true }),
+  ],
   {
     defaultParam: -1,
   },
@@ -130,7 +142,7 @@ export const $switchKey: ExpressionInterpreterSpec = [
       ? evaluate(context, correspondingCase)
       : evaluate(context, defaultExp)
   },
-  ['object', null, 'any'],
+  ['object', anyType({ delayEvaluation: true }), 'any'],
 ]
 
 export const LOGICAL_EXPRESSIONS = {

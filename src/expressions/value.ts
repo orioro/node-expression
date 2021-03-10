@@ -1,6 +1,7 @@
 import { get } from 'lodash'
 
 import { evaluate } from '../evaluate'
+import { anyType } from '@orioro/typing'
 
 import {
   Expression,
@@ -35,7 +36,7 @@ export const $value: ExpressionInterpreterSpec = [
       ? evaluate(context, defaultExp)
       : value
   },
-  [['string', 'undefined'], null],
+  [['string', 'undefined'], anyType({ delayEvaluation: true })],
   {
     defaultParam: -1,
   },
@@ -49,7 +50,7 @@ export const $value: ExpressionInterpreterSpec = [
 export const $literal: ExpressionInterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): any => value,
-  [null],
+  [anyType({ delayEvaluation: true })],
   { defaultParam: -1 },
 ]
 

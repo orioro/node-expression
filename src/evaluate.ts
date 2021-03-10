@@ -1,4 +1,4 @@
-import { validateType, TypeSpec } from '@orioro/typing'
+import { TypeSpec, validateType } from '@orioro/typing'
 
 import {
   Expression,

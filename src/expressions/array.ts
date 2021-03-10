@@ -6,7 +6,7 @@ import {
   Expression,
   ExpressionInterpreterSpec,
 } from '../types'
-import { validateType } from '@orioro/typing'
+import { validateType, anyType } from '@orioro/typing'
 
 export const $$INDEX = ['$value', '$$INDEX']
 export const $$ARRAY = ['$value', '$$ARRAY']
@@ -96,7 +96,7 @@ export const $arrayReduce: ExpressionInterpreterSpec = [
         ),
       start
     ),
-  [null, 'any', 'array'],
+  [anyType({ delayEvaluation: true }), 'any', 'array'],
 ]
 
 const _arrayIterator = (method: string): ExpressionInterpreterSpec => [
@@ -115,7 +115,7 @@ const _arrayIterator = (method: string): ExpressionInterpreterSpec => [
         iteratorExp
       )
     ),
-  [null, 'array'],
+  [anyType({ delayEvaluation: true }), 'array'],
 ]
 
 /**
@@ -247,7 +247,7 @@ export const $arraySort: ExpressionInterpreterSpec = [
       .slice()
       .sort(order === 'DESC' ? (a, b) => -1 * sortFn(a, b) : sortFn)
   },
-  [null, 'array'],
+  [anyType({ delayEvaluation: true }), 'array'],
 ]
 
 /**

@@ -54,18 +54,41 @@ const _asyncParamResolver = (resolver: ParamResolver) => {
       case ONE_OF_TYPES:
       case ENUM_TYPE:
         return evaluateTypedAsync.bind(null, expectedType)
-      case TUPLE_TYPE:
-      case INDEFINITE_ARRAY_OF_TYPE:
-        return (context, value) =>
-          evaluateTypedAsync('array', context, value)
-            .then((array) =>
-              _resolveArray(array, (item) => evaluate(context, item))
-            )
-            .then((finalArray) => {
-              validateType(expectedType, finalArray)
+      case TUPLE_TYPE: {
+        const itemParamResolvers = expectedType.items.map((itemResolver, index) =>
+          _asyncParamResolver(itemResolver)
+        )
 
-              return finalArray
+        return (context, value) => {
+          return evaluateTypedAsync('array', context, value)
+            .then(array => {
+              return Promise.all(array.map((item, index) => {
+                return itemParamResolvers[index](context, item)
+              }))
             })
+        }
+      }
+      case INDEFINITE_ARRAY_OF_TYPE: {
+        const itemParamResolver = _asyncParamResolver(expectedType.itemType)
+
+        return (context, value) => {
+          return evaluateTypedAsync('array', context, value)
+            .then(array => {
+              return Promise.all(array.map(item => itemParamResolver(context, item)))
+            })
+        }
+      }
+      // case INDEFINITE_ARRAY_OF_TYPE:
+      //   return (context, value) =>
+      //     evaluateTypedAsync('array', context, value)
+      //       .then((array) =>
+      //         _resolveArray(array, (item) => evaluate(context, item))
+      //       )
+      //       .then((finalArray) => {
+      //         validateType(expectedType, finalArray)
+
+      //         return finalArray
+      //       })
       case OBJECT_TYPE:
       case INDEFINITE_OBJECT_OF_TYPE:
         return (context, value) =>

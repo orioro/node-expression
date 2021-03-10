@@ -32,7 +32,7 @@ export type ParamResolverFunction = (context: EvaluationContext, arg: any) => an
  *
  * @typedef {Function | null | string | string[]} ParamResolver
  */
-export type ParamResolver = null | TypeSpec
+export type ParamResolver = TypeSpec
 
 /**
  * An expression is an array tuple with the first item
