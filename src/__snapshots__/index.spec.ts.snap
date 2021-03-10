@@ -98,8 +98,6 @@ Array [
   "OBJECT_EXPRESSIONS",
   "STRING_EXPRESSIONS",
   "TYPE_EXPRESSIONS",
-  "TypeAlternatives",
-  "TypeMap",
   "VALUE_EXPRESSIONS",
   "asyncInterpreter",
   "asyncInterpreterList",

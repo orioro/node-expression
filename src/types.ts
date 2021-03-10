@@ -1,6 +1,6 @@
-import { TypeAlternatives, TypeMap, TypeSpec } from '@orioro/typing'
+import type { TypeAlternatives, TypeMap, TypeSpec } from '@orioro/typing'
 
-export { TypeAlternatives, TypeMap }
+export type { TypeAlternatives, TypeMap, TypeSpec }
 
 export type ParamResolverFunction = (context: EvaluationContext, arg: any) => any
 
@@ -32,7 +32,7 @@ export type ParamResolverFunction = (context: EvaluationContext, arg: any) => an
  *
  * @typedef {Function | null | string | string[]} ParamResolver
  */
-export type ParamResolver = TypeSpec
+// export type ParamResolver = TypeSpec
 
 /**
  * An expression is an array tuple with the first item
@@ -67,7 +67,7 @@ export type Expression = [string, ...any[]]
  */
 export type ExpressionInterpreterSpec = [
   (...args: any) => any,
-  ParamResolver[],
+  TypeSpec[],
   { defaultParam?: number }?
 ]
 

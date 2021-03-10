@@ -16,7 +16,7 @@ export const $$VALUE: Expression = ['$value', '$$VALUE']
 
 /**
  * @function $value
- * @param {String} pathExp
+ * @param {String} path
  * @param {*} defaultExp
  * @returns {*} value
  */
@@ -55,9 +55,11 @@ export const $literal: ExpressionInterpreterSpec = [
 ]
 
 /**
+ * @todo value Consider adding 'expression' type
+ * 
  * @function $evaluate
- * @param {Expression} expExp
- * @param {Object | null} scopeExp
+ * @param {Expression} expression
+ * @param {Object} scope
  * @returns {*}
  */
 export const $evaluate: ExpressionInterpreterSpec = [
@@ -73,15 +75,7 @@ export const $evaluate: ExpressionInterpreterSpec = [
       },
       expression
     ),
-  [
-    (context: EvaluationContext, expExp: Expression | any): Expression =>
-      evaluate(context, expExp),
-    (
-      context: EvaluationContext,
-      scopeExp: Expression | null = null
-    ): EvaluationScope =>
-      scopeExp === null ? context.scope : evaluate(context, scopeExp),
-  ],
+  ['any', 'object'],
   { defaultParam: -1 },
 ]
 

@@ -19,11 +19,11 @@ import {
   ExpressionInterpreterList,
   ExpressionInterpreterFunction,
   ExpressionInterpreterFunctionList,
+  ParamResolverFunction,
+  TypeSpec,
 } from './types'
 
 import { evaluate, evaluateTyped } from './evaluate'
-
-import { ParamResolver } from './types'
 
 const _syncParamResolverNoop = (context: EvaluationContext, arg: any): any =>
   arg
@@ -31,75 +31,67 @@ const _syncParamResolverNoop = (context: EvaluationContext, arg: any): any =>
 /**
  * @function _syncParamResolver
  * @private
- * @param {ParamResolver} resolver
+ * @param {TypeSpec} resolver
  * @returns {ParamResolverFunction}
  */
-export const _syncParamResolver = (resolver: ParamResolver): ParamResolverFunction => {
+export const _syncParamResolver = (resolver: TypeSpec): ParamResolverFunction => {
   const expectedType = castTypeSpec(resolver)
 
-  if (expectedType !== null) {
-    switch (expectedType.specType) {
-      case ANY_TYPE:
-        return expectedType.delayEvaluation
-          ? (context, value) => value
-          : evaluate
-      case SINGLE_TYPE:
-      case ONE_OF_TYPES:
-      case ENUM_TYPE:
-        return evaluateTyped.bind(null, expectedType)
-      case TUPLE_TYPE: {
-        const itemParamResolvers = expectedType.items.map(itemResolver =>
-          _syncParamResolver(itemResolver)
+  if (expectedType === null) {
+    throw new TypeError(
+      `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
+    )
+  }
+
+  switch (expectedType.specType) {
+    case ANY_TYPE:
+      return expectedType.delayEvaluation
+        ? (context, value) => value
+        : evaluate
+    case SINGLE_TYPE:
+    case ONE_OF_TYPES:
+    case ENUM_TYPE:
+      return evaluateTyped.bind(null, expectedType)
+    case TUPLE_TYPE: {
+      const itemParamResolvers = expectedType.items.map(itemResolver =>
+        _syncParamResolver(itemResolver)
+      )
+
+      return (context, value) => {
+        const array = evaluateTyped('array', context, value).map((item, index) =>
+          itemParamResolvers[index](context, item)
         )
 
-        return (context, value) => {
-          const array = evaluateTyped('array', context, value).map((item, index) =>
-            itemParamResolvers[index](context, item)
-          )
-
-          return array
-        }
+        return array
       }
-      case INDEFINITE_ARRAY_OF_TYPE: {
-        const itemParamResolver = _syncParamResolver(expectedType.itemType)
+    }
+    case INDEFINITE_ARRAY_OF_TYPE: {
+      const itemParamResolver = _syncParamResolver(expectedType.itemType)
 
-        return (context, value) => {
-          const array = evaluateTyped('array', context, value).map((item) =>
-            itemParamResolver(context, item)
-          )
+      return (context, value) => {
+        const array = evaluateTyped('array', context, value).map((item) =>
+          itemParamResolver(context, item)
+        )
 
-          return array
-        }
+        return array
       }
-      case OBJECT_TYPE:
-      case INDEFINITE_OBJECT_OF_TYPE:
-        return (context, value) => {
-          const _object = evaluateTyped('object', context, value)
-          const object = Object.keys(_object).reduce(
-            (acc, key) => ({
-              ...acc,
-              [key]: evaluate(context, _object[key]),
-            }),
-            {}
-          )
-
-          validateType(expectedType, object)
-
-          return object
-        }
     }
-  } else {
-    if (typeof resolver === 'function') {
-      return resolver
-    } else if (resolver === null) {
-      throw new TypeError(
-        `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
-      )
-    } else {
-      throw new TypeError(
-        `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
-      )
-    }
+    case OBJECT_TYPE:
+    case INDEFINITE_OBJECT_OF_TYPE:
+      return (context, value) => {
+        const _object = evaluateTyped('object', context, value)
+        const object = Object.keys(_object).reduce(
+          (acc, key) => ({
+            ...acc,
+            [key]: evaluate(context, _object[key]),
+          }),
+          {}
+        )
+
+        validateType(expectedType, object)
+
+        return object
+      }
   }
 }
 
