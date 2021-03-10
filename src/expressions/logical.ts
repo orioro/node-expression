@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-
+import { indefiniteArrayOfType } from '@orioro/typing'
 import { evaluate } from '../evaluate'
 import {
   Expression,
@@ -14,9 +14,9 @@ import {
  * @returns {Boolean}
  */
 export const $and: ExpressionInterpreterSpec = [
-  (expressions: Expression[], context: EvaluationContext): boolean =>
-    expressions.every((exp) => Boolean(evaluate(context, exp))),
-  [['array', 'undefined']],
+  (values: any[]): boolean =>
+    values.every((value) => Boolean(value)),
+  [indefiniteArrayOfType('any')],
 ]
 
 /**

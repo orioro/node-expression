@@ -1,4 +1,4 @@
-import { validateType } from '@orioro/typing'
+import { validateType, TypeSpec } from '@orioro/typing'
 
 import {
   Expression,
@@ -76,7 +76,7 @@ export const evaluate =
  * @returns {*}
  */
 export const evaluateTyped = (
-  expectedTypes: string | string[],
+  expectedTypes: TypeSpec,
   context: EvaluationContext,
   expOrValue: Expression | any
 ): any => {
@@ -93,7 +93,7 @@ export const evaluateTyped = (
  * @returns {Promise<*>}
  */
 export const evaluateTypedAsync = (
-  expectedTypes: string | string[],
+  expectedTypes: TypeSpec,
   context: EvaluationContext,
   expOrValue: Expression | any
 ): Promise<any> =>

@@ -1,5 +1,12 @@
+import {
+  testCases,
+  asyncResult,
+  valueLabel,
+  resultLabel,
+} from '@orioro/jest-util'
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter'
+import { syncInterpreterList } from '../syncInterpreter'
+import { asyncInterpreterList } from '../asyncInterpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
 import { LOGICAL_EXPRESSIONS } from './logical'
@@ -18,141 +25,57 @@ const interpreters = syncInterpreterList({
   ...MATH_EXPRESSIONS,
 })
 
+const _ev = (value, expression) =>
+  evaluate(
+    {
+      interpreters,
+      scope: { $$VALUE: value },
+    },
+    expression
+  )
+
+const _evLabel = ([value, expression], result) =>
+  `${valueLabel(expression)}(${valueLabel(value)}) -> ${valueLabel(result)}`
+
 describe('$and', () => {
-  test('error situations', () => {
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: undefined },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: null },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: true },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 8 },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
-
-    expect(() =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: {} },
-        },
-        ['$and']
-      )
-    ).toThrow(TypeError)
+  describe('error situations', () => {
+    testCases(
+      [
+        [undefined, ['$and'], TypeError],
+        [null, ['$and'], TypeError],
+        [true, ['$and'], TypeError],
+        [8, ['$and'], TypeError],
+        [{}, ['$and'], TypeError],
+      ],
+      _ev,
+      _evLabel
+    )
   })
 
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [true, true, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [true, false, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, 'string', true] },
-        },
-        ['$and', ['$arrayMap', ['$boolean']]]
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, '', true] },
-        },
-        ['$and', ['$arrayMap', ['$boolean']]]
-      )
-    ).toEqual(false)
+  describe('basic', () => {
+    testCases(
+      [
+        [[true, true, true], ['$and'], true],
+        [[true, false, true], ['$and'], false],
+        [[1, 'string', true], ['$and'], true],
+        [[1, '', true], ['$and'], false],
+      ],
+      _ev,
+      _evLabel
+    )
   })
 
-  test('value coercion', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, 0, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, 'some-string', true] },
-        },
-        ['$and']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, '', true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [1, null, true] },
-        },
-        ['$and']
-      )
-    ).toEqual(false)
+  describe('value coercion', () => {
+    testCases(
+      [
+        [[1, 0, true], ['$and'], false],
+        [[1, 'some-string', true], ['$and'], true],
+        [[1, '', true], ['$and'], false],
+        [[1, null, true], ['$and'], false],
+      ],
+      _ev,
+      _evLabel
+    )
   })
 
   // eslint-disable-next-line jest/no-disabled-tests
@@ -240,90 +163,106 @@ describe('$and', () => {
       ])
     ).toEqual(true)
   })
+
+  describe('async', () => {
+    const MIN_VALUE = 20
+    const MAX_VALUE = 50
+
+    const interpreters = asyncInterpreterList({
+      ...VALUE_EXPRESSIONS,
+      ...LOGICAL_EXPRESSIONS,
+      ...COMPARISON_EXPRESSIONS,
+      $asyncGetMinValue: () =>
+        new Promise((resolve) => {
+          setTimeout(resolve.bind(null, MIN_VALUE), 100)
+        }),
+      $asyncGetMaxValue: () =>
+        new Promise((resolve) => {
+          setTimeout(resolve.bind(null, MAX_VALUE), 100)
+        }),
+    })
+
+    const exp = [
+      '$and',
+      [
+        ['$gte', ['$asyncGetMinValue']],
+        ['$lte', ['$asyncGetMaxValue']],
+      ],
+    ]
+
+    testCases(
+      [
+        [30, asyncResult(true)],
+        [20, asyncResult(true)],
+        [10, asyncResult(false)],
+      ],
+      (input) =>
+        evaluate(
+          {
+            interpreters,
+            scope: { $$VALUE: input },
+          },
+          exp
+        ),
+      ([value], result) =>
+        `${value} >= ${MIN_VALUE} && ${value} <= ${MAX_VALUE} -> ${resultLabel(
+          result
+        )}`
+    )
+  })
 })
 
 describe('$or', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [false, true, false] },
-        },
-        ['$or']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [false, false, false] },
-        },
-        ['$or']
-      )
-    ).toEqual(false)
-  })
+  testCases(
+    [
+      [[false, true, false], ['$or'], true],
+      [[false, false, false], ['$or'], false],
+    ],
+    _ev,
+    _evLabel
+  )
 })
 
 describe('$not', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'some-value' },
-        },
-        ['$not', ['$eq', 'some-value']]
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'some-value' },
-        },
-        ['$not', ['$eq', 'some-other-value']]
-      )
-    ).toEqual(true)
-  })
+  testCases(
+    [
+      ['some-value', ['$not', ['$eq', 'some-value']], false],
+      ['some-value', ['$not', ['$eq', 'some-other-value']], true],
+    ],
+    _ev,
+    _evLabel
+  )
 })
 
 describe('$nor', () => {
-  test('basic', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '1234567890' },
-        },
+  testCases(
+    [
+      [
+        '1234567890',
         [
           '$nor',
           [
             ['$stringStartsWith', '123'], // true
             ['$gt', 15, ['$stringLength']], // false
           ],
-        ]
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '1234567890' },
-        },
+        ],
+        false,
+      ],
+      [
+        '1234567890',
         [
           '$nor',
           [
             ['$stringStartsWith', '0000'], // false
             ['$gt', 15, ['$stringLength']], // false
           ],
-        ]
-      )
-    ).toEqual(true)
-  })
+        ],
+        true,
+      ],
+    ],
+    _ev,
+    _evLabel
+  )
 })
 
 describe('$xor', () => {

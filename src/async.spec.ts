@@ -3,7 +3,7 @@ import { testCases, asyncResult } from '@orioro/jest-util'
 
 import { ALL_EXPRESSIONS } from './'
 
-import { asyncInterpreterList } from './interpreter'
+import { asyncInterpreterList } from './asyncInterpreter'
 
 import { evaluate } from './evaluate'
 

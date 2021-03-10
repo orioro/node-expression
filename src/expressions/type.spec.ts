@@ -1,5 +1,5 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter'
+import { syncInterpreterList } from '../syncInterpreter'
 import { $value } from './value'
 import { TYPE_EXPRESSIONS, typeExpressions } from './type'
 import { testCases } from '@orioro/jest-util'
