@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { PlainObject, ExpressionInterpreterSpec } from '../types'
+import { PlainObject, InterpreterSpec } from '../types'
 
 import { getType } from '@orioro/typing'
 
@@ -45,7 +45,7 @@ const stringifyValue = (value) => {
  * @param {*} [value=$$VALUE]
  * @returns {String}
  */
-export const $string: ExpressionInterpreterSpec = [
+export const $string: InterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): string => stringifyValue(value),
   ['any'],
@@ -57,7 +57,7 @@ export const $string: ExpressionInterpreterSpec = [
  * @param {String} [str=$$VALUE]
  * @returns {Boolean}
  */
-export const $stringStartsWith: ExpressionInterpreterSpec = [
+export const $stringStartsWith: InterpreterSpec = [
   (query: string, str: string): boolean => str.startsWith(query),
   ['string', 'string'],
 ]
@@ -67,7 +67,7 @@ export const $stringStartsWith: ExpressionInterpreterSpec = [
  * @param {String} [str=$$VALUE]
  * @returns {Number}
  */
-export const $stringLength: ExpressionInterpreterSpec = [
+export const $stringLength: InterpreterSpec = [
   (str: string): number => str.length,
   ['string'],
 ]
@@ -78,7 +78,7 @@ export const $stringLength: ExpressionInterpreterSpec = [
  * @param {Number} end
  * @param {String} [str=$$VALUE]
  */
-export const $stringSubstr: ExpressionInterpreterSpec = [
+export const $stringSubstr: InterpreterSpec = [
   (start: number, end: number | undefined, str: string): string =>
     str.substring(start, end),
   ['number', ['number', 'undefined'], 'string'],
@@ -90,7 +90,7 @@ export const $stringSubstr: ExpressionInterpreterSpec = [
  * @param {String} [base=$$VALUE]
  * @returns {String}
  */
-export const $stringConcat: ExpressionInterpreterSpec = [
+export const $stringConcat: InterpreterSpec = [
   (concat: string | string[], base: string): string =>
     Array.isArray(concat) ? base.concat(concat.join('')) : base.concat(concat),
   [['string', 'array'], 'string'],
@@ -101,7 +101,7 @@ export const $stringConcat: ExpressionInterpreterSpec = [
  * @param {String} [str=$$VALUE]
  * @returns {String}
  */
-export const $stringTrim: ExpressionInterpreterSpec = [
+export const $stringTrim: InterpreterSpec = [
   (str: string): string => str.trim(),
   ['string'],
 ]
@@ -113,7 +113,7 @@ export const $stringTrim: ExpressionInterpreterSpec = [
  * @param {String} [str=$$VALUE]
  * @returns {String}
  */
-export const $stringPadStart: ExpressionInterpreterSpec = [
+export const $stringPadStart: InterpreterSpec = [
   (targetLength: number, padString: string, str: string): string =>
     str.padStart(targetLength, padString),
   ['number', 'string', 'string'],
@@ -126,7 +126,7 @@ export const $stringPadStart: ExpressionInterpreterSpec = [
  * @param {String} [str=$$VALUE]
  * @returns {String}
  */
-export const $stringPadEnd: ExpressionInterpreterSpec = [
+export const $stringPadEnd: InterpreterSpec = [
   (targetLength: number, padString: string, str: string): string =>
     str.padEnd(targetLength, padString),
   ['number', 'string', 'string'],
@@ -137,7 +137,7 @@ export const $stringPadEnd: ExpressionInterpreterSpec = [
  * @param {String} value
  * @returns {String}
  */
-export const $stringToUpperCase: ExpressionInterpreterSpec = [
+export const $stringToUpperCase: InterpreterSpec = [
   (str: string): string => str.toUpperCase(),
   ['string'],
 ]
@@ -147,7 +147,7 @@ export const $stringToUpperCase: ExpressionInterpreterSpec = [
  * @param {String} value
  * @returns {String}
  */
-export const $stringToLowerCase: ExpressionInterpreterSpec = [
+export const $stringToLowerCase: InterpreterSpec = [
   (str: string): string => str.toLowerCase(),
   ['string'],
 ]
@@ -187,7 +187,7 @@ const INTERPOLATABLE_TYPES = ['string', 'number']
  *                          only interpreted as paths to the value. No logic
  *                          supported: loops, conditionals, etc.
  */
-export const $stringInterpolate: ExpressionInterpreterSpec = [
+export const $stringInterpolate: InterpreterSpec = [
   (data: PlainObject | any[], template: string): string =>
     template.replace(INTERPOLATION_REGEXP, (match, path) => {
       const value = get(data, path)

@@ -1,8 +1,4 @@
-import {
-  EvaluationContext,
-  Expression,
-  ExpressionInterpreterSpec,
-} from '../types'
+import { EvaluationContext, Expression, InterpreterSpec } from '../types'
 
 import { evaluate } from '../evaluate'
 
@@ -11,7 +7,7 @@ import { evaluate } from '../evaluate'
  * @param {Expression[]} expressions
  * @returns {*} pipeResult
  */
-export const $pipe: ExpressionInterpreterSpec = [
+export const $pipe: InterpreterSpec = [
   (expressions: Expression[], context: EvaluationContext): any =>
     expressions.reduce((acc, expression) => {
       return evaluate(

@@ -1,14 +1,15 @@
-import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { STRING_EXPRESSIONS } from './string'
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
 
-const interpreters = syncInterpreterList({
+const EXP = {
   ...VALUE_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
-})
+}
 
-test('$string', () => {
+const _evTestCases = _prepareEvaluateTestCases(EXP)
+
+describe('$string', () => {
   const expectations = [
     ['some string', 'some string'],
     [10.5, '10.5'],
@@ -36,125 +37,80 @@ test('$string', () => {
     [new WeakMap(), '[object WeakMap]'],
   ]
 
-  expectations.forEach(([input, result]) => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: input },
-        },
-        ['$string']
-      )
-    ).toEqual(result)
-  })
-})
-
-test('$stringStartsWith', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: 'some_string' },
-  }
-
-  expect(evaluate(context, ['$stringStartsWith', 'some'])).toEqual(true)
-  expect(evaluate(context, ['$stringStartsWith', 'somethingelse'])).toEqual(
-    false
+  _evTestCases(
+    expectations.map(([input, result]) => [input, ['$string'], result])
   )
 })
 
-test('$stringLength', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 'some_string' },
-      },
-      ['$stringLength']
-    )
-  ).toEqual(11)
+describe('$stringStartsWith', () => {
+  _evTestCases([
+    ['some_string', ['$stringStartsWith', 'some'], true],
+    ['some_string', ['$stringStartsWith', 'somethingelse'], false],
+  ])
 })
 
-test('$stringSubstr', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: 'some_string' },
-  }
+describe('$stringLength', () => {
+  _evTestCases([
+    ['some_string', ['$stringLength'], 11],
+    ['', ['$stringLength'], 0],
+  ])
+})
 
-  expect(evaluate(context, ['$stringSubstr', 0, 4])).toEqual('some')
-  expect(evaluate(context, ['$stringSubstr', 4])).toEqual('_string')
+describe('$stringSubstr', () => {
+  _evTestCases([
+    ['some_string', ['$stringSubstr', 0, 4], 'some'],
+    ['some_string', ['$stringSubstr', 4], '_string'],
+  ])
 })
 
 describe('$stringConcat', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: 'some_string' },
-  }
-
-  test('single string', () => {
-    expect(evaluate(context, ['$stringConcat', '_another_string'])).toEqual(
-      'some_string_another_string'
-    )
+  describe('single string', () => {
+    _evTestCases([
+      [
+        'some_string',
+        ['$stringConcat', '_another_string'],
+        'some_string_another_string',
+      ],
+    ])
   })
 
-  test('array of strings', () => {
-    expect(
-      evaluate(context, ['$stringConcat', ['some', 'other', 'strings']])
-    ).toEqual('some_stringsomeotherstrings')
+  describe('array of strings', () => {
+    _evTestCases([
+      [
+        'some_string',
+        ['$stringConcat', ['some', 'other', 'strings']],
+        'some_stringsomeotherstrings',
+      ],
+    ])
   })
 })
 
-test('$stringTrim', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: ' some string  ' },
-  }
-
-  expect(evaluate(context, ['$stringTrim'])).toEqual('some string')
+describe('$stringTrim', () => {
+  _evTestCases([[' some string  ', ['$stringTrim'], 'some string']])
 })
 
-test('$stringPadStart', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: '1' },
-  }
-
-  expect(evaluate(context, ['$stringPadStart', 3, '0'])).toEqual('001')
+describe('$stringPadStart', () => {
+  _evTestCases([['1', ['$stringPadStart', 3, '0'], '001']])
 })
 
-test('$stringPadEnd', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: '1' },
-  }
-
-  expect(evaluate(context, ['$stringPadEnd', 3, '*'])).toEqual('1**')
+describe('$stringPadEnd', () => {
+  _evTestCases([['1', ['$stringPadEnd', 3, '*'], '1**']])
 })
 
-test('$stringToUpperCase', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 'String Multi Case' },
-      },
-      ['$stringToUpperCase']
-    )
-  ).toEqual('STRING MULTI CASE')
+describe('$stringToUpperCase', () => {
+  _evTestCases([
+    ['String Multi Case', ['$stringToUpperCase'], 'STRING MULTI CASE'],
+  ])
 })
 
-test('$stringToLowerCase', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 'String Multi Case' },
-      },
-      ['$stringToLowerCase']
-    )
-  ).toEqual('string multi case')
+describe('$stringToLowerCase', () => {
+  _evTestCases([
+    ['String Multi Case', ['$stringToLowerCase'], 'string multi case'],
+  ])
 })
 
 describe('$stringInterpolate(data, string)', () => {
-  test('object', () => {
+  describe('object', () => {
     const data = {
       name: 'João',
       mother: {
@@ -168,20 +124,11 @@ describe('$stringInterpolate(data, string)', () => {
       _special2: '_____',
     }
 
-    const template =
-      'Olá, eu sou ${ name }. Minha mãe ${ mother.name }, meu pai ${ father.name }.'
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: template },
-        },
-        ['$stringInterpolate', data]
-      )
-    ).toEqual('Olá, eu sou João. Minha mãe Maria, meu pai Guilherme.')
-
     const expectations = [
+      [
+        'Olá, eu sou ${ name }. Minha mãe ${ mother.name }, meu pai ${ father.name }.',
+        'Olá, eu sou João. Minha mãe Maria, meu pai Guilherme.',
+      ],
       ['name: ${ name }', 'name: João'],
       ['${name}', 'João'],
       ['${name }', 'João'],
@@ -198,35 +145,25 @@ describe('$stringInterpolate(data, string)', () => {
       ['${ [] }', '${ [] }'],
     ]
 
-    expectations.forEach(([input, expected]) => {
-      expect(
-        evaluate(
-          {
-            interpreters,
-            scope: { $$VALUE: input },
-          },
-          ['$stringInterpolate', data]
-        )
-      ).toEqual(expected)
-    })
+    _evTestCases(
+      expectations.map(([input, result]) => [
+        input,
+        ['$stringInterpolate', data],
+        result,
+      ])
+    )
   })
 
-  test('array', () => {
+  describe('array', () => {
     const data = ['first', 'second', 'third']
     const template = '1: ${0}; 2: ${1}; 3: ${2}'
 
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: template },
-        },
-        ['$stringInterpolate', data]
-      )
-    ).toEqual('1: first; 2: second; 3: third')
+    _evTestCases([
+      [template, ['$stringInterpolate', data], '1: first; 2: second; 3: third'],
+    ])
   })
 
-  test('null / undefined / other type values', () => {
+  describe('null / undefined / other type values', () => {
     const template = '1: ${0}; 2: ${1}; 3: ${2}'
 
     const expectations = [
@@ -245,16 +182,12 @@ describe('$stringInterpolate(data, string)', () => {
       ],
     ]
 
-    expectations.forEach(([input, result]) => {
-      expect(
-        evaluate(
-          {
-            interpreters,
-            scope: { $$VALUE: template },
-          },
-          ['$stringInterpolate', input]
-        )
-      ).toEqual(result)
-    })
+    _evTestCases(
+      expectations.map(([data, result]) => [
+        template,
+        ['$stringInterpolate', data],
+        result,
+      ])
+    )
   })
 })

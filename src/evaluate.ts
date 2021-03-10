@@ -1,21 +1,18 @@
-import { validateType } from '@orioro/typing'
+import { TypeSpec, validateType } from '@orioro/typing'
 
-import {
-  Expression,
-  ExpressionInterpreterList,
-  EvaluationContext,
-} from './types'
+import { Expression, InterpreterList, EvaluationContext } from './types'
 
 /**
  * @function isExpression
- * @param {ExpressionInterpreterList}
+ * @param {InterpreterList}
  */
 export const isExpression = (
-  interpreters: ExpressionInterpreterList,
+  interpreters: InterpreterList,
   candidateExpression: any // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
 ): boolean =>
   Array.isArray(candidateExpression) &&
-  typeof interpreters[candidateExpression[0]] === 'function'
+  typeof candidateExpression[0] === 'string' &&
+  typeof interpreters[candidateExpression[0]] === 'object'
 
 const _maybeExpression = (value) =>
   Array.isArray(value) &&
@@ -52,7 +49,9 @@ const _evaluate = (
   }
 
   const [interpreterId, ...interpreterArgs] = expOrValue
-  const interpreter = context.interpreters[interpreterId]
+  const interpreter = context.async
+    ? context.interpreters[interpreterId].async
+    : context.interpreters[interpreterId].sync
 
   return interpreter(context, ...interpreterArgs)
 }
@@ -68,6 +67,32 @@ export const evaluate =
     ? _evaluateDev
     : _evaluate
 
+export const evaluateSync = (
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): any =>
+  evaluate(
+    {
+      ...context,
+      async: false,
+    },
+    expOrValue
+  )
+
+export const evaluateAsync = (
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): Promise<any> =>
+  Promise.resolve(
+    evaluate(
+      {
+        ...context,
+        async: true,
+      },
+      expOrValue
+    )
+  )
+
 /**
  * @function evaluateTyped
  * @param {String | string[]} expectedTypes
@@ -76,11 +101,21 @@ export const evaluate =
  * @returns {*}
  */
 export const evaluateTyped = (
-  expectedTypes: string | string[],
+  expectedTypes: TypeSpec,
   context: EvaluationContext,
   expOrValue: Expression | any
 ): any => {
   const value = evaluate(context, expOrValue)
+  validateType(expectedTypes, value)
+  return value
+}
+
+export const evaluateTypedSync = (
+  expectedTypes: TypeSpec,
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): any => {
+  const value = evaluate({ ...context, async: false }, expOrValue)
   validateType(expectedTypes, value)
   return value
 }
@@ -93,11 +128,11 @@ export const evaluateTyped = (
  * @returns {Promise<*>}
  */
 export const evaluateTypedAsync = (
-  expectedTypes: string | string[],
+  expectedTypes: TypeSpec,
   context: EvaluationContext,
   expOrValue: Expression | any
 ): Promise<any> =>
-  Promise.resolve(evaluate(context, expOrValue)).then((value) => {
+  evaluateAsync(context, expOrValue).then((value) => {
     validateType(expectedTypes, value)
     return value
   })

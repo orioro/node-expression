@@ -1,65 +1,28 @@
-import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter'
 import { $value } from './value'
 import { $boolean } from './boolean'
 
-const interpreters = syncInterpreterList({
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
+
+const EXPS = {
   $value,
   $boolean,
-})
+}
+
+const _evTestCases = _prepareEvaluateTestCases(EXPS)
 
 describe('$boolean', () => {
-  test('numbers', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 1 },
-        },
-        ['$boolean']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 0 },
-        },
-        ['$boolean']
-      )
-    ).toEqual(false)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: -1 },
-        },
-        ['$boolean']
-      )
-    ).toEqual(true)
+  describe('numbers', () => {
+    _evTestCases([
+      [1, ['$boolean'], true],
+      [0, ['$boolean'], false],
+      [-1, ['$boolean'], true],
+    ])
   })
 
-  test('string', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 'some string' },
-        },
-        ['$boolean']
-      )
-    ).toEqual(true)
-
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: '' },
-        },
-        ['$boolean']
-      )
-    ).toEqual(false)
+  describe('string', () => {
+    _evTestCases([
+      ['some string', ['$boolean'], true],
+      ['', ['$boolean'], false],
+    ])
   })
 })
