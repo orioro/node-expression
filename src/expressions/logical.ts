@@ -132,7 +132,7 @@ export const $switch: ExpressionInterpreterSpec = [
 export const $switchKey: ExpressionInterpreterSpec = [
   (
     cases: PlainObject,
-    defaultExp: Expression | undefined = undefined,
+    defaultExp: Expression,
     value: any,
     context: EvaluationContext
   ): any => {

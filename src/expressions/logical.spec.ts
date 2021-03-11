@@ -3,6 +3,8 @@ import {
   asyncResult,
   valueLabel,
   resultLabel,
+  variableName,
+  VariableName
 } from '@orioro/jest-util'
 import { evaluate } from '../evaluate'
 import { syncInterpreterList } from '../syncInterpreter'
@@ -63,12 +65,12 @@ const _evAsync = (value, expression) =>
 const _evLabel = ([value, expression], result) =>
   `${valueLabel(value)} | ${valueLabel(expression)} -> ${resultLabel(result)}`
 
-const _evTestCases = (cases) => {
+const _evTestCases = (cases, expressionLabel: string | VariableName | null = null) => {
   testCases(
     cases,
     _evSync,
     ([value, expression], result) =>
-      `sync - ${_evLabel([value, expression], result)}`
+      `sync - ${_evLabel([value, expressionLabel || expression], result)}`
   )
 
   testCases(
@@ -80,7 +82,7 @@ const _evTestCases = (cases) => {
     }),
     _evAsync,
     ([value, expression], result) =>
-      `async - ${_evLabel([value, expression], result)}`
+      `async - ${_evLabel([value, expressionLabel || expression], result)}`
   )
 }
 
@@ -361,22 +363,16 @@ describe('$if', () => {
   })
 
   test('then and else expressions should be evaluated only after condition evaluation', () => {
-    let expAExecuted = false
-    let expBExecuted = false // eslint-disable-line prefer-const
+    const $expA = jest.fn(() => 'expA-result')
+    const $expB = jest.fn(() => 'expB-result')
 
     expect(
       evaluate(
         {
           interpreters: {
             ...syncInterpreters,
-            $expA: () => {
-              expAExecuted = true
-              return 'expA-result'
-            },
-            $expB: () => {
-              expAExecuted = false
-              return 'expB-result'
-            },
+            $expA,
+            $expB,
           },
           scope: { $$VALUE: 15 },
         },
@@ -384,8 +380,8 @@ describe('$if', () => {
       )
     ).toEqual('expA-result')
 
-    expect(expAExecuted).toEqual(true)
-    expect(expBExecuted).toEqual(false)
+    expect($expA).toHaveBeenCalledTimes(1)
+    expect($expB).not.toHaveBeenCalled()
   })
 })
 
@@ -405,25 +401,12 @@ describe('$switch', () => {
     _evTestCases([
       ['CASE_B', expNoDefault, 'VALUE_B'],
       ['CASE_D', expNoDefault, undefined],
-      ['CASE_D', expWithDefault, 'DEFAULT_VALUE']
-    ])
+      ['CASE_D', expWithDefault, 'DEFAULT_VALUE'],
+    ], variableName('$switchExpr'))
   })
 
-  test('simple comparison', () => {
-    const expNoDefault = [
-      '$switch',
-      [
-        [['$eq', 'CASE_A'], 'VALUE_A'],
-        [['$eq', 'CASE_B'], 'VALUE_B'],
-        [['$eq', 'CASE_C'], 'VALUE_C'],
-      ],
-    ]
-
-    const expWithDefault = [...expNoDefault, 'DEFAULT_VALUE']
-  })
-
-  test('more complex condition', () => {
-    const $expr = [
+  describe('more complex condition', () => {
+    const $switchExpr = [
       '$switch',
       [
         [
@@ -460,45 +443,15 @@ describe('$switch', () => {
       ['$mathMult', -1],
     ]
 
-    expect(
-      evaluate(
-        {
-          interpreters: syncInterpreters,
-          scope: { $$VALUE: 5 },
-        },
-        $expr
-      )
-    ).toEqual(0)
-
-    expect(
-      evaluate(
-        {
-          interpreters: syncInterpreters,
-          scope: { $$VALUE: 15 },
-        },
-        $expr
-      )
-    ).toEqual(150)
-
-    expect(
-      evaluate(
-        {
-          interpreters: syncInterpreters,
-          scope: { $$VALUE: 25 },
-        },
-        $expr
-      )
-    ).toEqual(500)
-
-    expect(
-      evaluate(
-        {
-          interpreters: syncInterpreters,
-          scope: { $$VALUE: 30 },
-        },
-        $expr
-      )
-    ).toEqual(-30)
+    _evTestCases(
+      [
+        [5, $switchExpr, 0],
+        [15, $switchExpr, 150],
+        [25, $switchExpr, 500],
+        [30, $switchExpr, -30],
+      ],
+      variableName('$switchExpr')
+    )
   })
 })
 
@@ -508,29 +461,23 @@ describe('$switchKey', () => {
     key2: 'value2',
     key3: 'value3',
   }
+  const exp = ['$switchKey', options, 'DEFAULT_VALUE']
 
-  test('basic', () => {
-    const exp = ['$switchKey', options, 'DEFAULT_VALUE']
+  const expected = [
+    [undefined, 'DEFAULT_VALUE'],
+    [null, 'DEFAULT_VALUE'],
+    ['key1', 'value1'],
+    ['key2', 'value2'],
+    ['key3', 'value3'],
+    ['key4', 'DEFAULT_VALUE'],
+  ]
 
-    const expected = [
-      [undefined, 'DEFAULT_VALUE'],
-      [null, 'DEFAULT_VALUE'],
-      ['key1', 'value1'],
-      ['key2', 'value2'],
-      ['key3', 'value3'],
-      ['key4', 'DEFAULT_VALUE'],
-    ]
-
-    expected.forEach(([input, result]) => {
-      expect(
-        evaluate(
-          {
-            interpreters: syncInterpreters,
-            scope: { $$VALUE: input },
-          },
-          exp
-        )
-      ).toEqual(result)
-    })
-  })
+  _evTestCases([
+    [undefined, exp, 'DEFAULT_VALUE'],
+    [null, exp, 'DEFAULT_VALUE'],
+    ['key1', exp, 'value1'],
+    ['key2', exp, 'value2'],
+    ['key3', exp, 'value3'],
+    ['key4', exp, 'DEFAULT_VALUE'],
+  ])
 })

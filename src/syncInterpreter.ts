@@ -25,21 +25,21 @@ import {
 
 import { evaluate, evaluateTyped } from './evaluate'
 
-const _syncParamResolverNoop = (context: EvaluationContext, arg: any): any =>
-  arg
-
 /**
+ * @todo syncInterpreter Study better ways at validating evlauation results for
+ *                       tupleType and indefiniteArrayOfType. Currently validation is highly redundant.
+ * @todo syncInterpreter Handle nested object param typeSpec
  * @function _syncParamResolver
  * @private
- * @param {TypeSpec} resolver
+ * @param {TypeSpec} typeSpec
  * @returns {ParamResolverFunction}
  */
-export const _syncParamResolver = (resolver: TypeSpec): ParamResolverFunction => {
-  const expectedType = castTypeSpec(resolver)
+export const _syncParamResolver = (typeSpec: TypeSpec): ParamResolverFunction => {
+  const expectedType = castTypeSpec(typeSpec)
 
   if (expectedType === null) {
     throw new TypeError(
-      `Expected resolver to be either Function | ExpectedType | 'any' | null, but got ${typeof resolver}: ${resolver}`
+      `Invalid typeSpec: ${JSON.stringify(typeSpec)}`
     )
   }
 
@@ -62,6 +62,8 @@ export const _syncParamResolver = (resolver: TypeSpec): ParamResolverFunction =>
           itemParamResolvers[index](context, item)
         )
 
+        validateType(expectedType, array)
+
         return array
       }
     }
@@ -72,6 +74,8 @@ export const _syncParamResolver = (resolver: TypeSpec): ParamResolverFunction =>
         const array = evaluateTyped('array', context, value).map((item) =>
           itemParamResolver(context, item)
         )
+
+        validateType(expectedType, array)
 
         return array
       }
@@ -108,8 +112,8 @@ export const syncInterpreter = (
 
   const [
     fn,
-    paramResolvers,
-    { defaultParam = paramResolvers.length - 1 } = {},
+    paramTypeSpecs,
+    { defaultParam = paramTypeSpecs.length - 1 } = {},
   ] = spec
 
   //
@@ -117,19 +121,19 @@ export const syncInterpreter = (
   // to outside the returned interperter wrapper function
   // in order to minimize expression evaluation performance
   //
-  const _syncParamResolvers = paramResolvers.map((resolver) =>
-    _syncParamResolver(resolver)
+  const _syncParamResolvers = paramTypeSpecs.map((typeSpec) =>
+    _syncParamResolver(typeSpec)
   )
 
   return (context, ...args) =>
     fn(
-      ..._syncParamResolvers.map((resolver, index) => {
+      ..._syncParamResolvers.map((typeSpec, index) => {
         // Last param defaults to $$VALUE
         const arg =
           args[index] === undefined && index === defaultParam
             ? ['$value', '$$VALUE']
             : args[index]
-        return resolver(context, arg)
+        return typeSpec(context, arg)
       }),
       context
     )
