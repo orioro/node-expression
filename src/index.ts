@@ -33,8 +33,8 @@ export const ALL_EXPRESSIONS = {
 
 export * from './types'
 export * from './evaluate'
-export { syncInterpreter, syncInterpreterList } from './syncInterpreter'
-export { asyncInterpreter, asyncInterpreterList } from './asyncInterpreter'
+export { syncInterpreter, syncInterpreterList } from './interpreter/syncInterpreter'
+export { asyncInterpreter, asyncInterpreterList } from './interpreter/asyncInterpreter'
 export * from './expressions/array'
 export * from './expressions/boolean'
 export * from './expressions/comparison'

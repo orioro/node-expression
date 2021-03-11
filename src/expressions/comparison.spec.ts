@@ -1,5 +1,5 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../syncInterpreter'
+import { syncInterpreterList } from '../interpreter/syncInterpreter'
 import { $stringSubstr } from './string'
 import {
   $eq,

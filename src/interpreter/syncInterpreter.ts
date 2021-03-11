@@ -21,9 +21,9 @@ import {
   ExpressionInterpreterFunctionList,
   ParamResolverFunction,
   TypeSpec,
-} from './types'
+} from '../types'
 
-import { evaluate, evaluateTyped } from './evaluate'
+import { evaluate, evaluateTyped } from '../evaluate'
 
 /**
  * @todo syncInterpreter Study better ways at validating evlauation results for

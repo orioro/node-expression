@@ -1,6 +1,6 @@
 import { testCases, fnCallLabel, variableName } from '@orioro/jest-util'
 
-import { ALL_EXPRESSIONS } from './'
+import { ALL_EXPRESSIONS } from '../'
 import { anyType, tupleType, indefiniteArrayOfType } from '@orioro/typing'
 import { _syncParamResolver, syncInterpreterList } from './syncInterpreter'
 

@@ -1,5 +1,5 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../syncInterpreter'
+import { syncInterpreterList } from '../interpreter/syncInterpreter'
 
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { VALUE_EXPRESSIONS } from './value'

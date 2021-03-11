@@ -17,11 +17,9 @@ import {
   ExpressionInterpreterList,
   ExpressionInterpreterFunction,
   ExpressionInterpreterFunctionList,
-} from './types'
+} from '../types'
 
-import { evaluate, evaluateTypedAsync } from './evaluate'
-
-import { ParamResolver } from './types'
+import { evaluate, evaluateTypedAsync } from '../evaluate'
 
 const _asyncParamResolverNoop = (context: EvaluationContext, arg: any): any =>
   arg

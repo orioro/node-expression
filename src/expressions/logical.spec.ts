@@ -7,8 +7,8 @@ import {
   VariableName
 } from '@orioro/jest-util'
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../syncInterpreter'
-import { asyncInterpreterList } from '../asyncInterpreter'
+import { syncInterpreterList } from '../interpreter/syncInterpreter'
+import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
 import { LOGICAL_EXPRESSIONS } from './logical'
