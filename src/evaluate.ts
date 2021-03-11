@@ -15,6 +15,7 @@ export const isExpression = (
   candidateExpression: any // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
 ): boolean =>
   Array.isArray(candidateExpression) &&
+  typeof candidateExpression[0] === 'string' &&
   typeof interpreters[candidateExpression[0]] === 'function'
 
 const _maybeExpression = (value) =>
