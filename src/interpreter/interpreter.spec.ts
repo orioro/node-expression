@@ -1,31 +1,23 @@
-import {
-  testCases,
-  fnCallLabel,
-  variableName,
-  asyncResult,
-  valueLabel,
-} from '@orioro/jest-util'
+import { testCases, asyncResult, valueLabel } from '@orioro/jest-util'
 
 import { ALL_EXPRESSIONS } from '../'
 import {
   anyType,
   tupleType,
-  oneOfTypes,
   indefiniteArrayOfType,
   indefiniteObjectOfType,
 } from '@orioro/typing'
-import { _syncParamResolver, syncInterpreterList } from './syncInterpreter'
-import { _asyncParamResolver, asyncInterpreterList } from './asyncInterpreter'
-
-const _label = (fnName) => ([context, value], result) =>
-  fnCallLabel(fnName, [variableName('context'), value], result)
+import { syncParamResolver } from './syncParamResolver'
+import { syncInterpreterList } from './syncInterpreter'
+import { asyncParamResolver } from './asyncParamResolver'
+import { asyncInterpreterList } from './asyncInterpreter'
 
 const syncInterpreters = syncInterpreterList(ALL_EXPRESSIONS)
 const asyncInterpreters = asyncInterpreterList(ALL_EXPRESSIONS)
 
 const _resolverTestCases = (cases, paramSpec) => {
-  const syncResolver = _syncParamResolver(paramSpec)
-  const asyncResolver = _asyncParamResolver(paramSpec)
+  const syncResolver = syncParamResolver(paramSpec)
+  const asyncResolver = asyncParamResolver(paramSpec)
 
   testCases(
     cases,
@@ -40,23 +32,26 @@ const _resolverTestCases = (cases, paramSpec) => {
         valueToResolve
       )
     },
-    (args, result) => `sync - ${valueLabel(paramSpec)}`
+    () => `sync - ${valueLabel(paramSpec)}`
   )
 
   testCases(
-    cases.map(_case => {
+    cases.map((_case) => {
       const args = _case.slice(0, -1)
       const result = _case[_case.length - 1]
 
       return [...args, asyncResult(result)]
     }),
     (scopeValue, valueToResolve) => {
-      return asyncResolver({
-        interpreters: asyncInterpreters,
-        scope: {
-          $$VALUE: scopeValue
-        }
-      }, valueToResolve)
+      return asyncResolver(
+        {
+          interpreters: asyncInterpreters,
+          scope: {
+            $$VALUE: scopeValue,
+          },
+        },
+        valueToResolve
+      )
     },
     `async - ${valueLabel(paramSpec)}`
   )
@@ -64,7 +59,9 @@ const _resolverTestCases = (cases, paramSpec) => {
 
 test('invalid type', () => {
   expect(() => {
-    _syncParamResolver(10)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    syncParamResolver(10)
   }).toThrow('Invalid typeSpec')
 })
 
@@ -173,7 +170,7 @@ describe('objectType(obj)', () => {
         'some-str',
         { key1: ['$value'], key2: [['$value'], 'LITERAL-STR-1'] },
         { key1: 'some-str', key2: ['some-str', 'LITERAL-STR-1'] },
-      ]
+      ],
     ],
     type
   )
@@ -187,21 +184,21 @@ describe('indefiniteObjectOfType(type)', () => {
         {
           key1: [9, ['$value']],
           key2: [10, 'LITERAL-STR-1'],
-          key3: [['$numberFloat'], ['$value']]
+          key3: [['$numberFloat'], ['$value']],
         },
         {
           key1: [9, '10.1'],
           key2: [10, 'LITERAL-STR-1'],
-          key3: [10.1, '10.1']
-        }
+          key3: [10.1, '10.1'],
+        },
       ],
       [
         '10.1',
         {
           key1: [['$value'], ['$value']],
         },
-        TypeError
-      ]
+        TypeError,
+      ],
     ],
     indefiniteObjectOfType(tupleType(['number', 'string']))
   )

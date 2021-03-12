@@ -1,10 +1,8 @@
 import {
   testCases,
   asyncResult,
-  valueLabel,
   resultLabel,
   variableName,
-  VariableName
 } from '@orioro/jest-util'
 import { evaluate } from '../evaluate'
 import { syncInterpreterList } from '../interpreter/syncInterpreter'
@@ -16,6 +14,8 @@ import { ARRAY_EXPRESSIONS } from './array'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { STRING_EXPRESSIONS } from './string'
 import { MATH_EXPRESSIONS } from './math'
+
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
 
 const COMMON_EXPRESSIONS = {
   ...VALUE_EXPRESSIONS,
@@ -44,47 +44,10 @@ const asyncInterpreters = asyncInterpreterList({
   $asyncTrue: () => delayValue(true),
 })
 
-const _evSync = (value, expression) =>
-  evaluate(
-    {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: value },
-    },
-    expression
-  )
-
-const _evAsync = (value, expression) =>
-  evaluate(
-    {
-      interpreters: asyncInterpreters,
-      scope: { $$VALUE: value },
-    },
-    expression
-  )
-
-const _evLabel = ([value, expression], result) =>
-  `${valueLabel(value)} | ${valueLabel(expression)} -> ${resultLabel(result)}`
-
-const _evTestCases = (cases, expressionLabel: string | VariableName | null = null) => {
-  testCases(
-    cases,
-    _evSync,
-    ([value, expression], result) =>
-      `sync - ${_evLabel([value, expressionLabel || expression], result)}`
-  )
-
-  testCases(
-    cases.map((_case) => {
-      const result = _case[_case.length - 1]
-      const args = _case.slice(0, -1)
-
-      return [...args, asyncResult(result)]
-    }),
-    _evAsync,
-    ([value, expression], result) =>
-      `async - ${_evLabel([value, expressionLabel || expression], result)}`
-  )
-}
+const _evTestCases = _prepareEvaluateTestCases({
+  syncInterpreters,
+  asyncInterpreters,
+})
 
 describe('$and', () => {
   describe('error situations', () => {
@@ -151,12 +114,6 @@ describe('$and', () => {
     const data = {
       name: 'João Maranhão',
       age: 25,
-    }
-    const context = {
-      interpreters: syncInterpreters,
-      scope: {
-        $$VALUE: data,
-      },
     }
 
     _evTestCases([
@@ -398,11 +355,14 @@ describe('$switch', () => {
 
     const expWithDefault = [...expNoDefault, 'DEFAULT_VALUE']
 
-    _evTestCases([
-      ['CASE_B', expNoDefault, 'VALUE_B'],
-      ['CASE_D', expNoDefault, undefined],
-      ['CASE_D', expWithDefault, 'DEFAULT_VALUE'],
-    ], variableName('$switchExpr'))
+    _evTestCases(
+      [
+        ['CASE_B', expNoDefault, 'VALUE_B'],
+        ['CASE_D', expNoDefault, undefined],
+        ['CASE_D', expWithDefault, 'DEFAULT_VALUE'],
+      ],
+      variableName('$switchExpr')
+    )
   })
 
   describe('more complex condition', () => {
@@ -462,15 +422,6 @@ describe('$switchKey', () => {
     key3: 'value3',
   }
   const exp = ['$switchKey', options, 'DEFAULT_VALUE']
-
-  const expected = [
-    [undefined, 'DEFAULT_VALUE'],
-    [null, 'DEFAULT_VALUE'],
-    ['key1', 'value1'],
-    ['key2', 'value2'],
-    ['key3', 'value3'],
-    ['key4', 'DEFAULT_VALUE'],
-  ]
 
   _evTestCases([
     [undefined, exp, 'DEFAULT_VALUE'],

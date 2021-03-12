@@ -1246,10 +1246,10 @@
     lodash "^4.17.20"
     luxon "^1.25.0"
 
-"@orioro/jest-util@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@orioro/jest-util/-/jest-util-1.4.0.tgz#1b4b868a04d6a8c7d55af309e0cd8ec7f7e947f8"
-  integrity sha512-bIOJwpoqVOmA0EOb4ZqXmyBzruLIbm0E4jqtwsvX3FN6KQdoIKQgbdvCR9LDNkY7RVji5PrfsPSZs4hG4PwTuQ==
+"@orioro/jest-util@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@orioro/jest-util/-/jest-util-1.5.0.tgz#d1a672ebf7aa28dcd86622cc263ddbec99e994f5"
+  integrity sha512-3O6qgVKn9zAZxkEMwDMLeA6JXsHUIA/p8gBviPTBsGrVhsuv8nrsiG3aQcMvDlCR8ucWVciQQcZ9rCrcEZ7/Cw==
   dependencies:
     is-plain-object "^5.0.0"
 

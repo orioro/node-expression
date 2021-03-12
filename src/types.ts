@@ -2,7 +2,7 @@ import type { TypeAlternatives, TypeMap, TypeSpec } from '@orioro/typing'
 
 export type { TypeAlternatives, TypeMap, TypeSpec }
 
-export type ParamResolverFunction = (context: EvaluationContext, arg: any) => any
+export type ParamResolver = (context: EvaluationContext, arg: any) => any
 
 /**
  * Defines how an expression argument should be resolved

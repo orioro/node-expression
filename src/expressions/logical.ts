@@ -24,8 +24,7 @@ export const $and: ExpressionInterpreterSpec = [
  * @returns {Boolean}
  */
 export const $or: ExpressionInterpreterSpec = [
-  (values: Expression[], context: EvaluationContext): boolean =>
-    values.some((value) => Boolean(value)),
+  (values: Expression[]): boolean => values.some((value) => Boolean(value)),
   [indefiniteArrayOfType('any')],
 ]
 
@@ -45,8 +44,7 @@ export const $not: ExpressionInterpreterSpec = [
  * @returns {Boolean}
  */
 export const $nor: ExpressionInterpreterSpec = [
-  (values: Expression[], context: EvaluationContext): boolean =>
-    values.every((value) => !value),
+  (values: Expression[]): boolean => values.every((value) => !value),
   [indefiniteArrayOfType('any')],
 ]
 

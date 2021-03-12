@@ -56,7 +56,7 @@ export const $literal: ExpressionInterpreterSpec = [
 
 /**
  * @todo value Consider adding 'expression' type
- * 
+ *
  * @function $evaluate
  * @param {Expression} expression
  * @param {Object} scope

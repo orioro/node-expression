@@ -36,20 +36,30 @@ describe('$value', () => {
     expect(evaluate(context, ['$value', 'key3.key31'])).toEqual('Value 31')
   })
 
-  test('[[\'$value\']]', () => {
-    expect(evaluate({
-      interpreters,
-      scope: {
-        $$VALUE: 'TEST'
-      }
-    }, ['$value'])).toEqual('TEST')
+  test("[['$value']]", () => {
+    expect(
+      evaluate(
+        {
+          interpreters,
+          scope: {
+            $$VALUE: 'TEST',
+          },
+        },
+        ['$value']
+      )
+    ).toEqual('TEST')
 
-    expect(evaluate({
-      interpreters,
-      scope: {
-        $$VALUE: 'TEST'
-      }
-    }, [['$value']])).toEqual([['$value']])
+    expect(
+      evaluate(
+        {
+          interpreters,
+          scope: {
+            $$VALUE: 'TEST',
+          },
+        },
+        [['$value']]
+      )
+    ).toEqual([['$value']])
   })
 })
 

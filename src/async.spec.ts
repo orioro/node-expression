@@ -7,13 +7,21 @@ import { asyncInterpreterList } from './interpreter/asyncInterpreter'
 
 import { evaluate } from './evaluate'
 
+import { ExpressionInterpreterSpec } from './types'
+
 const wait = (ms, result) =>
   new Promise((resolve) => setTimeout(resolve.bind(null, result), ms))
 
-const $asyncLoadStr = [() => wait(100, 'async-str'), []]
-const $asyncLoadNum = [() => wait(100, 9), []]
-const $asyncLoadArr = [() => wait(100, ['str-1', 'str-2', 'str-3']), []]
-const $asyncLoadObj = [
+const $asyncLoadStr: ExpressionInterpreterSpec = [
+  () => wait(100, 'async-str'),
+  [],
+]
+const $asyncLoadNum: ExpressionInterpreterSpec = [() => wait(100, 9), []]
+const $asyncLoadArr: ExpressionInterpreterSpec = [
+  () => wait(100, ['str-1', 'str-2', 'str-3']),
+  [],
+]
+const $asyncLoadObj: ExpressionInterpreterSpec = [
   () =>
     wait(100, {
       key1: 'value1',
@@ -21,8 +29,8 @@ const $asyncLoadObj = [
     }),
   [],
 ]
-const $asyncLoadTrue = [() => wait(100, true), []]
-const $asyncLoadFalse = [() => wait(100, false), []]
+const $asyncLoadTrue: ExpressionInterpreterSpec = [() => wait(100, true), []]
+const $asyncLoadFalse: ExpressionInterpreterSpec = [() => wait(100, false), []]
 
 const interpreters = asyncInterpreterList({
   ...ALL_EXPRESSIONS,

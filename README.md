@@ -727,14 +727,14 @@ through Catastrophic backtracking, for future study and reference:
 
 ## Value
 
-- [`$value(pathExp, defaultExp)`](#valuepathexp-defaultexp)
+- [`$value(path, defaultExp)`](#valuepath-defaultexp)
 - [`$literal(value)`](#literalvalue)
-- [`$evaluate(expExp, scopeExp)`](#evaluateexpexp-scopeexp)
+- [`$evaluate(expression, scope)`](#evaluateexpression-scope)
 
 
-##### `$value(pathExp, defaultExp)`
+##### `$value(path, defaultExp)`
 
-- `pathExp` {String}
+- `path` {String}
 - `defaultExp` {*}
 - Returns: `value` {*} 
 
@@ -743,8 +743,8 @@ through Catastrophic backtracking, for future study and reference:
 - `value` {*}
 - Returns: {*} 
 
-##### `$evaluate(expExp, scopeExp)`
+##### `$evaluate(expression, scope)`
 
-- `expExp` {[Expression](#expression)}
-- `scopeExp` {Object | null}
+- `expression` {[Expression](#expression)}
+- `scope` {Object}
 - Returns: {*}
