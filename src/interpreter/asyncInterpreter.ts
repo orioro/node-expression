@@ -40,6 +40,13 @@ export const asyncInterpreter = (
         return resolver(context, arg)
       })
     ).then((resolvedArgs) => fn(...resolvedArgs, context))
+      .then(result => {
+        if (Array.isArray(result)) {
+          return Promise.all(result)
+        } else {
+          return result
+        }
+      })
 }
 
 export const asyncInterpreterList = (

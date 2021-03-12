@@ -14,22 +14,7 @@ import {
 import { TypeSpec, ParamResolver } from '../types'
 
 import { evaluate, evaluateTypedAsync } from '../evaluate'
-
-const _resolveObject = (object, resolver) => {
-  const keys = Object.keys(object)
-
-  return Promise.all(keys.map((key) => resolver(object[key], key))).then(
-    (values) =>
-      values.reduce((acc, value, index) => {
-        const key = keys[index]
-
-        return {
-          ...acc,
-          [key]: value,
-        }
-      }, {})
-  )
-}
+import { promiseResolveObject } from '../util/promiseResolveObject'
 
 export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   const expectedType = castTypeSpec(typeSpec)
@@ -87,7 +72,7 @@ export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
       return (context, value) =>
         evaluateTypedAsync('object', context, value)
           .then((unresolvedObject) =>
-            _resolveObject(unresolvedObject, (propertyValue, propertyKey) =>
+            promiseResolveObject(unresolvedObject, (propertyValue, propertyKey) =>
               propertyParamResolvers[propertyKey](context, propertyValue)
             )
           )
@@ -105,7 +90,7 @@ export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
       return (context, value) =>
         evaluateTypedAsync('object', context, value)
           .then((object) =>
-            _resolveObject(object, (propertyValue) =>
+            promiseResolveObject(object, (propertyValue) =>
               propertyParamResolver(context, propertyValue)
             )
           )
