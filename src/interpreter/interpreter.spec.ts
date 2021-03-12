@@ -1,135 +1,208 @@
-import { testCases, fnCallLabel, variableName } from '@orioro/jest-util'
+import {
+  testCases,
+  fnCallLabel,
+  variableName,
+  asyncResult,
+  valueLabel,
+} from '@orioro/jest-util'
 
 import { ALL_EXPRESSIONS } from '../'
-import { anyType, tupleType, indefiniteArrayOfType } from '@orioro/typing'
+import {
+  anyType,
+  tupleType,
+  oneOfTypes,
+  indefiniteArrayOfType,
+  indefiniteObjectOfType,
+} from '@orioro/typing'
 import { _syncParamResolver, syncInterpreterList } from './syncInterpreter'
+import { _asyncParamResolver, asyncInterpreterList } from './asyncInterpreter'
 
-const _label = fnName => ([context, value], result) =>
+const _label = (fnName) => ([context, value], result) =>
   fnCallLabel(fnName, [variableName('context'), value], result)
 
-describe('_syncParamResolver(anyType)', () => {
-  const context = {
-    interpreters: syncInterpreterList(ALL_EXPRESSIONS),
-    scope: {
-      $$VALUE: 10,
+const syncInterpreters = syncInterpreterList(ALL_EXPRESSIONS)
+const asyncInterpreters = asyncInterpreterList(ALL_EXPRESSIONS)
+
+const _resolverTestCases = (cases, paramSpec) => {
+  const syncResolver = _syncParamResolver(paramSpec)
+  const asyncResolver = _asyncParamResolver(paramSpec)
+
+  testCases(
+    cases,
+    (scopeValue, valueToResolve) => {
+      return syncResolver(
+        {
+          interpreters: syncInterpreters,
+          scope: {
+            $$VALUE: scopeValue,
+          },
+        },
+        valueToResolve
+      )
     },
-  }
+    (args, result) => `sync - ${valueLabel(paramSpec)}`
+  )
 
-  describe('anyType()', () => {
-    const anyResolver = _syncParamResolver('any')
+  testCases(
+    cases.map(_case => {
+      const args = _case.slice(0, -1)
+      const result = _case[_case.length - 1]
 
-    testCases(
-      [
-        [context, 'value-b', 'value-b'],
-        [context, ['$value'], 10],
-        [context, ['$mathSum', 5], 15],
-      ],
-      anyResolver,
-      _label('anyResolver')
-    )
-  })
+      return [...args, asyncResult(result)]
+    }),
+    (scopeValue, valueToResolve) => {
+      return asyncResolver({
+        interpreters: asyncInterpreters,
+        scope: {
+          $$VALUE: scopeValue
+        }
+      }, valueToResolve)
+    },
+    `async - ${valueLabel(paramSpec)}`
+  )
+}
 
-  describe('anyType({ delayEvaluation: true })', () => {
-    const anyResolver = _syncParamResolver(anyType({ delayEvaluation: true }))
-
-    testCases(
-      [
-        [context, 'value-b', 'value-b'],
-        [context, ['$value'], ['$value']],
-        [context, ['$mathSum', 5], ['$mathSum', 5]],
-      ],
-      anyResolver,
-      _label('anyResolver')
-    )
-  })
+test('invalid type', () => {
+  expect(() => {
+    _syncParamResolver(10)
+  }).toThrow('Invalid typeSpec')
 })
 
-
-describe('_syncParamResolver(singleType | oneOfTypes | enumType)', () => {
-  const context = {
-    interpreters: syncInterpreterList(ALL_EXPRESSIONS),
-    scope: {
-      $$VALUE: 'some-str',
-    },
-  }
-
-  describe('singleType(string)', () => {
-    const stringResolver = _syncParamResolver('string')
-
-    testCases(
-      [
-        [context, 'value-b', 'value-b'],
-        [context, ['$value'], 'some-str'],
-        [context, 7, TypeError],
-      ],
-      stringResolver,
-      _label('singleType(string)')
-    )
-  })
-
-  describe('oneOfTypes([string, number])', () => {
-    const resolver = _syncParamResolver(['string', 'number'])
-
-    testCases(
-      [
-        [context, 'value-b', 'value-b'],
-        [context, ['$value'], 'some-str'],
-        [context, 7, 7],
-      ],
-      resolver,
-      _label('oneOfTypes([string, number])')
-    )
-  })
+describe('anyType()', () => {
+  _resolverTestCases(
+    [
+      [10, 'value-b', 'value-b'],
+      [10, ['$value'], 10],
+      [10, ['$mathSum', 5], 15],
+    ],
+    'any'
+  )
 })
 
-describe('_syncParamResolver(tupleType)', () => {
-  const context = {
-    interpreters: syncInterpreterList(ALL_EXPRESSIONS),
-    scope: {
-      $$VALUE: ['some-str', 20]
-    },
-  }
-
-  describe('tupleType([string, number])', () => {
-    const resolver = _syncParamResolver(tupleType(['string', 'number']))
-
-    testCases(
-      [
-        [context, ['$value'], ['some-str', 20]],
-        [context, ['some-other-str', 15], ['some-other-str', 15]],
-        [context, 'value-b', TypeError],
-        [context, 7, TypeError],
-        [context, [1, 2], TypeError],
-        [context, ['some-str', 20, 30], TypeError]
-      ],
-      resolver,
-      _label('tupleType([string, number])')
-    )
-  })
+describe('anyType({ delayEvaluation: true })', () => {
+  _resolverTestCases(
+    [
+      [10, 'value-b', 'value-b'],
+      [10, ['$value'], ['$value']],
+      [10, ['$mathSum', 5], ['$mathSum', 5]],
+    ],
+    anyType({ delayEvaluation: true })
+  )
 })
 
-describe('_syncParamResolver(indefiniteArrayOfType)', () => {
-  const context = {
-    interpreters: syncInterpreterList(ALL_EXPRESSIONS),
-    scope: {
-      $$VALUE: ['some-str', 20]
-    },
+describe('singleType(string)', () => {
+  _resolverTestCases(
+    [
+      ['some-str', 'value-b', 'value-b'],
+      ['some-str', ['$value'], 'some-str'],
+      ['some-str', 7, TypeError],
+    ],
+    'string'
+  )
+})
+
+describe('oneOfTypes([string, number])', () => {
+  _resolverTestCases(
+    [
+      ['some-str', 'value-b', 'value-b'],
+      ['some-str', ['$value'], 'some-str'],
+      ['some-str', 7, 7],
+    ],
+    ['string', 'number']
+  )
+})
+
+describe('tupleType([string, number])', () => {
+  _resolverTestCases(
+    [
+      [['some-str', 20], ['$value'], ['some-str', 20]],
+      [
+        ['some-str', 20],
+        ['some-other-str', 15],
+        ['some-other-str', 15],
+      ],
+      [['some-str', 20], 'value-b', TypeError],
+      [['some-str', 20], 7, TypeError],
+      [['some-str', 20], [1, 2], TypeError],
+      [['some-str', 20], ['some-str', 20, 30], TypeError],
+    ],
+    tupleType(['string', 'number'])
+  )
+})
+
+describe('indefiniteArrayOfType([string, number])', () => {
+  _resolverTestCases(
+    [
+      [['some-str', 20], ['$value'], ['some-str', 20]],
+      [
+        ['some-str', 20],
+        ['some-other-str', 15],
+        ['some-other-str', 15],
+      ],
+      [
+        ['some-str', 20],
+        [1, 2],
+        [1, 2],
+      ],
+      [
+        ['some-str', 20],
+        ['some-str', 20, 30],
+        ['some-str', 20, 30],
+      ],
+      [['some-str', 20], 'value-b', TypeError],
+      [['some-str', 20], 7, TypeError],
+    ],
+    indefiniteArrayOfType(['string', 'number'])
+  )
+})
+
+describe('objectType(obj)', () => {
+  const type = {
+    key1: 'string',
+    key2: indefiniteArrayOfType(['string', 'number']),
   }
 
-  describe('indefiniteArrayOfType([string, number])', () => {
-    const resolver = _syncParamResolver(indefiniteArrayOfType(['string', 'number']))
-
-    testCases(
+  _resolverTestCases(
+    [
       [
-        [context, ['$value'], ['some-str', 20]],
-        [context, ['some-other-str', 15], ['some-other-str', 15]],
-        [context, [1, 2], [1, 2]],
-        [context, ['some-str', 20, 30], ['some-str', 20, 30]],
-        [context, 'value-b', TypeError],
-        [context, 7, TypeError],
+        'some-str',
+        { key1: 'LITERAL-STR-1', key2: ['LITERAL-STR-2', 'LITERAL-STR-3'] },
+        { key1: 'LITERAL-STR-1', key2: ['LITERAL-STR-2', 'LITERAL-STR-3'] },
       ],
-      resolver,
-      _label('indefiniteArrayOfType([string, number])')
-    )
-  })
+      [
+        'some-str',
+        { key1: ['$value'], key2: [['$value'], 'LITERAL-STR-1'] },
+        { key1: 'some-str', key2: ['some-str', 'LITERAL-STR-1'] },
+      ]
+    ],
+    type
+  )
+})
+
+describe('indefiniteObjectOfType(type)', () => {
+  _resolverTestCases(
+    [
+      [
+        '10.1',
+        {
+          key1: [9, ['$value']],
+          key2: [10, 'LITERAL-STR-1'],
+          key3: [['$numberFloat'], ['$value']]
+        },
+        {
+          key1: [9, '10.1'],
+          key2: [10, 'LITERAL-STR-1'],
+          key3: [10.1, '10.1']
+        }
+      ],
+      [
+        '10.1',
+        {
+          key1: [['$value'], ['$value']],
+        },
+        TypeError
+      ]
+    ],
+    indefiniteObjectOfType(tupleType(['number', 'string']))
+  )
 })

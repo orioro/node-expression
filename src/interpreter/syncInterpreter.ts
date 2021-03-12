@@ -34,33 +34,33 @@ import { evaluate, evaluateTyped } from '../evaluate'
  * @param {TypeSpec} typeSpec
  * @returns {ParamResolverFunction}
  */
-export const _syncParamResolver = (typeSpec: TypeSpec): ParamResolverFunction => {
+export const _syncParamResolver = (
+  typeSpec: TypeSpec
+): ParamResolverFunction => {
   const expectedType = castTypeSpec(typeSpec)
 
   if (expectedType === null) {
-    throw new TypeError(
-      `Invalid typeSpec: ${JSON.stringify(typeSpec)}`
-    )
+    throw new TypeError(`Invalid typeSpec: ${JSON.stringify(typeSpec)}`)
   }
 
   switch (expectedType.specType) {
     case ANY_TYPE:
-      return expectedType.delayEvaluation
-        ? (context, value) => value
-        : evaluate
+      return expectedType.delayEvaluation ? (context, value) => value : evaluate
     case SINGLE_TYPE:
     case ONE_OF_TYPES:
     case ENUM_TYPE:
       return evaluateTyped.bind(null, expectedType)
     case TUPLE_TYPE: {
-      const itemParamResolvers = expectedType.items.map(itemResolver =>
+      const itemParamResolvers = expectedType.items.map((itemResolver) =>
         _syncParamResolver(itemResolver)
       )
 
       return (context, value) => {
-        const array = evaluateTyped('array', context, value).map((item, index) =>
-          itemParamResolvers[index](context, item)
-        )
+        const array = evaluateTyped(
+          'array',
+          context,
+          value
+        ).map((item, index) => itemParamResolvers[index](context, item))
 
         validateType(expectedType, array)
 
@@ -80,14 +80,43 @@ export const _syncParamResolver = (typeSpec: TypeSpec): ParamResolverFunction =>
         return array
       }
     }
-    case OBJECT_TYPE:
-    case INDEFINITE_OBJECT_OF_TYPE:
+    case OBJECT_TYPE: {
+      const propertyParamResolvers = Object.keys(
+        expectedType.properties
+      ).reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: _syncParamResolver(expectedType.properties[key]),
+        }),
+        {}
+      )
+
       return (context, value) => {
         const _object = evaluateTyped('object', context, value)
         const object = Object.keys(_object).reduce(
           (acc, key) => ({
             ...acc,
-            [key]: evaluate(context, _object[key]),
+            [key]: propertyParamResolvers[key](context, _object[key]),
+          }),
+          {}
+        )
+
+        validateType(expectedType, object)
+
+        return object
+      }
+    }
+    case INDEFINITE_OBJECT_OF_TYPE:
+      return (context, value) => {
+        const propertyParamResolver = _syncParamResolver(
+          expectedType.propertyType
+        )
+
+        const _object = evaluateTyped('object', context, value)
+        const object = Object.keys(_object).reduce(
+          (acc, key) => ({
+            ...acc,
+            [key]: propertyParamResolver(context, _object[key]),
           }),
           {}
         )
@@ -100,6 +129,7 @@ export const _syncParamResolver = (typeSpec: TypeSpec): ParamResolverFunction =>
 }
 
 /**
+ * @todo syncInterpreter Update ExpressionInterpreter type: remove function
  * @function syncInterpreter
  * @returns {ExpressionInterpreter}
  */
