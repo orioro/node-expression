@@ -1,17 +1,29 @@
+import { isPlainObject } from 'lodash'
+
 import {
-  ExpressionInterpreter,
-  ExpressionInterpreterList,
-  ExpressionInterpreterFunction,
-  ExpressionInterpreterFunctionList,
+  Interpreter,
+  InterpreterList,
+  InterpreterFunction,
+  InterpreterFunctionList,
 } from '../types'
 
 import { asyncParamResolver } from './asyncParamResolver'
 
-export const asyncInterpreter = (
-  spec: ExpressionInterpreter
-): ExpressionInterpreterFunction => {
+import { promiseResolveObject } from '../util/promiseResolveObject'
+
+export const asyncInterpreter = (spec: Interpreter): InterpreterFunction => {
   if (typeof spec === 'function') {
     return spec
+  } else if (Array.isArray(spec)) {
+    // do nothing
+  } else if (isPlainObject(spec)) {
+    if (typeof spec.async === 'function') {
+      return spec.async
+    } else {
+      spec = spec.async
+    }
+  } else {
+    throw new Error(`Invalid Interpreter ${spec}`)
   }
 
   const [
@@ -40,18 +52,21 @@ export const asyncInterpreter = (
         return resolver(context, arg)
       })
     ).then((resolvedArgs) => fn(...resolvedArgs, context))
-      .then(result => {
-        if (Array.isArray(result)) {
-          return Promise.all(result)
-        } else {
-          return result
-        }
-      })
+  // .then((result) => {
+  //   if (Array.isArray(result)) {
+  //     return Promise.all(result)
+  //   } else if (isPlainObject(result)) {
+  //     return result
+  //     // return promiseResolveObject(result, (value, key) => value)
+  //   } else {
+  //     return result
+  //   }
+  // })
 }
 
 export const asyncInterpreterList = (
-  specs: ExpressionInterpreterList
-): ExpressionInterpreterFunctionList =>
+  specs: InterpreterList
+): InterpreterFunctionList =>
   Object.keys(specs).reduce(
     (acc, interperterId) => ({
       ...acc,

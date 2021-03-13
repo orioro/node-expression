@@ -7,7 +7,7 @@ import {
   Expression,
   EvaluationContext,
   EvaluationScope,
-  ExpressionInterpreterSpec,
+  InterpreterSpec,
 } from '../types'
 
 const PATH_VARIABLE_RE = /^\$\$.+/
@@ -20,7 +20,7 @@ export const $$VALUE: Expression = ['$value', '$$VALUE']
  * @param {*} defaultExp
  * @returns {*} value
  */
-export const $value: ExpressionInterpreterSpec = [
+export const $value: InterpreterSpec = [
   (
     path: string = '$$VALUE',
     defaultExp: Expression,
@@ -47,7 +47,7 @@ export const $value: ExpressionInterpreterSpec = [
  * @param {*} value
  * @returns {*}
  */
-export const $literal: ExpressionInterpreterSpec = [
+export const $literal: InterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): any => value,
   [anyType({ delayEvaluation: true })],
@@ -62,7 +62,7 @@ export const $literal: ExpressionInterpreterSpec = [
  * @param {Object} scope
  * @returns {*}
  */
-export const $evaluate: ExpressionInterpreterSpec = [
+export const $evaluate: InterpreterSpec = [
   (
     expression: Expression,
     scope: EvaluationScope,

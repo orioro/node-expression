@@ -48,7 +48,7 @@ export type Expression = [string, ...any[]]
  * `syncInterpreter`, `syncInterpreterList`, `asyncInterpreter` or
  * `asyncInterpreterList`) may be compatible with sync and async formats.
  *
- * @typedef {[Function, ParamResolver[] | null, Object]} ExpressionInterpreterSpec
+ * @typedef {[Function, ParamResolver[] | null, Object]} InterpreterSpec
  * @param {Function} interpreterFn Function that executes logic for interpreting the
  *                                 expression. If `paramResolvers` are not null, the
  *                                 interpreterFn is invoked with the list of resolved
@@ -65,26 +65,32 @@ export type Expression = [string, ...any[]]
  *                                                                   In case the defaultParameter should not
  *                                                                   be used, use `defaultParam = -1`
  */
-export type ExpressionInterpreterSpec = [
+export type InterpreterSpecSingle = [
   (...args: any) => any,
   TypeSpec[],
   { defaultParam?: number }?
 ]
+export type InterpreterSpec =
+  | InterpreterSpecSingle
+  | {
+      sync: InterpreterSpecSingle | InterpreterFunction,
+      async: InterpreterSpecSingle | InterpreterFunction
+    }
 
 /**
  * Function that receives as first parameter the EvaluationContext
  * and should return the result for evaluating a given expression.
  *
- * @typedef {Function} ExpressionInterpreterFunction
+ * @typedef {Function} InterpreterFunction
  */
-export type ExpressionInterpreterFunction = (
+export type InterpreterFunction = (
   context: EvaluationContext,
   ...args: any[]
 ) => any
 
-export type ExpressionInterpreter =
-  | ExpressionInterpreterSpec
-  | ExpressionInterpreterFunction
+export type Interpreter =
+  | InterpreterSpec
+  | InterpreterFunction
 
 /**
  * @typedef {Object} EvaluationScope
@@ -110,26 +116,26 @@ export type EvaluationScope = {
 }
 
 /**
- * @typedef {Object} ExpressionInterpreterList
+ * @typedef {Object} InterpreterList
  * @property {Object} interpreterList
- * @property {ExpressionInterpreter} interpreterList.{{ expressionName }}
+ * @property {Interpreter} interpreterList.{{ expressionName }}
  */
-export type ExpressionInterpreterList = {
-  [key: string]: ExpressionInterpreter
+export type InterpreterList = {
+  [key: string]: Interpreter
 }
 
-export type ExpressionInterpreterFunctionList = {
-  [key: string]: ExpressionInterpreterFunction
+export type InterpreterFunctionList = {
+  [key: string]: InterpreterFunction
 }
 
 /**
  * @typedef {Object} EvaluationContext
  * @property {Object} context
- * @property {ExpressionInterpreterFunctionList} context.interpreters
+ * @property {InterpreterFunctionList} context.interpreters
  * @property {EvaluationScope} context.scope
  */
 export type EvaluationContext = {
-  interpreters: ExpressionInterpreterFunctionList
+  interpreters: InterpreterFunctionList
   scope: EvaluationScope
 }
 

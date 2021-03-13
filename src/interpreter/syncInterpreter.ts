@@ -1,24 +1,36 @@
+import { isPlainObject } from 'lodash'
+
 import {
-  ExpressionInterpreter,
-  ExpressionInterpreterList,
-  ExpressionInterpreterFunction,
-  ExpressionInterpreterFunctionList,
+  Interpreter,
+  InterpreterList,
+  InterpreterFunction,
+  InterpreterFunctionList,
 } from '../types'
 
 import { syncParamResolver } from './syncParamResolver'
 
 /**
- * @todo syncInterpreter Update ExpressionInterpreter type: remove function
+ * @todo syncInterpreter Update Interpreter type: remove function
  * @function syncInterpreter
- * @returns {ExpressionInterpreter}
+ * @returns {Interpreter}
  */
 export const syncInterpreter = (
-  spec: ExpressionInterpreter
-): ExpressionInterpreterFunction => {
+  spec: Interpreter
+): InterpreterFunction => {
   if (typeof spec === 'function') {
     return spec
+  } else if (Array.isArray(spec)) {
+    // do nothing
+  } else if (isPlainObject(spec)) {
+    if (typeof spec.sync === 'function') {
+      return spec.sync
+    } else {
+      spec = spec.sync
+    }
+  } else {
+    throw new Error(`Invalid Interpreter ${spec}`)
   }
-
+  
   const [
     fn,
     paramTypeSpecs,
@@ -49,8 +61,8 @@ export const syncInterpreter = (
 }
 
 export const syncInterpreterList = (
-  specs: ExpressionInterpreterList
-): ExpressionInterpreterFunctionList =>
+  specs: InterpreterList
+): InterpreterFunctionList =>
   Object.keys(specs).reduce(
     (acc, interperterId) => ({
       ...acc,

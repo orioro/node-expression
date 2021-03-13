@@ -8,7 +8,7 @@ import { objectDeepAssign } from '../util/deepAssign'
 import {
   EvaluationContext,
   PlainObject,
-  ExpressionInterpreterSpec,
+  InterpreterSpec,
 } from '../types'
 
 /**
@@ -17,7 +17,7 @@ import {
  * @param {Object} [value=$$VALUE]
  * @returns {Boolean} matches
  */
-export const $objectMatches: ExpressionInterpreterSpec = [
+export const $objectMatches: InterpreterSpec = [
   (
     criteriaByPath: PlainObject,
     value: PlainObject,
@@ -101,7 +101,7 @@ const _formatObject = (
  * @param {*} [source=$$VALUE]
  * @returns {Object | Array} object
  */
-export const $objectFormat: ExpressionInterpreterSpec = [
+export const $objectFormat: InterpreterSpec = [
   (
     format: PlainObject | any[],
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -121,7 +121,7 @@ export const $objectFormat: ExpressionInterpreterSpec = [
  * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectDefaults: ExpressionInterpreterSpec = [
+export const $objectDefaults: InterpreterSpec = [
   (defaultValues: PlainObject, base: PlainObject): PlainObject =>
     objectDeepApplyDefaults(base, defaultValues),
   ['object', 'object'],
@@ -133,7 +133,7 @@ export const $objectDefaults: ExpressionInterpreterSpec = [
  * @param {Object} [base=$$VALUE]
  * @returns {Object}
  */
-export const $objectAssign: ExpressionInterpreterSpec = [
+export const $objectAssign: InterpreterSpec = [
   (values: PlainObject, base: PlainObject): PlainObject =>
     objectDeepAssign(base, values),
   ['object', 'object'],
@@ -144,7 +144,7 @@ export const $objectAssign: ExpressionInterpreterSpec = [
  * @param {Object} object
  * @returns {String[]}
  */
-export const $objectKeys: ExpressionInterpreterSpec = [
+export const $objectKeys: InterpreterSpec = [
   (obj: PlainObject): string[] => Object.keys(obj),
   ['object'],
 ]

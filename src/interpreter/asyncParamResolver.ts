@@ -16,6 +16,11 @@ import { TypeSpec, ParamResolver } from '../types'
 import { evaluate, evaluateTypedAsync } from '../evaluate'
 import { promiseResolveObject } from '../util/promiseResolveObject'
 
+/**
+ * @function asyncParamResolver
+ * @todo asyncParamResolver ONE_OF_TYPES: handle complex cases, e.g.
+ *                          oneOfTypes(['string', objectType({ key1: 'string', key2: 'number '})])
+ */
 export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   const expectedType = castTypeSpec(typeSpec)
 

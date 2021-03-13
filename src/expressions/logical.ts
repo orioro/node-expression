@@ -5,7 +5,7 @@ import {
   Expression,
   EvaluationContext,
   PlainObject,
-  ExpressionInterpreterSpec,
+  InterpreterSpec,
 } from '../types'
 
 /**
@@ -13,7 +13,7 @@ import {
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $and: ExpressionInterpreterSpec = [
+export const $and: InterpreterSpec = [
   (values: any[]): boolean => values.every((value) => Boolean(value)),
   [indefiniteArrayOfType('any')],
 ]
@@ -23,7 +23,7 @@ export const $and: ExpressionInterpreterSpec = [
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $or: ExpressionInterpreterSpec = [
+export const $or: InterpreterSpec = [
   (values: Expression[]): boolean => values.some((value) => Boolean(value)),
   [indefiniteArrayOfType('any')],
 ]
@@ -33,7 +33,7 @@ export const $or: ExpressionInterpreterSpec = [
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $not: ExpressionInterpreterSpec = [
+export const $not: InterpreterSpec = [
   (value: any): boolean => !value,
   ['any'],
 ]
@@ -43,7 +43,7 @@ export const $not: ExpressionInterpreterSpec = [
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $nor: ExpressionInterpreterSpec = [
+export const $nor: InterpreterSpec = [
   (values: Expression[]): boolean => values.every((value) => !value),
   [indefiniteArrayOfType('any')],
 ]
@@ -54,7 +54,7 @@ export const $nor: ExpressionInterpreterSpec = [
  * @param {Boolean} expressionB
  * @returns {Boolean}
  */
-export const $xor: ExpressionInterpreterSpec = [
+export const $xor: InterpreterSpec = [
   (valueA: any, valueB: any): boolean => Boolean(valueA) !== Boolean(valueB),
   ['any', 'any'],
 ]
@@ -66,7 +66,7 @@ export const $xor: ExpressionInterpreterSpec = [
  * @param {Expression} elseExp
  * @returns {*} result
  */
-export const $if: ExpressionInterpreterSpec = [
+export const $if: InterpreterSpec = [
   (
     condition: any,
     thenExp: Expression,
@@ -99,7 +99,7 @@ type Case = [Expression, Expression]
  * @param {Expression} defaultExp
  * @returns {*} result
  */
-export const $switch: ExpressionInterpreterSpec = [
+export const $switch: InterpreterSpec = [
   (cases: Case[], defaultExp: Expression, context: EvaluationContext): any => {
     const correspondingCase = cases.find(([condition]) => Boolean(condition))
 
@@ -127,7 +127,7 @@ export const $switch: ExpressionInterpreterSpec = [
  * @param {String} ValueExp
  * @returns {*}
  */
-export const $switchKey: ExpressionInterpreterSpec = [
+export const $switchKey: InterpreterSpec = [
   (
     cases: PlainObject,
     defaultExp: Expression,

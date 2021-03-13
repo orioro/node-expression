@@ -7,7 +7,7 @@ import { evaluate, evaluateTyped } from '../evaluate'
 import {
   EvaluationContext,
   PlainObject,
-  ExpressionInterpreterSpec,
+  InterpreterSpec,
 } from '../types'
 
 import { $$VALUE } from './value'
@@ -20,7 +20,7 @@ import { $$VALUE } from './value'
  * @param {*} valueExp Value being compared.
  * @returns {Boolean}
  */
-export const $eq: ExpressionInterpreterSpec = [
+export const $eq: InterpreterSpec = [
   (valueB: any, valueA: any): boolean => isEqual(valueA, valueB),
   ['any', 'any'],
 ]
@@ -31,7 +31,7 @@ export const $eq: ExpressionInterpreterSpec = [
  * @param {*} valueExp Value being compared.
  * @returns {Boolean}
  */
-export const $notEq: ExpressionInterpreterSpec = [
+export const $notEq: InterpreterSpec = [
   (valueB: any, valueA: any): boolean => !isEqual(valueA, valueB),
   ['any', 'any'],
 ]
@@ -44,7 +44,7 @@ export const $notEq: ExpressionInterpreterSpec = [
  * @param {*} valueExp
  * @returns {Boolean}
  */
-export const $in: ExpressionInterpreterSpec = [
+export const $in: InterpreterSpec = [
   (array: any[], value: any): boolean =>
     array.some((item) => isEqual(item, value)),
   ['array', 'any'],
@@ -58,7 +58,7 @@ export const $in: ExpressionInterpreterSpec = [
  * @param {*} valueExp
  * @returns {Boolean}
  */
-export const $notIn: ExpressionInterpreterSpec = [
+export const $notIn: InterpreterSpec = [
   (array: any[], value: any): boolean =>
     array.every((item) => !isEqual(item, value)),
   ['array', 'any'],
@@ -72,7 +72,7 @@ export const $notIn: ExpressionInterpreterSpec = [
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $gt: ExpressionInterpreterSpec = [
+export const $gt: InterpreterSpec = [
   (reference: number, value: number): boolean => value > reference,
   ['number', 'number'],
 ]
@@ -85,7 +85,7 @@ export const $gt: ExpressionInterpreterSpec = [
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $gte: ExpressionInterpreterSpec = [
+export const $gte: InterpreterSpec = [
   (reference: number, value: number): boolean => value >= reference,
   ['number', 'number'],
 ]
@@ -98,7 +98,7 @@ export const $gte: ExpressionInterpreterSpec = [
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $lt: ExpressionInterpreterSpec = [
+export const $lt: InterpreterSpec = [
   (reference: number, value: number): boolean => value < reference,
   ['number', 'number'],
 ]
@@ -111,7 +111,7 @@ export const $lt: ExpressionInterpreterSpec = [
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $lte: ExpressionInterpreterSpec = [
+export const $lte: InterpreterSpec = [
   (reference: number, value: number): boolean => value <= reference,
   ['number', 'number'],
 ]
@@ -124,7 +124,7 @@ export const $lte: ExpressionInterpreterSpec = [
  * @param {Number} valueExp
  * @returns {Boolean}
  */
-export const $matches: ExpressionInterpreterSpec = [
+export const $matches: InterpreterSpec = [
   (criteria: PlainObject, value: any, context: EvaluationContext): boolean => {
     const criteriaKeys = Object.keys(criteria)
 

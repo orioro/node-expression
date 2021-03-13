@@ -2,16 +2,16 @@ import { TypeSpec, validateType } from '@orioro/typing'
 
 import {
   Expression,
-  ExpressionInterpreterList,
+  InterpreterList,
   EvaluationContext,
 } from './types'
 
 /**
  * @function isExpression
- * @param {ExpressionInterpreterList}
+ * @param {InterpreterList}
  */
 export const isExpression = (
-  interpreters: ExpressionInterpreterList,
+  interpreters: InterpreterList,
   candidateExpression: any // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
 ): boolean =>
   Array.isArray(candidateExpression) &&

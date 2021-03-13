@@ -1,5 +1,6 @@
 import { evaluate } from '../evaluate'
 import { syncInterpreterList } from '../interpreter/syncInterpreter'
+import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { LOGICAL_EXPRESSIONS } from './logical'
@@ -9,7 +10,9 @@ import { STRING_EXPRESSIONS } from './string'
 import { MATH_EXPRESSIONS } from './math'
 import { NUMBER_EXPRESSIONS } from './number'
 
-const interpreters = syncInterpreterList({
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
+
+const EXPRESSIONS = {
   ...VALUE_EXPRESSIONS,
   ...LOGICAL_EXPRESSIONS,
   ...NUMBER_EXPRESSIONS,
@@ -18,133 +21,113 @@ const interpreters = syncInterpreterList({
   ...OBJECT_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
+}
+
+const syncInterpreters = syncInterpreterList(EXPRESSIONS)
+const asyncInterpreters = asyncInterpreterList(EXPRESSIONS)
+
+const _evTestCases = _prepareEvaluateTestCases({
+  syncInterpreters,
+  asyncInterpreters,
 })
 
 describe('$arrayIncludes', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: {
-        $$VALUE: ['A', 'B', 'C', 'D'],
-      },
-    }
-
-    expect(evaluate(context, ['$arrayIncludes', 'A'])).toEqual(true)
-    expect(evaluate(context, ['$arrayIncludes', 'Z'])).toEqual(false)
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayIncludes', 'A'], true],
+    [['A', 'B', 'C', 'D'], ['$arrayIncludes', 'Z'], false],
+  ])
 })
 
 describe('$arrayIncludesAll', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: {
-        $$VALUE: ['A', 'B', 'C', 'D'],
-      },
-    }
-
-    expect(evaluate(context, ['$arrayIncludesAll', ['A', 'B']])).toEqual(true)
-    expect(evaluate(context, ['$arrayIncludesAll', ['A', 'Z']])).toEqual(false)
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayIncludesAll', ['A', 'B']], true],
+    [['A', 'B', 'C', 'D'], ['$arrayIncludesAll', ['A', 'Z']], false],
+  ])
 })
 
 describe('$arrayIncludesAny', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: {
-        $$VALUE: ['A', 'B', 'C', 'D'],
-      },
-    }
-
-    expect(evaluate(context, ['$arrayIncludesAny', ['A', 'B']])).toEqual(true)
-    expect(evaluate(context, ['$arrayIncludesAny', ['A', 'Z']])).toEqual(true)
-    expect(evaluate(context, ['$arrayIncludesAny', ['X', 'Y', 'Z']])).toEqual(
-      false
-    )
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayIncludesAny', ['A', 'B']], true],
+    [['A', 'B', 'C', 'D'], ['$arrayIncludesAny', ['A', 'Z']], true],
+    [['A', 'B', 'C', 'D'], ['$arrayIncludesAny', ['X', 'Y', 'Z']], false],
+  ])
 })
 
 describe('$arrayLength', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: {
-        $$VALUE: ['A', 'B', 'C', 'D'],
-      },
-    }
-
-    expect(evaluate(context, ['$arrayLength'])).toEqual(4)
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayLength'], 4],
+    [['A', 'B', 'C', 'D', 'E'], ['$arrayLength'], 5],
+    [[], ['$arrayLength'], 0],
+  ])
 })
 
 describe('$arrayMap', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: {
-        $$VALUE: [-10, 0, 10, 20],
-      },
-    }
-
-    expect(evaluate(context, ['$arrayMap', 'SOME_VALUE'])).toEqual([
-      'SOME_VALUE',
-      'SOME_VALUE',
-      'SOME_VALUE',
-      'SOME_VALUE',
-    ])
-
-    expect(evaluate(context, ['$arrayMap', ['$mathSum', 5]])).toEqual([
-      -5,
-      5,
-      15,
-      25,
+  describe('basic usage', () => {
+    _evTestCases([
+      [
+        [-10, 0, 10, 20],
+        ['$arrayMap', 'SOME_VALUE'],
+        ['SOME_VALUE', 'SOME_VALUE', 'SOME_VALUE', 'SOME_VALUE'],
+      ],
+      [
+        [-10, 0, 10, 20],
+        ['$arrayMap', ['$mathSum', 5]],
+        [-5, 5, 15, 25],
+      ],
     ])
   })
 
-  test('[$value, $$ARRAY]', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [-10, 0, 10, 20] },
-        },
-        ['$arrayMap', ['$mathSum', ['$arrayLength', ['$value', '$$ARRAY']]]]
-      )
-    ).toEqual([-6, 4, 14, 24])
+  describe('[$value, $$ARRAY]', () => {
+    _evTestCases([
+      [
+        [-10, 0, 10, 20],
+        ['$arrayMap', ['$mathSum', ['$arrayLength', ['$value', '$$ARRAY']]]],
+        [-6, 4, 14, 24],
+      ],
+    ])
   })
 
-  test('[$value, $$INDEX]', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: [-10, 0, 10, 20] },
-        },
-        ['$arrayMap', ['$mathSum', ['$value', '$$INDEX']]]
-      )
-    ).toEqual([-10, 1, 12, 23])
+  describe('[$value, $$INDEX]', () => {
+    _evTestCases([
+      [
+        [-10, 0, 10, 20],
+        ['$arrayMap', ['$mathSum', ['$value', '$$INDEX']]],
+        [-10, 1, 12, 23],
+      ],
+    ])
   })
 })
 
 describe('$arrayFilter', () => {
-  test('testing against parent scope value', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: 2 },
-        },
+  describe('testing against parent scope value', () => {
+    _evTestCases([
+      [
+        2,
         [
           '$arrayFilter',
           ['$eq', 0, ['$mathMod', ['$value', '$$PARENT_SCOPE.$$VALUE']]],
           [1, 2, 3, 4, 5, 6],
-        ]
-      )
-    ).toEqual([2, 4, 6])
+        ],
+        [2, 4, 6],
+      ],
+    ])
   })
 
-  test('with meta evaluation', () => {
+  describe('testing against parent scope value', () => {
+    _evTestCases([
+      [
+        2,
+        [
+          '$arrayFilter',
+          ['$eq', 0, ['$mathMod', ['$value', '$$PARENT_SCOPE.$$VALUE']]],
+          [1, 2, 3, 4, 5, 6],
+        ],
+        [2, 4, 6],
+      ],
+    ])
+  })
+
+  describe('with meta evaluation', () => {
     const OUT_OF_RANGE_COND = [
       '$and',
       [
@@ -168,135 +151,125 @@ describe('$arrayFilter', () => {
       [NOT_EVEN_COND, NOT_EVEN_ERR],
     ]
 
-    const check = (value) =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: value },
-        },
+    const EXPRESSION = [
+      '$arrayFilter',
+      ['$notEq', null],
+      [
+        '$arrayMap',
         [
-          '$arrayFilter',
-          ['$notEq', null],
-          [
-            '$arrayMap',
-            [
-              '$if',
-              ['$evaluate', ['$value', '0'], ['$value', '$$PARENT_SCOPE']],
-              null,
-              ['$value', '1'],
-            ],
-            CASES,
-          ],
-        ]
-      )
+          '$if',
+          ['$evaluate', ['$value', '0'], ['$value', '$$PARENT_SCOPE']],
+          null,
+          ['$value', '1'],
+        ],
+        CASES,
+      ],
+    ]
 
-    expect(check(9)).toEqual([NOT_EVEN_ERR])
-    expect(check(10)).toEqual([])
-    expect(check(11)).toEqual([OUT_OF_RANGE_ERR, NOT_EVEN_ERR])
+    _evTestCases([
+      [9, EXPRESSION, [NOT_EVEN_ERR]],
+      [10, EXPRESSION, []],
+      [11, EXPRESSION, [OUT_OF_RANGE_ERR, NOT_EVEN_ERR]],
+    ])
   })
 })
 
-describe('$arrayIndexOf vs $arrayFindIndex', () => {
-  test('$arrayIndexOf', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: [0, 10, 20, 40] },
-    }
+describe('$arrayIndexOf', () => {
+  _evTestCases([[[0, 10, 20, 40], ['$arrayIndexOf', 20], 2]])
+})
 
-    expect(evaluate(context, ['$arrayIndexOf', 20])).toEqual(2)
-  })
-
-  test('$arrayFindIndex', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: [0, 10, 20, 40] },
-    }
-
-    expect(evaluate(context, ['$arrayFindIndex', ['$eq', 20]])).toEqual(2)
-  })
+describe('$arrayFindIndex', () => {
+  _evTestCases([[[0, 10, 20, 40], ['$arrayFindIndex', ['$eq', 20]], 2]])
 })
 
 describe('$arrayReduce', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: [0, 10, 20, 40] },
-    }
-
-    expect(
-      evaluate(context, ['$arrayReduce', ['$mathSum', ['$value', '$$ACC']], 0])
-    ).toEqual(70)
-  })
+  _evTestCases([
+    [
+      [0, 10, 20, 40],
+      ['$arrayReduce', ['$mathSum', ['$value', '$$ACC']], 0],
+      70,
+    ],
+  ])
 })
 
 describe('$arrayReverse', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayReverse'])).toEqual(['D', 'C', 'B', 'A'])
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayReverse'], ['D', 'C', 'B', 'A']],
+  ])
 })
 
 describe('$arraySort', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: ['B', 'D', 'C', 'A'] },
-    }
-
-    expect(evaluate(context, ['$arraySort'])).toEqual(['A', 'B', 'C', 'D'])
-    expect(evaluate(context, ['$arraySort', 'DESC'])).toEqual([
-      'D',
-      'C',
-      'B',
-      'A',
+  describe('basic usage', () => {
+    _evTestCases([
+      [['B', 'D', 'C', 'A'], ['$arraySort'], ['A', 'B', 'C', 'D']],
+      [
+        ['B', 'D', 'C', 'A'],
+        ['$arraySort', 'DESC'],
+        ['D', 'C', 'B', 'A'],
+      ],
     ])
   })
 
-  test('with custom comparator', () => {
-    const context = {
-      interpreters,
-      scope: { $$VALUE: ['9', '1', '12', '11'] },
-    }
-
+  describe('with custom comparator', () => {
     const SORT_NUMBERS = [
       '$mathSub',
       ['$numberInt', 10, ['$value', '$$SORT_B']],
       ['$numberInt', 10, ['$value', '$$SORT_A']],
     ]
 
-    expect(evaluate(context, ['$arraySort'])).toEqual(['1', '11', '12', '9'])
-
-    expect(evaluate(context, ['$arraySort', SORT_NUMBERS])).toEqual([
-      '1',
-      '9',
-      '11',
-      '12',
-    ])
-
-    expect(evaluate(context, ['$arraySort', [SORT_NUMBERS]])).toEqual([
-      '1',
-      '9',
-      '11',
-      '12',
-    ])
-
-    expect(evaluate(context, ['$arraySort', [SORT_NUMBERS, 'DESC']])).toEqual([
-      '12',
-      '11',
-      '9',
-      '1',
+    _evTestCases([
+      [['9', '1', '12', '11'], ['$arraySort'], ['1', '11', '12', '9']],
+      [['9', '1', '12', '11'], ['$arraySort', SORT_NUMBERS], ['1', '9', '11', '12']],
+      [['9', '1', '12', '11'], ['$arraySort', [SORT_NUMBERS]], ['1', '9', '11', '12']],
+      [
+        ['9', '1', '12', '11'],
+        ['$arraySort', [SORT_NUMBERS, 'DESC']],
+        ['12', '11', '9', '1'],
+      ],
     ])
   })
+
+  // test('with custom comparator', () => {
+  //   const context = {
+  //     interpreters: syncInterpreters,
+  //     scope: { $$VALUE: ['9', '1', '12', '11'] },
+  //   }
+
+  //   const SORT_NUMBERS = [
+  //     '$mathSub',
+  //     ['$numberInt', 10, ['$value', '$$SORT_B']],
+  //     ['$numberInt', 10, ['$value', '$$SORT_A']],
+  //   ]
+
+  //   expect(evaluate(context, ['$arraySort'])).toEqual(['1', '11', '12', '9'])
+
+  //   expect(evaluate(context, ['$arraySort', SORT_NUMBERS])).toEqual([
+  //     '1',
+  //     '9',
+  //     '11',
+  //     '12',
+  //   ])
+
+  //   expect(evaluate(context, ['$arraySort', [SORT_NUMBERS]])).toEqual([
+  //     '1',
+  //     '9',
+  //     '11',
+  //     '12',
+  //   ])
+
+  //   expect(evaluate(context, ['$arraySort', [SORT_NUMBERS, 'DESC']])).toEqual([
+  //     '12',
+  //     '11',
+  //     '9',
+  //     '1',
+  //   ])
+  // })
 })
 
 describe('$arrayPush', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -313,7 +286,7 @@ describe('$arrayPush', () => {
 describe('$arrayPop', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -324,7 +297,7 @@ describe('$arrayPop', () => {
 describe('$arrayUnshift', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -341,7 +314,7 @@ describe('$arrayUnshift', () => {
 describe('$arrayShift', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -352,7 +325,7 @@ describe('$arrayShift', () => {
 describe('$arraySlice', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -362,7 +335,7 @@ describe('$arraySlice', () => {
 
 describe('$arrayReplace', () => {
   const context = {
-    interpreters,
+    interpreters: syncInterpreters,
     scope: { $$VALUE: ['0', '1', '2', '3'] },
   }
 
@@ -413,7 +386,7 @@ describe('$arrayReplace', () => {
 describe('$arrayAddAt', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -426,7 +399,7 @@ describe('$arrayAddAt', () => {
 describe('$arrayRemoveAt', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -439,7 +412,7 @@ describe('$arrayRemoveAt', () => {
 describe('$arrayJoin', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -452,7 +425,7 @@ describe('$arrayJoin', () => {
 describe('$arrayAt', () => {
   test('basic usage', () => {
     const context = {
-      interpreters,
+      interpreters: syncInterpreters,
       scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
     }
 
@@ -479,7 +452,7 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
     const itemsAreUnique = (array) =>
       evaluate(
         {
-          interpreters,
+          interpreters: syncInterpreters,
           scope: { $$VALUE: array },
         },
         ITEMS_UNIQUE_EXP
@@ -499,7 +472,7 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
     const itemsAreUnique = (array) =>
       evaluate(
         {
-          interpreters,
+          interpreters: syncInterpreters,
           scope: { $$VALUE: array },
         },
         ITEMS_UNIQUE_EXP
