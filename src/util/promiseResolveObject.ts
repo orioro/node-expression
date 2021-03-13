@@ -1,4 +1,6 @@
-export const promiseResolveObject = (object, resolver) => {
+type PropertyResolverFunction = (value: any, key: string) => any
+
+export const promiseResolveObject = (object, resolver: PropertyResolverFunction = value => value) => {
   const keys = Object.keys(object)
 
   return Promise.all(keys.map((key) => resolver(object[key], key))).then(

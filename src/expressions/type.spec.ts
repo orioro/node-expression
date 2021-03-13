@@ -1,49 +1,43 @@
 import { evaluate } from '../evaluate'
 import { syncInterpreterList } from '../interpreter/syncInterpreter'
+import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { $value } from './value'
 import { TYPE_EXPRESSIONS, typeExpressions } from './type'
 import { testCases } from '@orioro/jest-util'
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
 
-const interpreters = syncInterpreterList({
+const EXP = {
   $value,
   ...TYPE_EXPRESSIONS,
+}
+
+const syncInterpreters = syncInterpreterList(EXP)
+const asyncInterpreters = asyncInterpreterList(EXP)
+
+const _evTestCases = _prepareEvaluateTestCases({
+  syncInterpreters,
+  asyncInterpreters,
 })
 
 describe('$type', () => {
-  testCases(
-    [
-      ['some string', 'string'],
-      [10, 'number'],
-      [true, 'boolean'],
-      [[], 'array'],
-      [{}, 'object'],
-      [new Map(), 'map'],
-      [new Set(), 'set'],
-      [Symbol(), 'symbol'],
-    ],
-    (value) =>
-      evaluate(
-        {
-          interpreters,
-          scope: { $$VALUE: value },
-        },
-        ['$type']
-      ),
-    '$type'
-  )
+  _evTestCases([
+    ['some string', ['$type'], 'string'],
+    [10, ['$type'], 'number'],
+    [true, ['$type'], 'boolean'],
+    [[], ['$type'], 'array'],
+    [{}, ['$type'], 'object'],
+    [new Map(), ['$type'], 'map'],
+    [new Set(), ['$type'], 'set'],
+    [Symbol(), ['$type'], 'symbol'],
+  ])
 })
 
 describe('$isType', () => {
-  testCases(
-    [
-      ['string', 'Some str', true],
-      ['string', 9, false],
-      ['number', 9, true],
-    ],
-    (type, value) =>
-      evaluate({ interpreters, scope: { $$VALUE: value } }, ['$isType', type]),
-    '$isType'
-  )
+  _evTestCases([
+    ['Some str', ['$isType', 'string'], true],
+    [9, ['$isType', 'string'], false],
+    [9, ['$isType', 'number'], true],
+  ])
 })
 
 describe('typeExpressions(types)', () => {
@@ -57,57 +51,40 @@ describe('typeExpressions(types)', () => {
     normalString: (value) => typeof value === 'string',
   })
 
-  const customTypeInterpreters = syncInterpreterList({
+  const customTypeExps = {
     $customType,
     $customIsType,
+  }
+
+  const _evTestCases = _prepareEvaluateTestCases({
+    syncInterpreters: syncInterpreterList({
+      ...EXP,
+      ...customTypeExps,
+    }),
+    asyncInterpreters: asyncInterpreterList({
+      ...EXP,
+      ...customTypeExps,
+    }),
   })
 
   describe('$customType', () => {
-    testCases(
-      [
-        ['abc123', 'alphaNumericString'],
-        ['abc123-', 'normalString'],
-        ['abc', 'alphaOnlyString'],
-        ['abc123', 'alphaNumericString'],
-        ['123', 'numericOnlyString'],
-      ],
-      (value) =>
-        evaluate(
-          {
-            interpreters: {
-              ...interpreters,
-              ...customTypeInterpreters,
-            },
-            scope: { $$VALUE: value },
-          },
-          ['$customType']
-        ),
-      '$customType'
-    )
+    _evTestCases([
+      ['abc123', ['$customType'], 'alphaNumericString'],
+      ['abc123-', ['$customType'], 'normalString'],
+      ['abc', ['$customType'], 'alphaOnlyString'],
+      ['abc123', ['$customType'], 'alphaNumericString'],
+      ['123', ['$customType'], 'numericOnlyString'],
+    ])
   })
 
   describe('$customIsType', () => {
-    testCases(
-      [
-        ['alphaNumericString', 'abc123', true],
-        ['alphaNumericString', 'abc123-', false],
-        ['alphaOnlyString', 'abc', true],
-        ['alphaOnlyString', 'abc123', false],
-        ['numericOnlyString', '123', true],
-        ['numericOnlyString', 'abc123', false],
-      ],
-      (type, value) =>
-        evaluate(
-          {
-            interpreters: {
-              ...interpreters,
-              ...customTypeInterpreters,
-            },
-            scope: { $$VALUE: value },
-          },
-          ['$customIsType', type]
-        ),
-      '$customIsType'
-    )
+    _evTestCases([
+      ['abc123', ['$customIsType', 'alphaNumericString'], true],
+      ['abc123-', ['$customIsType', 'alphaNumericString'], false],
+      ['abc', ['$customIsType', 'alphaOnlyString'], true],
+      ['abc123', ['$customIsType', 'alphaOnlyString'], false],
+      ['123', ['$customIsType', 'numericOnlyString'], true],
+      ['abc123', ['$customIsType', 'numericOnlyString'], false],
+    ])
   })
 })

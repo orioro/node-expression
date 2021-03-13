@@ -1,22 +1,34 @@
 import { evaluate } from '../evaluate'
 import { syncInterpreterList } from '../interpreter/syncInterpreter'
+import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { $value } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { ARRAY_EXPRESSIONS } from './array'
 import { OBJECT_EXPRESSIONS } from './object'
 import { STRING_EXPRESSIONS } from './string'
+import { LOGICAL_EXPRESSIONS } from './logical'
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
 
-const interpreters = syncInterpreterList({
+const EXP = {
   $value,
   ...STRING_EXPRESSIONS,
   ...COMPARISON_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
+  ...LOGICAL_EXPRESSIONS,
 
   ...OBJECT_EXPRESSIONS,
+}
+
+const syncInterpreters = syncInterpreterList(EXP)
+const asyncInterpreters = asyncInterpreterList(EXP)
+
+const _evTestCases = _prepareEvaluateTestCases({
+  syncInterpreters,
+  asyncInterpreters,
 })
 
 const context = {
-  interpreters,
+  interpreters: syncInterpreters,
   scope: {
     $$VALUE: {
       name: 'João Silva',
@@ -34,149 +46,202 @@ const context = {
 }
 
 describe('$objectMatches', () => {
-  test('path notation', () => {
-    expect(
-      evaluate(context, [
-        '$objectMatches',
-        {
-          name: 'João Silva',
-          'mother.name': 'Maria do Carmo',
-        },
-      ])
-    ).toEqual(true)
+  const DATA = {
+    name: 'João Silva',
+    age: 50,
+    mother: {
+      name: 'Maria do Carmo',
+      age: 76,
+    },
+    father: {
+      name: 'Galvão Queiroz',
+      age: 74,
+    },
+  }
+
+  describe('path notation', () => {
+    _evTestCases([
+      [
+        DATA,
+        [
+          '$objectMatches',
+          {
+            name: 'João Silva',
+            'mother.name': 'Maria do Carmo',
+          },
+        ],
+        true,
+      ],
+    ])
   })
 
-  test('object property equality', () => {
-    expect(
-      evaluate(context, [
-        '$objectMatches',
-        {
-          mother: {
-            $eq: {
-              name: 'Maria do Carmo',
-              age: 76,
+  describe('object property equality', () => {
+    _evTestCases([
+      [
+        DATA,
+        [
+          '$objectMatches',
+          {
+            mother: {
+              $eq: {
+                name: 'Maria do Carmo',
+                age: 76,
+              },
             },
           },
-        },
-      ])
-    ).toEqual(true)
-
-    expect(
-      evaluate(context, [
-        '$objectMatches',
-        {
-          mother: {
-            $eq: {
-              name: 'Maria do Carmo',
-              age: 76,
-              someOtherProp: 'B',
+        ],
+        true,
+      ],
+      [
+        DATA,
+        [
+          '$objectMatches',
+          {
+            mother: {
+              $eq: {
+                name: 'Maria do Carmo',
+                age: 76,
+                someOtherProp: 'B',
+              },
             },
           },
-        },
-      ])
-    ).toEqual(false)
+        ],
+        false,
+      ],
+    ])
   })
 
-  test('comparison operators', () => {
-    expect(
-      evaluate(context, [
-        '$objectMatches',
-        {
-          age: {
-            $gte: 50,
+  describe('comparison operators', () => {
+    _evTestCases([
+      [
+        DATA,
+        [
+          '$objectMatches',
+          {
+            age: {
+              $gte: 50,
+            },
           },
-        },
-      ])
-    ).toEqual(true)
-
-    expect(
-      evaluate(context, [
-        '$objectMatches',
-        {
-          age: {
-            $gte: 51,
+        ],
+        true,
+      ],
+      [
+        DATA,
+        [
+          '$objectMatches',
+          {
+            age: {
+              $gte: 51,
+            },
           },
-        },
-      ])
-    ).toEqual(false)
+        ],
+        false,
+      ],
+    ])
   })
 })
 
 describe('$objectFormat', () => {
+  const DATA = {
+    name: 'João Silva',
+    age: 50,
+    mother: {
+      name: 'Maria do Carmo',
+      age: 76,
+    },
+    father: {
+      name: 'Galvão Queiroz',
+      age: 74,
+    },
+  }
+
   describe('object root', () => {
-    test('simple transformation', () => {
-      expect(
-        evaluate(context, [
-          '$objectFormat',
+    describe('simple transformation', () => {
+      _evTestCases([
+        [
+          DATA,
+          [
+            '$objectFormat',
+            {
+              fatherName: 'father.name',
+              motherName: 'mother.name',
+            },
+          ],
           {
-            fatherName: 'father.name',
-            motherName: 'mother.name',
+            fatherName: 'Galvão Queiroz',
+            motherName: 'Maria do Carmo',
           },
-        ])
-      ).toEqual({
-        fatherName: 'Galvão Queiroz',
-        motherName: 'Maria do Carmo',
-      })
+        ],
+      ])
     })
 
-    test('basic', () => {
-      expect(
-        evaluate(context, [
-          '$objectFormat',
+    describe('basic', () => {
+      _evTestCases([
+        [
+          DATA,
+          [
+            '$objectFormat',
+            {
+              fatherName: 'father.name',
+              motherNameIsMariaDoCarmo: [
+                '$eq',
+                'Maria do Carmo',
+                ['$value', 'mother.name'],
+              ],
+              parentNames: ['father.name', 'mother.name'],
+            },
+          ],
           {
-            fatherName: 'father.name',
-            motherNameIsMariaDoCarmo: [
-              '$eq',
-              'Maria do Carmo',
-              ['$value', 'mother.name'],
-            ],
-            parentNames: ['father.name', 'mother.name'],
+            fatherName: 'Galvão Queiroz',
+            motherNameIsMariaDoCarmo: true,
+            parentNames: ['Galvão Queiroz', 'Maria do Carmo'],
           },
-        ])
-      ).toEqual({
-        fatherName: 'Galvão Queiroz',
-        motherNameIsMariaDoCarmo: true,
-        parentNames: ['Galvão Queiroz', 'Maria do Carmo'],
-      })
+        ],
+      ])
     })
   })
 
   describe('array root', () => {
-    test('basic', () => {
-      expect(
-        evaluate(context, [
-          '$objectFormat',
-          ['name', 'father.name', 'mother.name'],
-        ])
-      ).toEqual(['João Silva', 'Galvão Queiroz', 'Maria do Carmo'])
-    })
-
-    test('expression items', () => {
-      expect(
-        evaluate(context, [
-          '$objectFormat',
-          [
-            [
-              '$stringConcat',
-              ['$value', 'father.name'],
-              ['$value', 'mother.name'],
-            ],
-            'name',
-            'father.name',
-            'mother.name',
-          ],
-        ])
-      ).toEqual([
-        'Maria do CarmoGalvão Queiroz',
-        'João Silva',
-        'Galvão Queiroz',
-        'Maria do Carmo',
+    describe('basic', () => {
+      _evTestCases([
+        [
+          DATA,
+          ['$objectFormat', ['name', 'father.name', 'mother.name']],
+          ['João Silva', 'Galvão Queiroz', 'Maria do Carmo'],
+        ],
       ])
     })
 
-    test('with object items', () => {
-      expect(
-        evaluate(context, [
+    describe('expression items', () => {
+      _evTestCases([
+        [
+          DATA,
+          [
+            '$objectFormat',
+            [
+              [
+                '$stringConcat',
+                ['$value', 'father.name'],
+                ['$value', 'mother.name'],
+              ],
+              'name',
+              'father.name',
+              'mother.name',
+            ],
+          ],
+          [
+            'Maria do CarmoGalvão Queiroz',
+            'João Silva',
+            'Galvão Queiroz',
+            'Maria do Carmo',
+          ],
+        ],
+      ])
+    })
+
+    describe('with object items', () => {
+      _evTestCases([
+        [DATA, [
           '$objectFormat',
           [
             'father.name',
@@ -184,25 +249,17 @@ describe('$objectFormat', () => {
               fatherName: 'father.name',
             },
           ],
-        ])
-      ).toEqual(['Galvão Queiroz', { fatherName: 'Galvão Queiroz' }])
+        ], ['Galvão Queiroz', { fatherName: 'Galvão Queiroz' }]]
+      ])
     })
   })
 })
 
 describe('$objectDefaults', () => {
-  test('simple', () => {
-    expect(
-      evaluate(
-        {
-          interpreters,
-          scope: {
-            $$VALUE: {
-              propA: 'valueA',
-              propB: 'valueB',
-            },
-          },
-        },
+  describe('simple', () => {
+    _evTestCases([
+      [
+        { propA: 'valueA', propB: 'valueB' },
         [
           '$objectDefaults',
           {
@@ -210,28 +267,20 @@ describe('$objectDefaults', () => {
             propB: 'defaultB',
             propC: 'defaultC',
           },
-        ]
-      )
-    ).toEqual({
-      propA: 'valueA',
-      propB: 'valueB',
-      propC: 'defaultC',
-    })
+        ],
+        { propA: 'valueA', propB: 'valueB', propC: 'defaultC' }
+      ]
+    ])
   })
 
-  test('nested object', () => {
-    expect(
-      evaluate(
+  describe('nested object', () => {
+    _evTestCases([
+      [
         {
-          interpreters,
-          scope: {
-            $$VALUE: {
-              propA: 'valueA',
-              propB: 'valueB',
-              propC: {
-                propCA: 'valueCA',
-              },
-            },
+          propA: 'valueA',
+          propB: 'valueB',
+          propC: {
+            propCA: 'valueCA',
           },
         },
         [
@@ -245,69 +294,62 @@ describe('$objectDefaults', () => {
             },
             propD: 'defaultValueD',
           },
-        ]
-      )
-    ).toEqual({
-      propA: 'valueA',
-      propB: 'valueB',
-      propC: {
-        propCA: 'valueCA',
-        propCB: 'defaultValueCB',
-      },
-      propD: 'defaultValueD',
-    })
+        ],
+        {
+          propA: 'valueA',
+          propB: 'valueB',
+          propC: {
+            propCA: 'valueCA',
+            propCB: 'defaultValueCB',
+          },
+          propD: 'defaultValueD',
+        }
+      ]
+    ])
   })
 
-  test('nested array', () => {
-    const context = {
-      interpreters,
-      scope: {
-        $$VALUE: {
+  describe('nested array', () => {
+    _evTestCases([
+      [
+        {
           propA: 'valueA',
           propB: [{ id: 'B0' }, { id: 'B1' }, undefined, { id: 'B3' }],
         },
-      },
-    }
-
-    const expression = [
-      '$objectDefaults',
-      {
-        propA: 'defaultA',
-        propB: [
-          { id: 'defaultB0', foo: 0 },
-          { id: 'defaultB1', foo: 1 },
-          { id: 'defaultB2', foo: 2 },
-          { id: 'defaultB3', foo: 3 },
+        [
+          '$objectDefaults',
+          {
+            propA: 'defaultA',
+            propB: [
+              { id: 'defaultB0', foo: 0 },
+              { id: 'defaultB1', foo: 1 },
+              { id: 'defaultB2', foo: 2 },
+              { id: 'defaultB3', foo: 3 },
+            ],
+            propC: 'defaultC',
+          },
         ],
-        propC: 'defaultC',
-      },
-    ]
-
-    expect(evaluate(context, expression)).toEqual({
-      propA: 'valueA',
-      propB: [
-        { id: 'B0', foo: 0 },
-        { id: 'B1', foo: 1 },
-        { id: 'defaultB2', foo: 2 },
-        { id: 'B3', foo: 3 },
-      ],
-      propC: 'defaultC',
-    })
+        {
+          propA: 'valueA',
+          propB: [
+            { id: 'B0', foo: 0 },
+            { id: 'B1', foo: 1 },
+            { id: 'defaultB2', foo: 2 },
+            { id: 'B3', foo: 3 },
+          ],
+          propC: 'defaultC',
+        }
+      ]
+    ])
   })
 })
 
 describe('$objectAssign', () => {
-  test('simple', () => {
-    expect(
-      evaluate(
+  describe('simple', () => {
+    _evTestCases([
+      [
         {
-          interpreters,
-          scope: {
-            $$VALUE: {
-              propA: 'valueA',
-              propB: 'valueB',
-            },
-          },
+          propA: 'valueA',
+          propB: 'valueB',
         },
         [
           '$objectAssign',
@@ -315,30 +357,26 @@ describe('$objectAssign', () => {
             propA: 'assignA',
             propC: 'assignC',
           },
-        ]
-      )
-    ).toEqual({
-      propA: 'assignA',
-      propB: 'valueB',
-      propC: 'assignC',
-    })
+        ],
+        {
+          propA: 'assignA',
+          propB: 'valueB',
+          propC: 'assignC',
+        }
+      ]
+    ])
   })
 
-  test('nested', () => {
-    expect(
-      evaluate(
+  describe('nested', () => {
+    _evTestCases([
+      [
         {
-          interpreters,
-          scope: {
-            $$VALUE: {
-              propA: 'valueA',
-              propB: {
-                propBA: 'valueBA',
-                propBB: 'valueBB',
-              },
-              propC: 'valueC',
-            },
+          propA: 'valueA',
+          propB: {
+            propBA: 'valueBA',
+            propBB: 'valueBB',
           },
+          propC: 'valueC',
         },
         [
           '$objectAssign',
@@ -348,33 +386,26 @@ describe('$objectAssign', () => {
               propBB: 'assignBB',
             },
           },
-        ]
-      )
-    ).toEqual({
-      propA: 'assignA',
-      propB: {
-        propBA: 'valueBA',
-        propBB: 'assignBB',
-      },
-      propC: 'valueC',
-    })
+        ],
+        {
+          propA: 'assignA',
+          propB: {
+            propBA: 'valueBA',
+            propBB: 'assignBB',
+          },
+          propC: 'valueC',
+        }
+      ]
+    ])
   })
 })
 
-test('$objectKeys', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: {
-          $$VALUE: {
-            key1: 'value1',
-            key2: 'value2',
-            key3: 'value3',
-          },
-        },
-      },
-      ['$objectKeys']
-    )
-  ).toEqual(['key1', 'key2', 'key3'])
+describe('$objectKeys', () => {
+  _evTestCases([
+    [
+      { key1: 'value1', key2: 'value2', key3: 'value3' },
+      ['$objectKeys'],
+      ['key1', 'key2', 'key3']
+    ]
+  ])
 })

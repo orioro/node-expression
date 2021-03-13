@@ -163,20 +163,64 @@ export const $arrayMap: InterpreterSpec = {
  * $arrayEvery exposes array iteration variables:
  * `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
  *
+ * @todo array $arrayEvery write tests with async conditions
  * @function $arrayEvery
- * @param {Expression} everyExp
+ * @param {Expression} testExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayEvery: InterpreterSpec = _arraySyncIterator('every')
+export const $arrayEvery: InterpreterSpec = {
+  sync: _arraySyncIterator('every'),
+  async: [
+    (
+      testExp: Expression,
+      array: any[],
+      context: EvaluationContext
+    ): Promise<boolean> =>
+      array.reduce((accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+        accPromise.then(acc =>
+          acc === true
+            ? evaluate(
+                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                testExp
+              ).then((result) => Boolean(result))
+            : false
+        ),
+        Promise.resolve(true)
+      ),
+    [anyType({ delayEvaluation: true }), 'array'],
+  ],
+}
 
 /**
  * `Array.prototype.some`
  *
+ * @todo array $arraySome write tests with async conditions
  * @function $arraySome
  * @param {Expression} someExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arraySome: InterpreterSpec = _arraySyncIterator('some')
+export const $arraySome: InterpreterSpec = {
+  sync: _arraySyncIterator('some'),
+  async: [
+    (
+      testExp: Expression,
+      array: any[],
+      context: EvaluationContext
+    ): Promise<boolean> =>
+      array.reduce((accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+        accPromise.then(acc =>
+          acc === false
+            ? evaluate(
+                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                testExp
+              ).then((result) => Boolean(result))
+            : true
+        ),
+        Promise.resolve(false)
+      ),
+    [anyType({ delayEvaluation: true }), 'array'],
+  ]
+}
 
 // export const $arrayFilterAsyncParallel: InterpreterSpecSingle = [
 //   (filterExp: Expression, array: any[], context: EvaluationContext) =>
@@ -234,23 +278,23 @@ export const $arrayFindIndex: InterpreterSpec = {
   async: [
     (queryExp: Expression, array: any[], context: EvaluationContext) =>
       array.reduce((accPromise, $$VALUE, $$INDEX, $$ARRAY) => {
-        return accPromise.then(acc => {
-          if (acc === null) {
-            return Promise.resolve(evaluate(
-              _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-              queryExp
-            ))
-            .then(matchesQuery => Boolean(matchesQuery)
-              ? $$INDEX
-              : null
+        return accPromise.then((acc) => {
+          if (acc === undefined) {
+            return Promise.resolve(
+              evaluate(
+                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                queryExp
+              )
+            ).then((matchesQuery) =>
+              Boolean(matchesQuery) ? $$INDEX : undefined
             )
           } else {
             return acc
           }
         })
-      }, Promise.resolve(null)),
+      }, Promise.resolve(undefined)),
     [anyType({ delayEvaluation: true }), 'array'],
-  ]
+  ],
 }
 
 /**

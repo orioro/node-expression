@@ -131,27 +131,15 @@ export const $matches: InterpreterSpec = [
     if (criteriaKeys.length === 0) {
       throw new Error(`Invalid criteria: ${JSON.stringify(criteria)}`)
     }
-
-    return criteriaKeys.every((criteriaKey) => {
-      //
-      // Criteria value may be an expression.
-      // Evaluate the expression against the original context, not
-      // against the value
-      //
-      const criteriaValue = evaluate(context, criteria[criteriaKey])
-
-      return evaluateTyped(
-        'boolean',
-        {
-          ...context,
-          scope: {
-            ...context.scope,
-            $$VALUE: value,
-          },
-        },
-        [criteriaKey, criteriaValue, $$VALUE]
-      )
-    })
+    
+    return evaluate(
+      context,
+      ['$and', criteriaKeys.map(criteriaKey => [
+        criteriaKey,
+        criteria[criteriaKey],
+        value
+      ])]
+    )
   },
   ['object', 'any'],
 ]

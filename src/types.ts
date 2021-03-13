@@ -73,7 +73,7 @@ export type InterpreterSpecSingle = [
 export type InterpreterSpec =
   | InterpreterSpecSingle
   | {
-      sync: InterpreterSpecSingle | InterpreterFunction,
+      sync: InterpreterSpecSingle | InterpreterFunction
       async: InterpreterSpecSingle | InterpreterFunction
     }
 
@@ -88,9 +88,7 @@ export type InterpreterFunction = (
   ...args: any[]
 ) => any
 
-export type Interpreter =
-  | InterpreterSpec
-  | InterpreterFunction
+export type Interpreter = InterpreterSpec | InterpreterFunction
 
 /**
  * @typedef {Object} EvaluationScope
@@ -128,6 +126,11 @@ export type InterpreterFunctionList = {
   [key: string]: InterpreterFunction
 }
 
+export type InterpreterSet = {
+  sync: InterpreterFunctionList
+  async: InterpreterFunctionList
+}
+
 /**
  * @typedef {Object} EvaluationContext
  * @property {Object} context
@@ -135,8 +138,9 @@ export type InterpreterFunctionList = {
  * @property {EvaluationScope} context.scope
  */
 export type EvaluationContext = {
-  interpreters: InterpreterFunctionList
+  interpreters: InterpreterSet
   scope: EvaluationScope
+  async?: boolean
 }
 
 /**

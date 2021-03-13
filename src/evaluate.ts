@@ -69,6 +69,14 @@ export const evaluate =
     ? _evaluateDev
     : _evaluate
 
+export const evaluateAsync = (
+  context: EvaluationContext,
+  expOrValue: Expression | any
+): Promise<any> => Promise.resolve(evaluate({
+  ...context,
+  async: true
+}, expOrValue))
+
 /**
  * @function evaluateTyped
  * @param {String | string[]} expectedTypes
@@ -98,7 +106,7 @@ export const evaluateTypedAsync = (
   context: EvaluationContext,
   expOrValue: Expression | any
 ): Promise<any> =>
-  Promise.resolve(evaluate(context, expOrValue)).then((value) => {
+  evaluateAsync(context, expOrValue).then((value) => {
     validateType(expectedTypes, value)
     return value
   })

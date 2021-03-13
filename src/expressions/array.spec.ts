@@ -198,7 +198,7 @@ describe('$arrayReverse', () => {
   ])
 })
 
-describe('$arraySort', () => {
+describe.skip('$arraySort', () => {
   describe('basic usage', () => {
     _evTestCases([
       [['B', 'D', 'C', 'A'], ['$arraySort'], ['A', 'B', 'C', 'D']],
@@ -219,8 +219,16 @@ describe('$arraySort', () => {
 
     _evTestCases([
       [['9', '1', '12', '11'], ['$arraySort'], ['1', '11', '12', '9']],
-      [['9', '1', '12', '11'], ['$arraySort', SORT_NUMBERS], ['1', '9', '11', '12']],
-      [['9', '1', '12', '11'], ['$arraySort', [SORT_NUMBERS]], ['1', '9', '11', '12']],
+      [
+        ['9', '1', '12', '11'],
+        ['$arraySort', SORT_NUMBERS],
+        ['1', '9', '11', '12'],
+      ],
+      [
+        ['9', '1', '12', '11'],
+        ['$arraySort', [SORT_NUMBERS]],
+        ['1', '9', '11', '12'],
+      ],
       [
         ['9', '1', '12', '11'],
         ['$arraySort', [SORT_NUMBERS, 'DESC']],
@@ -267,70 +275,41 @@ describe('$arraySort', () => {
 })
 
 describe('$arrayPush', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayPush', 'E'])).toEqual([
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-    ])
-  })
+  _evTestCases([
+    [
+      ['A', 'B', 'C', 'D'],
+      ['$arrayPush', 'E'],
+      ['A', 'B', 'C', 'D', 'E'],
+    ],
+  ])
 })
 
 describe('$arrayPop', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayPop'])).toEqual(['A', 'B', 'C'])
-  })
+  _evTestCases([[['A', 'B', 'C', 'D'], ['$arrayPop'], ['A', 'B', 'C']]])
 })
 
 describe('$arrayUnshift', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayUnshift', 'Z'])).toEqual([
-      'Z',
-      'A',
-      'B',
-      'C',
-      'D',
-    ])
-  })
+  _evTestCases([
+    [
+      ['A', 'B', 'C', 'D'],
+      ['$arrayUnshift', 'Z'],
+      ['Z', 'A', 'B', 'C', 'D'],
+    ],
+  ])
 })
 
 describe('$arrayShift', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayShift'])).toEqual(['B', 'C', 'D'])
-  })
+  _evTestCases([[['A', 'B', 'C', 'D'], ['$arrayShift'], ['B', 'C', 'D']]])
 })
 
 describe('$arraySlice', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arraySlice', 1, 3])).toEqual(['B', 'C'])
-  })
+  _evTestCases([
+    [
+      ['A', 'B', 'C', 'D'],
+      ['$arraySlice', 1, 3],
+      ['B', 'C'],
+    ],
+  ])
 })
 
 describe('$arrayReplace', () => {
@@ -339,102 +318,80 @@ describe('$arrayReplace', () => {
     scope: { $$VALUE: ['0', '1', '2', '3'] },
   }
 
-  test('index', () => {
-    expect(evaluate(context, ['$arrayReplace', 1, 'R'])).toEqual([
-      '0',
-      'R',
-      '2',
-      '3',
+  const BASE_VALUE = ['0', '1', '2', '3']
+
+  describe('index', () => {
+    _evTestCases([
+      [BASE_VALUE, ['$arrayReplace', 1, 'R'], ['0', 'R', '2', '3']],
+      [
+        BASE_VALUE,
+        ['$arrayReplace', 1, ['R1', 'R2', 'R3']],
+        ['0', 'R1', 'R2', 'R3', '2', '3'],
+      ],
     ])
-    expect(
-      evaluate(context, ['$arrayReplace', 1, ['R1', 'R2', 'R3']])
-    ).toEqual(['0', 'R1', 'R2', 'R3', '2', '3'])
   })
 
-  test('range', () => {
-    expect(evaluate(context, ['$arrayReplace', [1, 3], 'R'])).toEqual([
-      '0',
-      'R',
-      '3',
+  describe('range', () => {
+    _evTestCases([
+      [BASE_VALUE, ['$arrayReplace', [1, 3], 'R'], ['0', 'R', '3']],
+      [
+        BASE_VALUE,
+        ['$arrayReplace', [1, 3], ['R1', 'R2', 'R3']],
+        ['0', 'R1', 'R2', 'R3', '3'],
+      ],
     ])
-    expect(
-      evaluate(context, ['$arrayReplace', [1, 3], ['R1', 'R2', 'R3']])
-    ).toEqual(['0', 'R1', 'R2', 'R3', '3'])
   })
 
-  test('empty replacement (removal)', () => {
-    expect(evaluate(context, ['$arrayReplace', 1, []])).toEqual(['0', '2', '3'])
-
-    expect(evaluate(context, ['$arrayReplace', [1, 3], []])).toEqual(['0', '3'])
+  describe('empty replacement (removal)', () => {
+    _evTestCases([
+      [BASE_VALUE, ['$arrayReplace', 1, []], ['0', '2', '3']],
+      [BASE_VALUE, ['$arrayReplace', [1, 3], []], ['0', '3']],
+    ])
   })
 
-  test('empty range (add)', () => {
-    expect(evaluate(context, ['$arrayReplace', [1, 1], 'R'])).toEqual([
-      '0',
-      'R',
-      '1',
-      '2',
-      '3',
+  describe('empty range (add)', () => {
+    _evTestCases([
+      [BASE_VALUE, ['$arrayReplace', [1, 1], 'R'], ['0', 'R', '1', '2', '3']],
+      [
+        BASE_VALUE,
+        ['$arrayReplace', [1, 1], ['R1', 'R2', 'R3']],
+        ['0', 'R1', 'R2', 'R3', '1', '2', '3'],
+      ],
     ])
-
-    expect(
-      evaluate(context, ['$arrayReplace', [1, 1], ['R1', 'R2', 'R3']])
-    ).toEqual(['0', 'R1', 'R2', 'R3', '1', '2', '3'])
   })
 })
 
 describe('$arrayAddAt', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(
-      evaluate(context, ['$arrayAddAt', 1, ['$arraySlice', 0, 4]])
-    ).toEqual(['A', 'A', 'B', 'C', 'D', 'B', 'C', 'D'])
-  })
+  _evTestCases([
+    [
+      ['A', 'B', 'C', 'D'],
+      ['$arrayAddAt', 1, ['$arraySlice', 0, 4]],
+      ['A', 'A', 'B', 'C', 'D', 'B', 'C', 'D'],
+    ],
+  ])
 })
 
 describe('$arrayRemoveAt', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayRemoveAt', 1, 2])).toEqual(['A', 'D'])
-
-    expect(evaluate(context, ['$arrayRemoveAt', 1])).toEqual(['A', 'C', 'D'])
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayRemoveAt', 1, 2], ['A', 'D']],
+    [['A', 'B', 'C', 'D'], ['$arrayRemoveAt', 1], ['A', 'C', 'D']]
+  ])
 })
 
 describe('$arrayJoin', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayJoin', '_'])).toEqual('A_B_C_D')
-
-    expect(evaluate(context, ['$arrayJoin'])).toEqual('ABCD')
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayJoin', '_'], 'A_B_C_D'],
+    [['A', 'B', 'C', 'D'], ['$arrayJoin'], 'ABCD']
+  ])
 })
 
 describe('$arrayAt', () => {
-  test('basic usage', () => {
-    const context = {
-      interpreters: syncInterpreters,
-      scope: { $$VALUE: ['A', 'B', 'C', 'D'] },
-    }
-
-    expect(evaluate(context, ['$arrayAt', 0])).toEqual('A')
-
-    expect(evaluate(context, ['$arrayAt', 3])).toEqual('D')
-
-    expect(evaluate(context, ['$arrayAt', 4])).toEqual(undefined)
-  })
+  _evTestCases([
+    [['A', 'B', 'C', 'D'], ['$arrayAt', 0], 'A'],
+    [['A', 'B', 'C', 'D'], ['$arrayAt', 3], 'D'],
+    [['A', 'B', 'C', 'D'], ['$arrayAt', 4], undefined],
+    [['A', 'B', 'C', 'D'], ['$arrayAt', '0'], TypeError]
+  ])
 })
 
 describe('$arrayEvery vs $and (logical) - example: check for array item uniqueness', () => {
@@ -444,41 +401,34 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
     ['$arrayIndexOf', ['$value', '$$VALUE'], ['$value', '$$ARRAY']],
   ]
 
-  test('using $and', () => {
+  describe('using $and', () => {
     const MAP_EXP = ['$arrayMap', ITEM_IS_UNIQUE_EXP]
 
     const ITEMS_UNIQUE_EXP = ['$and', MAP_EXP]
 
-    const itemsAreUnique = (array) =>
-      evaluate(
-        {
-          interpreters: syncInterpreters,
-          scope: { $$VALUE: array },
-        },
-        ITEMS_UNIQUE_EXP
-      )
-
-    expect(itemsAreUnique([1, 2, 3, 4])).toEqual(true)
-    expect(itemsAreUnique([1, 2, 3, 1])).toEqual(false)
+    _evTestCases([
+      [[1, 2, 3, 4], ITEMS_UNIQUE_EXP, true],
+      [[1, 2, 3, 1], ITEMS_UNIQUE_EXP, false]
+    ])
   })
 
-  test('using $arrayEvery', () => {
+  describe('using $arrayEvery', () => {
     // Skips the 'map' step,
     // which prevents executing the ITEM_IS_UNIQUE_EXP for
     // every value, as $arrayEvery (Array.prototype.every)
     // will return at first false value
     const ITEMS_UNIQUE_EXP = ['$arrayEvery', ITEM_IS_UNIQUE_EXP]
 
-    const itemsAreUnique = (array) =>
-      evaluate(
-        {
-          interpreters: syncInterpreters,
-          scope: { $$VALUE: array },
-        },
-        ITEMS_UNIQUE_EXP
-      )
-
-    expect(itemsAreUnique([1, 2, 3, 4])).toEqual(true)
-    expect(itemsAreUnique([1, 2, 3, 1])).toEqual(false)
+    _evTestCases([
+      [[1, 2, 3, 4], ITEMS_UNIQUE_EXP, true],
+      [[1, 2, 3, 1], ITEMS_UNIQUE_EXP, false]
+    ])
   })
+})
+
+describe('$arraySome', () => {
+  _evTestCases([
+    [[1, 2, 3, 4], ['$arraySome', ['$eq', 0, ['$mathMod', 2]]], true],
+    [[1, 3, 5, 7], ['$arraySome', ['$eq', 0, ['$mathMod', 2]]], false]
+  ])
 })

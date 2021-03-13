@@ -9,6 +9,7 @@ import {
 } from '../types'
 
 /**
+ * @todo $and Add 'strict' mode option
  * @function $and
  * @param {Array} expressionsExp
  * @returns {Boolean}

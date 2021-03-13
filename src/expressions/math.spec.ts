@@ -1,121 +1,90 @@
 import { evaluate } from '../evaluate'
 import { syncInterpreterList } from '../interpreter/syncInterpreter'
+import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { MATH_EXPRESSIONS } from './math'
+import { _prepareEvaluateTestCases } from '../../spec/specUtil'
 
-const interpreters = syncInterpreterList({
+const EXP = {
   ...VALUE_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
+}
+
+const syncInterpreters = syncInterpreterList(EXP)
+const asyncInterpreters = asyncInterpreterList(EXP)
+
+const _evTestCases = _prepareEvaluateTestCases({
+  syncInterpreters,
+  asyncInterpreters,
 })
 
 describe('operations', () => {
-  const context = {
-    interpreters,
-    scope: {
-      $$VALUE: 10,
-    },
-  }
-
-  test('$mathSum', () => expect(evaluate(context, ['$mathSum', 5])).toEqual(15))
-  test('$mathSub', () => expect(evaluate(context, ['$mathSub', 5])).toEqual(5))
-  test('$mathMult', () =>
-    expect(evaluate(context, ['$mathMult', 5])).toEqual(50))
-  test('$mathDiv', () => expect(evaluate(context, ['$mathDiv', 5])).toEqual(2))
-  test('$mathMod', () => expect(evaluate(context, ['$mathMod', 3])).toEqual(1))
-  test('$mathPow', () =>
-    expect(evaluate(context, ['$mathPow', 3])).toEqual(1000))
+  _evTestCases([
+    [10, ['$mathSum', 5], 15],
+    [10, ['$mathSub', 5], 5],
+    [10, ['$mathMult', 5], 50],
+    [10, ['$mathDiv', 5], 2],
+    [10, ['$mathMod', 3], 1],
+    [10, ['$mathPow', 3], 1000],
+  ])
 })
 
-test('$mathAbs', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10 },
-      },
-      ['$mathAbs']
-    )
-  ).toEqual(10)
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: -10 },
-      },
-      ['$mathAbs']
-    )
-  ).toEqual(10)
+describe('$mathAbs', () => {
+  _evTestCases([
+    [10, ['$mathAbs'], 10],
+    [-10, ['$mathAbs'], 10],
+  ])
 })
 
 describe('$mathMax', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: 10 },
-  }
-
-  test('single value', () => {
-    expect(evaluate(context, ['$mathMax', 5])).toEqual(10)
-    expect(evaluate(context, ['$mathMax', 15])).toEqual(15)
+  describe('single value', () => {
+    _evTestCases([
+      [10, ['$mathMax', 5], 10],
+      [10, ['$mathMax', 15], 15],
+    ])
   })
 
-  test('array of values', () => {
-    expect(evaluate(context, ['$mathMax', []])).toEqual(10)
-    expect(evaluate(context, ['$mathMax', [0, 5]])).toEqual(10)
-    expect(evaluate(context, ['$mathMax', [5, 15]])).toEqual(15)
+  describe('array of values', () => {
+    _evTestCases([
+      [10, ['$mathMax', []], 10],
+      [10, ['$mathMax', [0, 5]], 10],
+      [10, ['$mathMax', [5, 15]], 15],
+    ])
   })
 })
 
 describe('$mathMin', () => {
-  const context = {
-    interpreters,
-    scope: { $$VALUE: 10 },
-  }
-
-  test('single value', () => {
-    expect(evaluate(context, ['$mathMin', 5])).toEqual(5)
-    expect(evaluate(context, ['$mathMin', 15])).toEqual(10)
+  describe('single value', () => {
+    _evTestCases([
+      [10, ['$mathMin', 5], 5],
+      [10, ['$mathMin', 15], 10],
+    ])
   })
 
-  test('array of values', () => {
-    expect(evaluate(context, ['$mathMin', []])).toEqual(10)
-    expect(evaluate(context, ['$mathMin', [0, 5]])).toEqual(0)
-    expect(evaluate(context, ['$mathMin', [5, 15]])).toEqual(5)
-    expect(evaluate(context, ['$mathMin', [25, 15]])).toEqual(10)
+  describe('array of values', () => {
+    _evTestCases([
+      [10, ['$mathMin', []], 10],
+      [10, ['$mathMin', [0, 5]], 0],
+      [10, ['$mathMin', [5, 15]], 5],
+      [10, ['$mathMin', [25, 15]], 10],
+    ])
   })
 })
 
-test('$mathRound', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10.1 },
-      },
-      ['$mathRound']
-    )
-  ).toEqual(10)
+describe('$mathRound', () => {
+  _evTestCases([
+    [10.1, ['$mathRound'], 10],
+  ])
 })
 
-test('$mathFloor', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10.1 },
-      },
-      ['$mathFloor']
-    )
-  ).toEqual(10)
+describe('$mathFloor', () => {
+  _evTestCases([
+    [10.1, ['$mathFloor'], 10],
+  ])
 })
 
-test('$mathCeil', () => {
-  expect(
-    evaluate(
-      {
-        interpreters,
-        scope: { $$VALUE: 10.1 },
-      },
-      ['$mathCeil']
-    )
-  ).toEqual(11)
+describe('$mathCeil', () => {
+  _evTestCases([
+    [10.1, ['$mathCeil'], 11],
+  ])
 })

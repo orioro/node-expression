@@ -1,4 +1,4 @@
-import { evaluate } from '../src/evaluate'
+import { evaluate, evaluateAsync } from '../src/evaluate'
 import {
   testCases,
   asyncResult,
@@ -32,7 +32,7 @@ export const _prepareEvaluateTestCases = ({
 
       return [...args, asyncResult(result)]
     }),
-    (value, expression) => evaluate({
+    (value, expression) => evaluateAsync({
       interpreters: asyncInterpreters,
       scope: { $$VALUE: value }
     }, expression),
