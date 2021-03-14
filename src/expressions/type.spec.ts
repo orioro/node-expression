@@ -1,7 +1,5 @@
-import { evaluate } from '../evaluate'
 import { $value } from './value'
 import { TYPE_EXPRESSIONS, typeExpressions } from './type'
-import { testCases } from '@orioro/jest-util'
 import { _prepareEvaluateTestCases } from '../../spec/specUtil'
 
 const EXP = {

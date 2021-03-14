@@ -224,22 +224,23 @@ export const $arraySome: InterpreterSpec = {
   ],
 }
 
-// export const $arrayFilterAsyncParallel: InterpreterSpecSingle = [
-//   (filterExp: Expression, array: any[], context: EvaluationContext) =>
-//     Promise.all(
-//       array.map(($$VALUE, $$INDEX, $$ARRAY) =>
-//         evaluate(
-//           _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-//           filterExp
-//         )
-//       )
-//     ).then((results) =>
-//       results.reduce((acc, result, index) => {
-//         return Boolean(result) ? [...acc, array[index]] : acc
-//       }, [])
-//     ),
-//   [anyType({ delayEvaluation: true }), 'array'],
-// ]
+export const $arrayFilterAsyncParallel: InterpreterSpecSingle = [
+  (filterExp: Expression, array: any[], context: EvaluationContext) =>
+    Promise.all(
+      array.map(($$VALUE, $$INDEX, $$ARRAY) =>
+        evaluate(
+          _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+          filterExp
+        )
+      )
+    ).then((results) =>
+      results.reduce(
+        (acc, result, index) => (result ? [...acc, array[index]] : acc),
+        []
+      )
+    ),
+  [anyType({ delayEvaluation: true }), 'array'],
+]
 
 export const $arrayFilterAsyncSerial: InterpreterSpecSingle = [
   (filterExp: Expression, array: any[], context: EvaluationContext) =>
@@ -251,9 +252,7 @@ export const $arrayFilterAsyncSerial: InterpreterSpecSingle = [
               _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
               filterExp
             )
-          ).then((itemCondition) =>
-            Boolean(itemCondition) ? [...acc, $$VALUE] : acc
-          )
+          ).then((itemCondition) => (itemCondition ? [...acc, $$VALUE] : acc))
         ),
       Promise.resolve([])
     ),
@@ -287,9 +286,7 @@ export const $arrayFindIndex: InterpreterSpec = {
                 _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
                 queryExp
               )
-            ).then((matchesQuery) =>
-              Boolean(matchesQuery) ? $$INDEX : undefined
-            )
+            ).then((matchesQuery) => (matchesQuery ? $$INDEX : undefined))
           } else {
             return acc
           }

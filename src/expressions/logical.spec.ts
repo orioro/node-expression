@@ -1,11 +1,5 @@
-import {
-  testCases,
-  asyncResult,
-  resultLabel,
-  variableName,
-} from '@orioro/jest-util'
-import { evaluate, evaluateAsync } from '../evaluate'
-import { AsyncModeUnsupportedError, SyncModeUnsupportedError } from '../errors'
+import { evaluate } from '../evaluate'
+import { SyncModeUnsupportedError } from '../errors'
 import { interpreterList } from '../interpreter/interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
@@ -28,14 +22,14 @@ const EXP = {
   ...COMPARISON_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
-  // $asyncValue: (context, ...args) =>
-  //   delayValue(evaluate(context, ['$value', ...args])),
-  // $asyncNum50: () => delayValue(50),
-  // $asyncNum100: () => delayValue(100),
-  // $asyncStr1: () => delayValue('str1'),
-  // $asyncStr2: () => delayValue('str2'),
-  // $asyncFalse: () => delayValue(false),
-  // $asyncTrue: () => delayValue(true),
+  $asyncValue: (context, ...args) =>
+    delayValue(evaluate(context, ['$value', ...args])),
+  $asyncNum50: () => delayValue(50),
+  $asyncNum100: () => delayValue(100),
+  $asyncStr1: () => delayValue('str1'),
+  $asyncStr2: () => delayValue('str2'),
+  $asyncFalse: () => delayValue(false),
+  $asyncTrue: () => delayValue(true),
 }
 
 const _evTestCases = _prepareEvaluateTestCases(EXP)
@@ -358,14 +352,11 @@ describe('$switch', () => {
 
     const expWithDefault = [...expNoDefault, 'DEFAULT_VALUE']
 
-    _evTestCases(
-      [
-        ['CASE_B', expNoDefault, 'VALUE_B'],
-        ['CASE_D', expNoDefault, undefined],
-        ['CASE_D', expWithDefault, 'DEFAULT_VALUE'],
-      ],
-      variableName('$switchExpr')
-    )
+    _evTestCases([
+      ['CASE_B', expNoDefault, 'VALUE_B'],
+      ['CASE_D', expNoDefault, undefined],
+      ['CASE_D', expWithDefault, 'DEFAULT_VALUE'],
+    ])
   })
 
   describe('more complex condition', () => {
@@ -406,15 +397,12 @@ describe('$switch', () => {
       ['$mathMult', -1],
     ]
 
-    _evTestCases(
-      [
-        [5, $switchExpr, 0],
-        [15, $switchExpr, 150],
-        [25, $switchExpr, 500],
-        [30, $switchExpr, -30],
-      ],
-      variableName('$switchExpr')
-    )
+    _evTestCases([
+      [5, $switchExpr, 0],
+      [15, $switchExpr, 150],
+      [25, $switchExpr, 500],
+      [30, $switchExpr, -30],
+    ])
   })
 })
 

@@ -1,4 +1,3 @@
-import { evaluate } from '../evaluate'
 import { VALUE_EXPRESSIONS } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { LOGICAL_EXPRESSIONS } from './logical'
@@ -91,20 +90,6 @@ describe('$arrayMap', () => {
 })
 
 describe('$arrayFilter', () => {
-  describe('testing against parent scope value', () => {
-    _evTestCases([
-      [
-        2,
-        [
-          '$arrayFilter',
-          ['$eq', 0, ['$mathMod', ['$value', '$$PARENT_SCOPE.$$VALUE']]],
-          [1, 2, 3, 4, 5, 6],
-        ],
-        [2, 4, 6],
-      ],
-    ])
-  })
-
   describe('testing against parent scope value', () => {
     _evTestCases([
       [
@@ -228,42 +213,6 @@ describe('$arraySort', () => {
       ],
     ])
   })
-
-  // test('with custom comparator', () => {
-  //   const context = {
-  //     interpreters: syncInterpreters,
-  //     scope: { $$VALUE: ['9', '1', '12', '11'] },
-  //   }
-
-  //   const SORT_NUMBERS = [
-  //     '$mathSub',
-  //     ['$numberInt', 10, ['$value', '$$SORT_B']],
-  //     ['$numberInt', 10, ['$value', '$$SORT_A']],
-  //   ]
-
-  //   expect(evaluate(context, ['$arraySort'])).toEqual(['1', '11', '12', '9'])
-
-  //   expect(evaluate(context, ['$arraySort', SORT_NUMBERS])).toEqual([
-  //     '1',
-  //     '9',
-  //     '11',
-  //     '12',
-  //   ])
-
-  //   expect(evaluate(context, ['$arraySort', [SORT_NUMBERS]])).toEqual([
-  //     '1',
-  //     '9',
-  //     '11',
-  //     '12',
-  //   ])
-
-  //   expect(evaluate(context, ['$arraySort', [SORT_NUMBERS, 'DESC']])).toEqual([
-  //     '12',
-  //     '11',
-  //     '9',
-  //     '1',
-  //   ])
-  // })
 })
 
 describe('$arrayPush', () => {

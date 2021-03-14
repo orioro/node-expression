@@ -13,6 +13,7 @@ Array [
   "$arrayAt",
   "$arrayEvery",
   "$arrayFilter",
+  "$arrayFilterAsyncParallel",
   "$arrayFilterAsyncSerial",
   "$arrayFind",
   "$arrayFindIndex",

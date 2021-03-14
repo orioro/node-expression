@@ -1,10 +1,4 @@
-import { isPlainObject } from 'lodash'
-
-import {
-  InterpreterSpecSingle,
-  InterpreterList,
-  InterpreterFunction,
-} from '../types'
+import { InterpreterSpecSingle, InterpreterFunction } from '../types'
 
 import { syncParamResolver } from './syncParamResolver'
 

@@ -1,4 +1,3 @@
-import { evaluate } from '../evaluate'
 import { VALUE_EXPRESSIONS } from './value'
 import { NUMBER_EXPRESSIONS } from './number'
 import { _prepareEvaluateTestCases } from '../../spec/specUtil'

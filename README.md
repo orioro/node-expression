@@ -106,7 +106,7 @@ TODO
 - [`$arrayLength(array)`](#arraylengtharray)
 - [`$arrayReduce(reduceExp, start, array)`](#arrayreducereduceexp-start-array)
 - [`$arrayMap(mapExp, array)`](#arraymapmapexp-array)
-- [`$arrayEvery(everyExp, array)`](#arrayeveryeveryexp-array)
+- [`$arrayEvery(testExp, array)`](#arrayeverytestexp-array)
 - [`$arraySome(someExp, array)`](#arraysomesomeexp-array)
 - [`$arrayFilter(queryExp, array)`](#arrayfilterqueryexp-array)
 - [`$arrayFindIndex(queryExp, array)`](#arrayfindindexqueryexp-array)
@@ -169,7 +169,7 @@ any of the searched values is in the array.
 - `mapExp` {[Expression](#expression)}
 - `array` {Array}
 
-##### `$arrayEvery(everyExp, array)`
+##### `$arrayEvery(testExp, array)`
 
 `Array.prototype.every`
 
@@ -178,7 +178,7 @@ Result is similar to logical operator `$and`. Main difference
 $arrayEvery exposes array iteration variables:
 `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
 
-- `everyExp` {[Expression](#expression)}
+- `testExp` {[Expression](#expression)}
 - `array` {Array}
 
 ##### `$arraySome(someExp, array)`

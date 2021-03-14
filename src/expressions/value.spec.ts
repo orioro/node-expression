@@ -1,4 +1,3 @@
-import { evaluate } from '../evaluate'
 import { MATH_EXPRESSIONS } from './math'
 import { LOGICAL_EXPRESSIONS } from './logical'
 import { COMPARISON_EXPRESSIONS } from './comparison'
@@ -39,32 +38,6 @@ describe('$value', () => {
       ['TEST', [['$value']], [['$value']]],
     ])
   })
-
-  // test("[['$value']]", () => {
-  //   expect(
-  //     evaluate(
-  //       {
-  //         interpreters: syncInterpreters,
-  //         scope: {
-  //           $$VALUE: 'TEST',
-  //         },
-  //       },
-  //       ['$value']
-  //     )
-  //   ).toEqual('TEST')
-
-  //   expect(
-  //     evaluate(
-  //       {
-  //         interpreters: syncInterpreters,
-  //         scope: {
-  //           $$VALUE: 'TEST',
-  //         },
-  //       },
-  //       [['$value']]
-  //     )
-  //   ).toEqual([['$value']])
-  // })
 })
 
 describe('$evaluate', () => {

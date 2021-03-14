@@ -1,4 +1,3 @@
-import { evaluate } from '../evaluate'
 import { $value } from './value'
 import { $boolean } from './boolean'
 

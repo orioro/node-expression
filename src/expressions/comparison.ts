@@ -2,11 +2,9 @@
 
 import { isEqual } from 'lodash'
 
-import { evaluate, evaluateTyped } from '../evaluate'
+import { evaluate } from '../evaluate'
 
 import { EvaluationContext, PlainObject, InterpreterSpec } from '../types'
-
-import { $$VALUE } from './value'
 
 /**
  * Checks if the two values

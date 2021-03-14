@@ -1,18 +1,6 @@
-import { evaluate } from '../evaluate'
 import { $stringSubstr } from './string'
 import { $and } from './logical'
-import {
-  $eq,
-  $notEq,
-  $in,
-  $notIn,
-  $gt,
-  $gte,
-  $lt,
-  $lte,
-  $matches,
-  COMPARISON_EXPRESSIONS,
-} from './comparison'
+import { COMPARISON_EXPRESSIONS } from './comparison'
 import { $value } from './value'
 
 import { _prepareEvaluateTestCases } from '../../spec/specUtil'

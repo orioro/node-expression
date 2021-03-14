@@ -1,9 +1,13 @@
+import { PlainObject } from '../types'
+
 type PropertyResolverFunction = (value: any, key: string) => any
 
+const _defaulrPropertyResolver: PropertyResolverFunction = (value) => value
+
 export const promiseResolveObject = (
-  object,
-  resolver: PropertyResolverFunction = (value) => value
-) => {
+  object: PlainObject,
+  resolver: PropertyResolverFunction = _defaulrPropertyResolver
+): Promise<PlainObject> => {
   const keys = Object.keys(object)
 
   return Promise.all(keys.map((key) => resolver(object[key], key))).then(

@@ -1,6 +1,6 @@
-import { get, set, isPlainObject } from 'lodash'
+import { get, isPlainObject } from 'lodash'
 
-import { evaluate, isExpression } from '../evaluate'
+import { evaluate } from '../evaluate'
 
 import { $objectFormatSync, $objectFormatAsync } from './object/objectFormat'
 

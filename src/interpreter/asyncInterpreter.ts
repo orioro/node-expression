@@ -1,14 +1,6 @@
-import { isPlainObject } from 'lodash'
-
-import {
-  InterpreterSpecSingle,
-  InterpreterList,
-  InterpreterFunction,
-} from '../types'
+import { InterpreterSpecSingle, InterpreterFunction } from '../types'
 
 import { asyncParamResolver } from './asyncParamResolver'
-
-import { promiseResolveObject } from '../util/promiseResolveObject'
 
 export const asyncInterpreter = (
   spec: InterpreterSpecSingle
@@ -39,25 +31,4 @@ export const asyncInterpreter = (
         return resolver(context, arg)
       })
     ).then((resolvedArgs) => fn(...resolvedArgs, context))
-  // .then((result) => {
-  //   if (Array.isArray(result)) {
-  //     return Promise.all(result)
-  //   } else if (isPlainObject(result)) {
-  //     return result
-  //     // return promiseResolveObject(result, (value, key) => value)
-  //   } else {
-  //     return result
-  //   }
-  // })
 }
-
-// export const asyncInterpreterList = (
-//   specs: InterpreterList
-// ): InterpreterFunctionList =>
-//   Object.keys(specs).reduce(
-//     (acc, interperterId) => ({
-//       ...acc,
-//       [interperterId]: asyncInterpreter(specs[interperterId]),
-//     }),
-//     {}
-//   )
