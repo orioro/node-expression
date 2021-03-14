@@ -1,6 +1,4 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter/syncInterpreter'
-import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { $value } from './value'
 import { TYPE_EXPRESSIONS, typeExpressions } from './type'
 import { testCases } from '@orioro/jest-util'
@@ -11,13 +9,7 @@ const EXP = {
   ...TYPE_EXPRESSIONS,
 }
 
-const syncInterpreters = syncInterpreterList(EXP)
-const asyncInterpreters = asyncInterpreterList(EXP)
-
-const _evTestCases = _prepareEvaluateTestCases({
-  syncInterpreters,
-  asyncInterpreters,
-})
+const _evTestCases = _prepareEvaluateTestCases(EXP)
 
 describe('$type', () => {
   _evTestCases([
@@ -57,14 +49,8 @@ describe('typeExpressions(types)', () => {
   }
 
   const _evTestCases = _prepareEvaluateTestCases({
-    syncInterpreters: syncInterpreterList({
-      ...EXP,
-      ...customTypeExps,
-    }),
-    asyncInterpreters: asyncInterpreterList({
-      ...EXP,
-      ...customTypeExps,
-    }),
+    ...EXP,
+    ...customTypeExps,
   })
 
   describe('$customType', () => {

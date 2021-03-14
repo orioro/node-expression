@@ -1,6 +1,4 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter/syncInterpreter'
-import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { $stringSubstr } from './string'
 import { $and } from './logical'
 import {
@@ -26,13 +24,7 @@ const EXPS = {
   ...COMPARISON_EXPRESSIONS,
 }
 
-const syncInterpreters = syncInterpreterList(EXPS)
-const asyncInterpreters = asyncInterpreterList(EXPS)
-
-const _evTestCases = _prepareEvaluateTestCases({
-  syncInterpreters,
-  asyncInterpreters,
-})
+const _evTestCases = _prepareEvaluateTestCases(EXPS)
 
 describe('$eq / $notEq', () => {
   describe('string', () => {

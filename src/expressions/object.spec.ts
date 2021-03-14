@@ -1,6 +1,4 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter/syncInterpreter'
-import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { $value } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { ARRAY_EXPRESSIONS } from './array'
@@ -19,31 +17,7 @@ const EXP = {
   ...OBJECT_EXPRESSIONS,
 }
 
-const syncInterpreters = syncInterpreterList(EXP)
-const asyncInterpreters = asyncInterpreterList(EXP)
-
-const _evTestCases = _prepareEvaluateTestCases({
-  syncInterpreters,
-  asyncInterpreters,
-})
-
-const context = {
-  interpreters: syncInterpreters,
-  scope: {
-    $$VALUE: {
-      name: 'João Silva',
-      age: 50,
-      mother: {
-        name: 'Maria do Carmo',
-        age: 76,
-      },
-      father: {
-        name: 'Galvão Queiroz',
-        age: 74,
-      },
-    },
-  },
-}
+const _evTestCases = _prepareEvaluateTestCases(EXP)
 
 describe('$objectMatches', () => {
   const DATA = {
@@ -241,15 +215,19 @@ describe('$objectFormat', () => {
 
     describe('with object items', () => {
       _evTestCases([
-        [DATA, [
-          '$objectFormat',
+        [
+          DATA,
           [
-            'father.name',
-            {
-              fatherName: 'father.name',
-            },
+            '$objectFormat',
+            [
+              'father.name',
+              {
+                fatherName: 'father.name',
+              },
+            ],
           ],
-        ], ['Galvão Queiroz', { fatherName: 'Galvão Queiroz' }]]
+          ['Galvão Queiroz', { fatherName: 'Galvão Queiroz' }],
+        ],
       ])
     })
   })
@@ -268,8 +246,8 @@ describe('$objectDefaults', () => {
             propC: 'defaultC',
           },
         ],
-        { propA: 'valueA', propB: 'valueB', propC: 'defaultC' }
-      ]
+        { propA: 'valueA', propB: 'valueB', propC: 'defaultC' },
+      ],
     ])
   })
 
@@ -303,8 +281,8 @@ describe('$objectDefaults', () => {
             propCB: 'defaultValueCB',
           },
           propD: 'defaultValueD',
-        }
-      ]
+        },
+      ],
     ])
   })
 
@@ -337,8 +315,8 @@ describe('$objectDefaults', () => {
             { id: 'B3', foo: 3 },
           ],
           propC: 'defaultC',
-        }
-      ]
+        },
+      ],
     ])
   })
 })
@@ -362,8 +340,8 @@ describe('$objectAssign', () => {
           propA: 'assignA',
           propB: 'valueB',
           propC: 'assignC',
-        }
-      ]
+        },
+      ],
     ])
   })
 
@@ -394,8 +372,8 @@ describe('$objectAssign', () => {
             propBB: 'assignBB',
           },
           propC: 'valueC',
-        }
-      ]
+        },
+      ],
     ])
   })
 })
@@ -405,7 +383,7 @@ describe('$objectKeys', () => {
     [
       { key1: 'value1', key2: 'value2', key3: 'value3' },
       ['$objectKeys'],
-      ['key1', 'key2', 'key3']
-    ]
+      ['key1', 'key2', 'key3'],
+    ],
   ])
 })

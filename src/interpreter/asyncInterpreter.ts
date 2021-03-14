@@ -1,31 +1,18 @@
 import { isPlainObject } from 'lodash'
 
 import {
-  Interpreter,
+  InterpreterSpecSingle,
   InterpreterList,
   InterpreterFunction,
-  InterpreterFunctionList,
 } from '../types'
 
 import { asyncParamResolver } from './asyncParamResolver'
 
 import { promiseResolveObject } from '../util/promiseResolveObject'
 
-export const asyncInterpreter = (spec: Interpreter): InterpreterFunction => {
-  if (typeof spec === 'function') {
-    return spec
-  } else if (Array.isArray(spec)) {
-    // do nothing
-  } else if (isPlainObject(spec)) {
-    if (typeof spec.async === 'function') {
-      return spec.async
-    } else {
-      spec = spec.async
-    }
-  } else {
-    throw new Error(`Invalid Interpreter ${spec}`)
-  }
-
+export const asyncInterpreter = (
+  spec: InterpreterSpecSingle
+): InterpreterFunction => {
   const [
     fn,
     paramResolvers,
@@ -64,13 +51,13 @@ export const asyncInterpreter = (spec: Interpreter): InterpreterFunction => {
   // })
 }
 
-export const asyncInterpreterList = (
-  specs: InterpreterList
-): InterpreterFunctionList =>
-  Object.keys(specs).reduce(
-    (acc, interperterId) => ({
-      ...acc,
-      [interperterId]: asyncInterpreter(specs[interperterId]),
-    }),
-    {}
-  )
+// export const asyncInterpreterList = (
+//   specs: InterpreterList
+// ): InterpreterFunctionList =>
+//   Object.keys(specs).reduce(
+//     (acc, interperterId) => ({
+//       ...acc,
+//       [interperterId]: asyncInterpreter(specs[interperterId]),
+//     }),
+//     {}
+//   )

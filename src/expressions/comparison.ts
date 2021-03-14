@@ -4,11 +4,7 @@ import { isEqual } from 'lodash'
 
 import { evaluate, evaluateTyped } from '../evaluate'
 
-import {
-  EvaluationContext,
-  PlainObject,
-  InterpreterSpec,
-} from '../types'
+import { EvaluationContext, PlainObject, InterpreterSpec } from '../types'
 
 import { $$VALUE } from './value'
 
@@ -131,15 +127,15 @@ export const $matches: InterpreterSpec = [
     if (criteriaKeys.length === 0) {
       throw new Error(`Invalid criteria: ${JSON.stringify(criteria)}`)
     }
-    
-    return evaluate(
-      context,
-      ['$and', criteriaKeys.map(criteriaKey => [
+
+    return evaluate(context, [
+      '$and',
+      criteriaKeys.map((criteriaKey) => [
         criteriaKey,
         criteria[criteriaKey],
-        value
-      ])]
-    )
+        value,
+      ]),
+    ])
   },
   ['object', 'any'],
 ]

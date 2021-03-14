@@ -34,10 +34,7 @@ export const $or: InterpreterSpec = [
  * @param {Array} expressionsExp
  * @returns {Boolean}
  */
-export const $not: InterpreterSpec = [
-  (value: any): boolean => !value,
-  ['any'],
-]
+export const $not: InterpreterSpec = [(value: any): boolean => !value, ['any']]
 
 /**
  * @function $nor

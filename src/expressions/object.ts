@@ -7,11 +7,7 @@ import { $objectFormatSync, $objectFormatAsync } from './object/objectFormat'
 import { objectDeepApplyDefaults } from '../util/deepApplyDefaults'
 import { objectDeepAssign } from '../util/deepAssign'
 
-import {
-  EvaluationContext,
-  PlainObject,
-  InterpreterSpec,
-} from '../types'
+import { EvaluationContext, PlainObject, InterpreterSpec } from '../types'
 
 /**
  * @function $objectMatches
@@ -33,16 +29,16 @@ export const $objectMatches: InterpreterSpec = [
       )
     }
 
-    return evaluate(
-      context,
-      ['$and', paths.map(path => [
+    return evaluate(context, [
+      '$and',
+      paths.map((path) => [
         '$matches',
         isPlainObject(criteriaByPath[path])
           ? criteriaByPath[path]
           : { $eq: criteriaByPath[path] },
-        get(value, path)
-      ])]
-    )
+        get(value, path),
+      ]),
+    ])
 
     // return paths.every((path) => {
     //   //
@@ -66,7 +62,6 @@ export const $objectMatches: InterpreterSpec = [
   ['object', 'object'],
 ]
 
-
 /**
  * @function $objectFormat
  * @param {Object | Array} format
@@ -75,7 +70,7 @@ export const $objectMatches: InterpreterSpec = [
  */
 export const $objectFormat = {
   sync: $objectFormatSync,
-  async: $objectFormatAsync
+  async: $objectFormatAsync,
 }
 
 /**

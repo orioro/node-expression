@@ -1,6 +1,4 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter/syncInterpreter'
-import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { MATH_EXPRESSIONS } from './math'
 import { _prepareEvaluateTestCases } from '../../spec/specUtil'
@@ -10,13 +8,7 @@ const EXP = {
   ...MATH_EXPRESSIONS,
 }
 
-const syncInterpreters = syncInterpreterList(EXP)
-const asyncInterpreters = asyncInterpreterList(EXP)
-
-const _evTestCases = _prepareEvaluateTestCases({
-  syncInterpreters,
-  asyncInterpreters,
-})
+const _evTestCases = _prepareEvaluateTestCases(EXP)
 
 describe('operations', () => {
   _evTestCases([
@@ -72,19 +64,13 @@ describe('$mathMin', () => {
 })
 
 describe('$mathRound', () => {
-  _evTestCases([
-    [10.1, ['$mathRound'], 10],
-  ])
+  _evTestCases([[10.1, ['$mathRound'], 10]])
 })
 
 describe('$mathFloor', () => {
-  _evTestCases([
-    [10.1, ['$mathFloor'], 10],
-  ])
+  _evTestCases([[10.1, ['$mathFloor'], 10]])
 })
 
 describe('$mathCeil', () => {
-  _evTestCases([
-    [10.1, ['$mathCeil'], 11],
-  ])
+  _evTestCases([[10.1, ['$mathCeil'], 11]])
 })

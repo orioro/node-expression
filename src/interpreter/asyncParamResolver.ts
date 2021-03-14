@@ -77,8 +77,10 @@ export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
       return (context, value) =>
         evaluateTypedAsync('object', context, value)
           .then((unresolvedObject) =>
-            promiseResolveObject(unresolvedObject, (propertyValue, propertyKey) =>
-              propertyParamResolvers[propertyKey](context, propertyValue)
+            promiseResolveObject(
+              unresolvedObject,
+              (propertyValue, propertyKey) =>
+                propertyParamResolvers[propertyKey](context, propertyValue)
             )
           )
           .then((resolvedObject) => {

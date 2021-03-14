@@ -1,4 +1,5 @@
 import { evaluateTyped } from './evaluate'
+import { interpreterList } from './interpreter/interpreter'
 
 describe('evaluateTyped(expectedTypes, context, value)', () => {
   test('simple type - example: number', () => {
@@ -57,9 +58,9 @@ describe('evaluateTyped(expectedTypes, context, value)', () => {
         evaluateTyped(
           'array',
           {
-            interpreters: {
+            interpreters: interpreterList({
               $someExpression: () => 'text',
-            },
+            }),
             scope: { $$VALUE: 'aa' },
           },
           ['$someExpression']
@@ -71,9 +72,9 @@ describe('evaluateTyped(expectedTypes, context, value)', () => {
       evaluateTyped(
         'array',
         {
-          interpreters: {
+          interpreters: interpreterList({
             $someExpression: () => ['item-1', 'item-2'],
-          },
+          }),
           scope: { $$VALUE: 'aa' },
         },
         ['$someExpression']

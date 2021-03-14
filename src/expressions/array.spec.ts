@@ -1,6 +1,4 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter/syncInterpreter'
-import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { COMPARISON_EXPRESSIONS } from './comparison'
 import { LOGICAL_EXPRESSIONS } from './logical'
@@ -23,13 +21,7 @@ const EXPRESSIONS = {
   ...ARRAY_EXPRESSIONS,
 }
 
-const syncInterpreters = syncInterpreterList(EXPRESSIONS)
-const asyncInterpreters = asyncInterpreterList(EXPRESSIONS)
-
-const _evTestCases = _prepareEvaluateTestCases({
-  syncInterpreters,
-  asyncInterpreters,
-})
+const _evTestCases = _prepareEvaluateTestCases(EXPRESSIONS)
 
 describe('$arrayIncludes', () => {
   _evTestCases([
@@ -198,7 +190,7 @@ describe('$arrayReverse', () => {
   ])
 })
 
-describe.skip('$arraySort', () => {
+describe('$arraySort', () => {
   describe('basic usage', () => {
     _evTestCases([
       [['B', 'D', 'C', 'A'], ['$arraySort'], ['A', 'B', 'C', 'D']],
@@ -313,11 +305,6 @@ describe('$arraySlice', () => {
 })
 
 describe('$arrayReplace', () => {
-  const context = {
-    interpreters: syncInterpreters,
-    scope: { $$VALUE: ['0', '1', '2', '3'] },
-  }
-
   const BASE_VALUE = ['0', '1', '2', '3']
 
   describe('index', () => {
@@ -373,15 +360,23 @@ describe('$arrayAddAt', () => {
 
 describe('$arrayRemoveAt', () => {
   _evTestCases([
-    [['A', 'B', 'C', 'D'], ['$arrayRemoveAt', 1, 2], ['A', 'D']],
-    [['A', 'B', 'C', 'D'], ['$arrayRemoveAt', 1], ['A', 'C', 'D']]
+    [
+      ['A', 'B', 'C', 'D'],
+      ['$arrayRemoveAt', 1, 2],
+      ['A', 'D'],
+    ],
+    [
+      ['A', 'B', 'C', 'D'],
+      ['$arrayRemoveAt', 1],
+      ['A', 'C', 'D'],
+    ],
   ])
 })
 
 describe('$arrayJoin', () => {
   _evTestCases([
     [['A', 'B', 'C', 'D'], ['$arrayJoin', '_'], 'A_B_C_D'],
-    [['A', 'B', 'C', 'D'], ['$arrayJoin'], 'ABCD']
+    [['A', 'B', 'C', 'D'], ['$arrayJoin'], 'ABCD'],
   ])
 })
 
@@ -390,7 +385,7 @@ describe('$arrayAt', () => {
     [['A', 'B', 'C', 'D'], ['$arrayAt', 0], 'A'],
     [['A', 'B', 'C', 'D'], ['$arrayAt', 3], 'D'],
     [['A', 'B', 'C', 'D'], ['$arrayAt', 4], undefined],
-    [['A', 'B', 'C', 'D'], ['$arrayAt', '0'], TypeError]
+    [['A', 'B', 'C', 'D'], ['$arrayAt', '0'], TypeError],
   ])
 })
 
@@ -408,7 +403,7 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
 
     _evTestCases([
       [[1, 2, 3, 4], ITEMS_UNIQUE_EXP, true],
-      [[1, 2, 3, 1], ITEMS_UNIQUE_EXP, false]
+      [[1, 2, 3, 1], ITEMS_UNIQUE_EXP, false],
     ])
   })
 
@@ -421,7 +416,7 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
 
     _evTestCases([
       [[1, 2, 3, 4], ITEMS_UNIQUE_EXP, true],
-      [[1, 2, 3, 1], ITEMS_UNIQUE_EXP, false]
+      [[1, 2, 3, 1], ITEMS_UNIQUE_EXP, false],
     ])
   })
 })
@@ -429,6 +424,6 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
 describe('$arraySome', () => {
   _evTestCases([
     [[1, 2, 3, 4], ['$arraySome', ['$eq', 0, ['$mathMod', 2]]], true],
-    [[1, 3, 5, 7], ['$arraySome', ['$eq', 0, ['$mathMod', 2]]], false]
+    [[1, 3, 5, 7], ['$arraySome', ['$eq', 0, ['$mathMod', 2]]], false],
   ])
 })

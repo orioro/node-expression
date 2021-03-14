@@ -72,10 +72,15 @@ export type InterpreterSpecSingle = [
 ]
 export type InterpreterSpec =
   | InterpreterSpecSingle
+  | InterpreterFunction
   | {
-      sync: InterpreterSpecSingle | InterpreterFunction
-      async: InterpreterSpecSingle | InterpreterFunction
+      sync: InterpreterSpecSingle | InterpreterFunction | null
+      async: InterpreterSpecSingle | InterpreterFunction | null
     }
+
+export type InterpreterSpecList = {
+  [key: string]: InterpreterSpec
+}
 
 /**
  * Function that receives as first parameter the EvaluationContext
@@ -88,7 +93,19 @@ export type InterpreterFunction = (
   ...args: any[]
 ) => any
 
-export type Interpreter = InterpreterSpec | InterpreterFunction
+export type Interpreter = {
+  sync: InterpreterFunction
+  async: InterpreterFunction
+}
+
+/**
+ * @typedef {Object} InterpreterList
+ * @property {Object} interpreterList
+ * @property {Interpreter} interpreterList.{{ expressionName }}
+ */
+export type InterpreterList = {
+  [key: string]: Interpreter
+}
 
 /**
  * @typedef {Object} EvaluationScope
@@ -114,31 +131,13 @@ export type EvaluationScope = {
 }
 
 /**
- * @typedef {Object} InterpreterList
- * @property {Object} interpreterList
- * @property {Interpreter} interpreterList.{{ expressionName }}
- */
-export type InterpreterList = {
-  [key: string]: Interpreter
-}
-
-export type InterpreterFunctionList = {
-  [key: string]: InterpreterFunction
-}
-
-export type InterpreterSet = {
-  sync: InterpreterFunctionList
-  async: InterpreterFunctionList
-}
-
-/**
  * @typedef {Object} EvaluationContext
  * @property {Object} context
  * @property {InterpreterFunctionList} context.interpreters
  * @property {EvaluationScope} context.scope
  */
 export type EvaluationContext = {
-  interpreters: InterpreterSet
+  interpreters: InterpreterList
   scope: EvaluationScope
   async?: boolean
 }

@@ -10,7 +10,8 @@ import {
   InterpreterSpecSingle,
 } from '../../types'
 
-const _parseFormat = format => typeof format === 'string' ? ['$value', format] : format
+const _parseFormat = (format) =>
+  typeof format === 'string' ? ['$value', format] : format
 
 const _formatSync = (context, format, source) => {
   format = _parseFormat(format)
@@ -28,7 +29,6 @@ const _formatSync = (context, format, source) => {
       _formatSync(context, nestedTargetValue, source)
     )
   } else if (isPlainObject(format)) {
-
     const targetPaths = Object.keys(format)
 
     return targetPaths.reduce((acc, targetPath) => {
@@ -53,11 +53,15 @@ const _formatAsync = (context, format, source) => {
       format
     )
   } else if (Array.isArray(format)) {
-    return Promise.all(format.map((nestedTargetValue) =>
-      _formatAsync(context, nestedTargetValue, source)
-    ))
+    return Promise.all(
+      format.map((nestedTargetValue) =>
+        _formatAsync(context, nestedTargetValue, source)
+      )
+    )
   } else if (isPlainObject(format)) {
-    return promiseResolveObject(format, (propertyValue) => _formatAsync(context, propertyValue, source))
+    return promiseResolveObject(format, (propertyValue) =>
+      _formatAsync(context, propertyValue, source)
+    )
   } else {
     throw `Invalid $objectFormat item: ${format}`
   }

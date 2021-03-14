@@ -1,8 +1,4 @@
-import {
-  EvaluationContext,
-  Expression,
-  InterpreterSpec,
-} from '../types'
+import { EvaluationContext, Expression, InterpreterSpec } from '../types'
 
 import { evaluate } from '../evaluate'
 

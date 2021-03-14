@@ -7,13 +7,11 @@ import {
   indefiniteArrayOfType,
   indefiniteObjectOfType,
 } from '@orioro/typing'
+import { interpreterList } from './interpreter'
 import { syncParamResolver } from './syncParamResolver'
-import { syncInterpreterList } from './syncInterpreter'
 import { asyncParamResolver } from './asyncParamResolver'
-import { asyncInterpreterList } from './asyncInterpreter'
 
-const syncInterpreters = syncInterpreterList(ALL_EXPRESSIONS)
-const asyncInterpreters = asyncInterpreterList(ALL_EXPRESSIONS)
+const interpreters = interpreterList(ALL_EXPRESSIONS)
 
 const _resolverTestCases = (cases, paramSpec) => {
   const syncResolver = syncParamResolver(paramSpec)
@@ -24,7 +22,7 @@ const _resolverTestCases = (cases, paramSpec) => {
     (scopeValue, valueToResolve) => {
       return syncResolver(
         {
-          interpreters: syncInterpreters,
+          interpreters,
           scope: {
             $$VALUE: scopeValue,
           },
@@ -45,7 +43,7 @@ const _resolverTestCases = (cases, paramSpec) => {
     (scopeValue, valueToResolve) => {
       return asyncResolver(
         {
-          interpreters: asyncInterpreters,
+          interpreters,
           scope: {
             $$VALUE: scopeValue,
           },

@@ -1,6 +1,4 @@
 import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter/syncInterpreter'
-import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { STRING_EXPRESSIONS } from './string'
 import { _prepareEvaluateTestCases } from '../../spec/specUtil'
@@ -10,13 +8,7 @@ const EXP = {
   ...STRING_EXPRESSIONS,
 }
 
-const syncInterpreters = syncInterpreterList(EXP)
-const asyncInterpreters = asyncInterpreterList(EXP)
-
-const _evTestCases = _prepareEvaluateTestCases({
-  syncInterpreters,
-  asyncInterpreters,
-})
+const _evTestCases = _prepareEvaluateTestCases(EXP)
 
 describe('$string', () => {
   const expectations = [
@@ -52,11 +44,6 @@ describe('$string', () => {
 })
 
 describe('$stringStartsWith', () => {
-  const context = {
-    interpreters: syncInterpreters,
-    scope: { $$VALUE: 'some_string' },
-  }
-
   _evTestCases([
     ['some_string', ['$stringStartsWith', 'some'], true],
     ['some_string', ['$stringStartsWith', 'somethingelse'], false],
@@ -78,11 +65,6 @@ describe('$stringSubstr', () => {
 })
 
 describe('$stringConcat', () => {
-  const context = {
-    interpreters: syncInterpreters,
-    scope: { $$VALUE: 'some_string' },
-  }
-
   describe('single string', () => {
     _evTestCases([
       [
@@ -178,7 +160,7 @@ describe('$stringInterpolate(data, string)', () => {
     const template = '1: ${0}; 2: ${1}; 3: ${2}'
 
     _evTestCases([
-      [template, ['$stringInterpolate', data], '1: first; 2: second; 3: third']
+      [template, ['$stringInterpolate', data], '1: first; 2: second; 3: third'],
     ])
   })
 

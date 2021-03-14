@@ -4,9 +4,9 @@ import {
   resultLabel,
   variableName,
 } from '@orioro/jest-util'
-import { evaluate } from '../evaluate'
-import { syncInterpreterList } from '../interpreter/syncInterpreter'
-import { asyncInterpreterList } from '../interpreter/asyncInterpreter'
+import { evaluate, evaluateAsync } from '../evaluate'
+import { AsyncModeUnsupportedError, SyncModeUnsupportedError } from '../errors'
+import { interpreterList } from '../interpreter/interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
 import { LOGICAL_EXPRESSIONS } from './logical'
@@ -17,7 +17,10 @@ import { MATH_EXPRESSIONS } from './math'
 
 import { _prepareEvaluateTestCases } from '../../spec/specUtil'
 
-const COMMON_EXPRESSIONS = {
+const delayValue = (value, ms = 100) =>
+  new Promise((resolve) => setTimeout(resolve.bind(null, value), ms))
+
+const EXP = {
   ...VALUE_EXPRESSIONS,
   ...BOOLEAN_EXPRESSIONS,
   ...LOGICAL_EXPRESSIONS,
@@ -25,29 +28,17 @@ const COMMON_EXPRESSIONS = {
   ...COMPARISON_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
+  // $asyncValue: (context, ...args) =>
+  //   delayValue(evaluate(context, ['$value', ...args])),
+  // $asyncNum50: () => delayValue(50),
+  // $asyncNum100: () => delayValue(100),
+  // $asyncStr1: () => delayValue('str1'),
+  // $asyncStr2: () => delayValue('str2'),
+  // $asyncFalse: () => delayValue(false),
+  // $asyncTrue: () => delayValue(true),
 }
 
-const syncInterpreters = syncInterpreterList(COMMON_EXPRESSIONS)
-
-const delayValue = (value, ms = 100) =>
-  new Promise((resolve) => setTimeout(resolve.bind(null, value), ms))
-
-const asyncInterpreters = asyncInterpreterList({
-  ...COMMON_EXPRESSIONS,
-  $asyncValue: (context, ...args) =>
-    delayValue(evaluate(context, ['$value', ...args])),
-  $asyncNum50: () => delayValue(50),
-  $asyncNum100: () => delayValue(100),
-  $asyncStr1: () => delayValue('str1'),
-  $asyncStr2: () => delayValue('str2'),
-  $asyncFalse: () => delayValue(false),
-  $asyncTrue: () => delayValue(true),
-})
-
-const _evTestCases = _prepareEvaluateTestCases({
-  syncInterpreters,
-  asyncInterpreters,
-})
+const _evTestCases = _prepareEvaluateTestCases(EXP)
 
 describe('$and', () => {
   describe('error situations', () => {
@@ -85,7 +76,7 @@ describe('$and', () => {
 
     evaluate(
       {
-        interpreters: syncInterpreters,
+        interpreters: interpreterList(EXP),
         scope: {
           $$VALUE: [
             ['$unknownExpression', 1, 2],
@@ -170,18 +161,38 @@ describe('$and', () => {
     const MIN_VALUE = 20
     const MAX_VALUE = 50
 
-    const asyncInterpreters = asyncInterpreterList({
+    // const interpreters = interpreterList({
+    //   ...VALUE_EXPRESSIONS,
+    //   ...LOGICAL_EXPRESSIONS,
+    //   ...COMPARISON_EXPRESSIONS,
+    //   $asyncGetMinValue: () =>
+    //     new Promise((resolve) => {
+    //       setTimeout(resolve.bind(null, MIN_VALUE), 100)
+    //     }),
+    //   $asyncGetMaxValue: () =>
+    //     new Promise((resolve) => {
+    //       setTimeout(resolve.bind(null, MAX_VALUE), 100)
+    //     }),
+    // })
+
+    const _evTestCases = _prepareEvaluateTestCases({
       ...VALUE_EXPRESSIONS,
       ...LOGICAL_EXPRESSIONS,
       ...COMPARISON_EXPRESSIONS,
-      $asyncGetMinValue: () =>
-        new Promise((resolve) => {
-          setTimeout(resolve.bind(null, MIN_VALUE), 100)
-        }),
-      $asyncGetMaxValue: () =>
-        new Promise((resolve) => {
-          setTimeout(resolve.bind(null, MAX_VALUE), 100)
-        }),
+      $asyncGetMinValue: {
+        sync: null,
+        async: () =>
+          new Promise((resolve) => {
+            setTimeout(resolve.bind(null, MIN_VALUE), 100)
+          }),
+      },
+      $asyncGetMaxValue: {
+        sync: null,
+        async: () =>
+          new Promise((resolve) => {
+            setTimeout(resolve.bind(null, MAX_VALUE), 100)
+          }),
+      },
     })
 
     const exp = [
@@ -192,25 +203,17 @@ describe('$and', () => {
       ],
     ]
 
-    testCases(
-      [
-        [30, asyncResult(true)],
-        [20, asyncResult(true)],
-        [10, asyncResult(false)],
-      ],
-      (input) =>
-        evaluate(
-          {
-            interpreters: asyncInterpreters,
-            scope: { $$VALUE: input },
-          },
-          exp
-        ),
-      ([value], result) =>
-        `${value} >= ${MIN_VALUE} && ${value} <= ${MAX_VALUE} -> ${resultLabel(
-          result
-        )}`
-    )
+    _evTestCases.testSyncCases([
+      [30, exp, new SyncModeUnsupportedError('$asyncGetMinValue')],
+      [20, exp, new SyncModeUnsupportedError('$asyncGetMinValue')],
+      [10, exp, new SyncModeUnsupportedError('$asyncGetMinValue')],
+    ])
+
+    _evTestCases.testAsyncCases([
+      [30, exp, true],
+      [20, exp, true],
+      [10, exp, false],
+    ])
   })
 })
 
@@ -326,11 +329,11 @@ describe('$if', () => {
     expect(
       evaluate(
         {
-          interpreters: {
-            ...syncInterpreters,
+          interpreters: interpreterList({
+            ...EXP,
             $expA,
             $expB,
-          },
+          }),
           scope: { $$VALUE: 15 },
         },
         ['$if', ['$gt', 10], ['$expA'], ['$expB']]

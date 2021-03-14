@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import { evaluate, evaluateTyped, isExpression } from '../evaluate'
+import { evaluate, evaluateTypedSync, isExpression } from '../evaluate'
 import {
   EvaluationContext,
   Expression,
@@ -176,15 +176,16 @@ export const $arrayEvery: InterpreterSpec = {
       array: any[],
       context: EvaluationContext
     ): Promise<boolean> =>
-      array.reduce((accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
-        accPromise.then(acc =>
-          acc === true
-            ? evaluate(
-                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-                testExp
-              ).then((result) => Boolean(result))
-            : false
-        ),
+      array.reduce(
+        (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+          accPromise.then((acc) =>
+            acc === true
+              ? evaluate(
+                  _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                  testExp
+                ).then((result) => Boolean(result))
+              : false
+          ),
         Promise.resolve(true)
       ),
     [anyType({ delayEvaluation: true }), 'array'],
@@ -207,19 +208,20 @@ export const $arraySome: InterpreterSpec = {
       array: any[],
       context: EvaluationContext
     ): Promise<boolean> =>
-      array.reduce((accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
-        accPromise.then(acc =>
-          acc === false
-            ? evaluate(
-                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-                testExp
-              ).then((result) => Boolean(result))
-            : true
-        ),
+      array.reduce(
+        (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+          accPromise.then((acc) =>
+            acc === false
+              ? evaluate(
+                  _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                  testExp
+                ).then((result) => Boolean(result))
+              : true
+          ),
         Promise.resolve(false)
       ),
     [anyType({ delayEvaluation: true }), 'array'],
-  ]
+  ],
 }
 
 // export const $arrayFilterAsyncParallel: InterpreterSpecSingle = [
@@ -366,7 +368,7 @@ export const $arraySort: InterpreterSpec = [
       sortExp === undefined
         ? _sortDefault
         : ($$SORT_A, $$SORT_B) =>
-            evaluateTyped(
+            evaluateTypedSync(
               'number',
               {
                 ...context,
