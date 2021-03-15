@@ -1,6 +1,7 @@
 import { TypeSpec, validateType } from '@orioro/typing'
 
 import { Expression, InterpreterList, EvaluationContext } from './types'
+import { SyncModePromiseUnsupportedError } from './errors'
 
 /**
  * @function isExpression
@@ -44,16 +45,27 @@ const _evaluate = (
   context: EvaluationContext,
   expOrValue: Expression | any
 ): any => {
+  let interpreterId
+  let result
+
   if (!isExpression(context.interpreters, expOrValue)) {
-    return expOrValue
+    interpreterId = 'LITERAL_VALUE'
+    result = expOrValue
+  } else {
+    const [_interpreterId, ...interpreterArgs] = expOrValue
+    const interpreter = context.async
+      ? context.interpreters[_interpreterId].async
+      : context.interpreters[_interpreterId].sync
+
+    interpreterId = _interpreterId
+    result = interpreter(context, ...interpreterArgs)
   }
 
-  const [interpreterId, ...interpreterArgs] = expOrValue
-  const interpreter = context.async
-    ? context.interpreters[interpreterId].async
-    : context.interpreters[interpreterId].sync
+  if (!context.async && result instanceof Promise) {
+    throw new SyncModePromiseUnsupportedError(interpreterId)
+  }
 
-  return interpreter(context, ...interpreterArgs)
+  return result
 }
 
 /**
