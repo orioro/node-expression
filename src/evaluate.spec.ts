@@ -1,36 +1,44 @@
-import { evaluateTyped } from './evaluate'
+import 'regenerator-runtime/runtime'
+import { testCases, fnCallLabel, variableName } from '@orioro/jest-util'
+import {
+  evaluate,
+  // evaluateSync,
+  // evaluateAsync,
+  evaluateTyped,
+  // evaluateTypedSync,
+  // evaluateTypedAsync,
+} from './evaluate'
+
+import { ALL_EXPRESSIONS } from './'
+
+import { SyncModePromiseUnsupportedError } from './errors'
+
 import { interpreterList } from './interpreter/interpreter'
 
-describe('evaluateTyped(expectedTypes, context, value)', () => {
-  test('simple type - example: number', () => {
-    expect(() => {
-      console.log(
-        evaluateTyped(
-          'number',
-          {
-            interpreters: {},
-            scope: { $$VALUE: 'aa' },
-          },
-          '1'
-        )
-      )
-    }).toThrow(TypeError)
+import { _prepareEvaluateTestCases } from '../spec/specUtil'
 
+const delay = (value, ms = 100) =>
+  new Promise((resolve) => setTimeout(resolve.bind(null, value), ms))
+
+const _evTestCases = _prepareEvaluateTestCases({
+  ...ALL_EXPRESSIONS,
+  $asyncEcho: async (context, value) => delay(value),
+})
+
+describe('evaluate(context, value)', () => {
+  test('possible unknown expression warning', () => {
     const _warn = console.warn
     console.warn = jest.fn()
 
-    expect(() => {
-      console.log(
-        evaluateTyped(
-          'number',
-          {
-            interpreters: {},
-            scope: { $$VALUE: 'aa' },
-          },
-          ['$someUnknownExpression']
-        )
+    expect(
+      evaluate(
+        {
+          interpreters: {},
+          scope: { $$VALUE: 'aa' },
+        },
+        ['$someUnknownExpression']
       )
-    }).toThrow(TypeError)
+    ).toEqual(['$someUnknownExpression'])
 
     expect(console.warn).toHaveBeenCalledWith(
       'Possible missing expression error: ["$someUnknownExpression"]. ' +
@@ -38,47 +46,66 @@ describe('evaluateTyped(expectedTypes, context, value)', () => {
     )
     console.warn = _warn
   })
+})
 
-  test('array object type', () => {
-    expect(() => {
-      console.log(
-        evaluateTyped(
-          'array',
-          {
-            interpreters: {},
-            scope: { $$VALUE: 'aa' },
-          },
-          '1'
-        )
-      )
-    }).toThrow(TypeError)
+describe('evaluateSync(context, expression)', () => {
+  _evTestCases.testSyncCases([
+    [
+      'any-value',
+      Promise.resolve(10),
+      new SyncModePromiseUnsupportedError('LITERAL_VALUE'),
+    ],
+    [
+      'any-value',
+      new Promise(() => {}), // eslint-disable-line @typescript-eslint/no-empty-function
+      new SyncModePromiseUnsupportedError('LITERAL_VALUE'),
+    ],
+    [
+      'any-value',
+      ['$asyncEcho', 'Some async value'],
+      new SyncModePromiseUnsupportedError('$asyncEcho'),
+    ],
+  ])
+})
 
-    expect(() => {
-      console.log(
-        evaluateTyped(
-          'array',
-          {
-            interpreters: interpreterList({
-              $someExpression: () => 'text',
-            }),
-            scope: { $$VALUE: 'aa' },
-          },
-          ['$someExpression']
-        )
-      )
-    }).toThrow(TypeError)
+describe('evaluateAsync(context, expression)', () => {
+  _evTestCases.testAsyncCases([
+    ['any-value', 10, 10],
+    ['any-value', Promise.resolve(10), 10],
+    ['any-value', ['$asyncEcho', 'Some async value'], 'Some async value'],
+  ])
+})
 
-    expect(
+describe('evaluateTyped(expectedTypes, context, expression)', () => {
+  testCases(
+    [
+      ['string', ['$getStrExp'], 'some_string'],
+      ['string', 'some_other_string', 'some_other_string'],
+      ['string', 1, TypeError],
+      ['number', 1, 1],
+      ['number', '1', TypeError],
+      ['array', ['1', 1], ['1', 1]],
+      ['array', '1', TypeError],
+      ['array', ['$getStrExp'], TypeError],
+      ['array', ['$getArrExp'], ['item-1', 'item-2']],
+    ],
+    (type, expression) =>
       evaluateTyped(
-        'array',
+        type,
         {
           interpreters: interpreterList({
-            $someExpression: () => ['item-1', 'item-2'],
+            $getStrExp: () => 'some_string',
+            $getArrExp: () => ['item-1', 'item-2'],
           }),
-          scope: { $$VALUE: 'aa' },
+          scope: { $$VALUE: 'any-value' },
         },
-        ['$someExpression']
+        expression
+      ),
+    ([type, expression], result) =>
+      fnCallLabel(
+        'evaluateTyped',
+        [type, variableName('context'), expression],
+        result
       )
-    ).toEqual(['item-1', 'item-2'])
-  })
+  )
 })

@@ -1,12 +1,6 @@
-export class EvaluationError extends Error {}
-
-export class AsyncModeUnsupportedError extends EvaluationError {
-  constructor(interpreterId: string, message?: string) {
-    super(
-      message
-        ? message
-        : `Interpreter \`${interpreterId}\` does not support ASYNC mode`
-    )
+export class EvaluationError extends Error {
+  constructor(interpreterId: string, message: string) {
+    super(`Interpreter \`${interpreterId}\`: ${message}`)
 
     this.interpreterId = interpreterId
   }
@@ -14,16 +8,20 @@ export class AsyncModeUnsupportedError extends EvaluationError {
   interpreterId: string
 }
 
-export class SyncModeUnsupportedError extends EvaluationError {
-  constructor(interpreterId: string, message?: string) {
-    super(
-      message
-        ? message
-        : `Interpreter \`${interpreterId}\` does not support SYNC mode`
-    )
-
-    this.interpreterId = interpreterId
+export class SyncModePromiseUnsupportedError extends EvaluationError {
+  constructor(interpreterId: string) {
+    super(interpreterId, 'Promise is an invalid evaluation result in SYNC mode')
   }
+}
 
-  interpreterId: string
+export class AsyncModeUnsupportedError extends EvaluationError {
+  constructor(interpreterId: string) {
+    super(interpreterId, 'ASYNC mode unsupported')
+  }
+}
+
+export class SyncModeUnsupportedError extends EvaluationError {
+  constructor(interpreterId: string) {
+    super(interpreterId, 'SYNC mode unsupported')
+  }
 }
