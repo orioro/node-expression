@@ -1,5 +1,4 @@
 import { evaluate } from '../evaluate'
-import { SyncModeUnsupportedError } from '../errors'
 import { interpreterList } from '../interpreter/interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
@@ -9,10 +8,16 @@ import { COMPARISON_EXPRESSIONS } from './comparison'
 import { STRING_EXPRESSIONS } from './string'
 import { MATH_EXPRESSIONS } from './math'
 
-import { _prepareEvaluateTestCases } from '../../spec/specUtil'
+import {
+  SyncModePromiseUnsupportedError,
+  SyncModeUnsupportedError,
+} from '../errors'
 
-const delayValue = (value, ms = 100) =>
-  new Promise((resolve) => setTimeout(resolve.bind(null, value), ms))
+import {
+  _prepareEvaluateTestCases,
+  delay,
+  $asyncEcho,
+} from '../../spec/specUtil'
 
 const EXP = {
   ...VALUE_EXPRESSIONS,
@@ -22,14 +27,12 @@ const EXP = {
   ...COMPARISON_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...MATH_EXPRESSIONS,
-  $asyncValue: (context, ...args) =>
-    delayValue(evaluate(context, ['$value', ...args])),
-  $asyncNum50: () => delayValue(50),
-  $asyncNum100: () => delayValue(100),
-  $asyncStr1: () => delayValue('str1'),
-  $asyncStr2: () => delayValue('str2'),
-  $asyncFalse: () => delayValue(false),
-  $asyncTrue: () => delayValue(true),
+  // `$incorrectAsyncEcho` is incorrect because it is written using the function
+  // spec shorthand and thus will be used as both sync and async interpreters
+  // The correct implementation specifies that the expression is async only
+  // by providing an object whose sync property is null
+  $incorrectAsyncEcho: (context, value) => delay(value),
+  $asyncEcho,
 }
 
 const _evTestCases = _prepareEvaluateTestCases(EXP)
@@ -42,6 +45,45 @@ describe('$and', () => {
       [true, ['$and'], TypeError],
       [8, ['$and'], TypeError],
       [{}, ['$and'], TypeError],
+    ])
+
+    _evTestCases.testSyncCases([
+      [[true, true], ['$and'], true],
+      [
+        [['$incorrectAsyncEcho', true], true],
+        ['$and'],
+        new SyncModePromiseUnsupportedError('$incorrectAsyncEcho'),
+      ],
+      [
+        [true, ['$incorrectAsyncEcho', true]],
+        ['$and'],
+        new SyncModePromiseUnsupportedError('$incorrectAsyncEcho'),
+      ],
+      [
+        [['$incorrectAsyncEcho', true], true],
+        ['$and'],
+        new SyncModePromiseUnsupportedError('$incorrectAsyncEcho'),
+      ],
+
+      // Errors are different because the moment they are detected is different
+      [
+        [['$asyncEcho', true], true],
+        ['$and'],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
+    ])
+
+    _evTestCases.testAsyncCases([
+      [[true, true], ['$and'], true],
+      [[['$incorrectAsyncEcho', true], true], ['$and'], true],
+      [
+        [
+          ['$incorrectAsyncEcho', true],
+          ['$incorrectAsyncEcho', true],
+        ],
+        ['$and'],
+        true,
+      ],
     ])
   })
 
