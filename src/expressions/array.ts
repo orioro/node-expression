@@ -16,6 +16,8 @@ export const $$SORT_A = ['$value', '$$SORT_A']
 export const $$SORT_B = ['$value', '$$SORT_B']
 
 /**
+ * @todo array Substitute all param resolvers from 'array' to indefiniteArrayOfType('any')
+ *             to allow for array items to be evaluated themselves.
  * Equivalent of `Array.prototype.includes`.
  *
  * @function $arrayIncludes
@@ -70,6 +72,9 @@ export const $arrayLength: InterpreterSpec = [
 ]
 
 /**
+ * @todo array Substitute anyType({ delaytEvaluation }) for some type that better
+ *             expresses that the value is an expression whose evaluation
+ *             has been delayed
  * @function $arrayReduce
  * @param {Expression} reduceExp An expression that returns the
  *                               result of reduction. Has access to:

@@ -9,8 +9,18 @@ import {
   VariableName,
 } from '@orioro/jest-util'
 
+import { _ellipsis } from '../src/util/misc'
+
 const _evLabel = ([value, expression], result) =>
-  `${valueLabel(value)} | ${valueLabel(expression)} -> ${resultLabel(result)}`
+  `${valueLabel(value)} | ${_ellipsis(valueLabel(expression))} -> ${resultLabel(result)}`
+
+export const delay = (value, ms = 100) =>
+  new Promise((resolve) => setTimeout(resolve.bind(null, value), ms))
+
+export const $asyncEcho = {
+  sync: null,
+  async: (context, value) => delay(value)
+}
 
 export const _prepareEvaluateTestCases = (interpreterSpecs) => {
   const interpreters = interpreterList(interpreterSpecs)

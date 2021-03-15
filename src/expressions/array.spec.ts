@@ -7,7 +7,12 @@ import { STRING_EXPRESSIONS } from './string'
 import { MATH_EXPRESSIONS } from './math'
 import { NUMBER_EXPRESSIONS } from './number'
 
-import { _prepareEvaluateTestCases } from '../../spec/specUtil'
+import {
+  SyncModePromiseUnsupportedError,
+  SyncModeUnsupportedError,
+} from '../errors'
+
+import { _prepareEvaluateTestCases, $asyncEcho } from '../../spec/specUtil'
 
 const EXPRESSIONS = {
   ...VALUE_EXPRESSIONS,
@@ -18,6 +23,7 @@ const EXPRESSIONS = {
   ...OBJECT_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
+  $asyncEcho,
 }
 
 const _evTestCases = _prepareEvaluateTestCases(EXPRESSIONS)
@@ -366,6 +372,28 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
     _evTestCases([
       [[1, 2, 3, 4], ITEMS_UNIQUE_EXP, true],
       [[1, 2, 3, 1], ITEMS_UNIQUE_EXP, false],
+    ])
+
+    _evTestCases.testSyncCases([
+      [
+        Promise.resolve([1, 2, 3, 4]),
+        ITEMS_UNIQUE_EXP,
+        new SyncModePromiseUnsupportedError('$value'),
+      ],
+      [
+        'any-value', // irrelevant
+        ['$arrayEvery', ITEM_IS_UNIQUE_EXP, ['$asyncEcho', [1, 2, 3, 4]]],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
+    ])
+
+    _evTestCases.testAsyncCases([
+      [Promise.resolve([1, 2, 3, 4]), ITEMS_UNIQUE_EXP, true], // not so realistic case
+      [
+        'any-value', // irrelevant
+        ['$arrayEvery', ITEM_IS_UNIQUE_EXP, ['$asyncEcho', [1, 2, 3, 4]]],
+        true,
+      ],
     ])
   })
 })
