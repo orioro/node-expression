@@ -10,11 +10,15 @@ import {
   OBJECT_TYPE,
 } from '@orioro/typing'
 
-import { validateType } from '../typing'
+import { validateType, isType } from '../typing'
 
 import { ParamResolver, TypeSpec } from '../types'
 
 import { evaluate, evaluateTyped } from '../evaluate'
+
+import { _pseudoSymbol } from '../util/misc'
+
+const _NOT_RESOLVED = _pseudoSymbol()
 
 const _syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   const expectedType = castTypeSpec(typeSpec)
@@ -30,9 +34,31 @@ const _syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   switch (expectedType.specType) {
     case ANY_TYPE:
     case SINGLE_TYPE:
-    case ONE_OF_TYPES:
     case ENUM_TYPE:
       return evaluate
+    case ONE_OF_TYPES: {
+      const candidateResolverPairs: [
+        TypeSpec,
+        ParamResolver
+      ][] = expectedType.types.map((type) => [type, _syncParamResolver(type)])
+
+      return (context, value) => {
+        const result = candidateResolverPairs.reduce(
+          (acc, [candidateType, candidateResolver]) => {
+            if (acc !== _NOT_RESOLVED) {
+              return acc
+            } else {
+              const result = candidateResolver(context, value)
+
+              return isType(candidateType, result) ? result : _NOT_RESOLVED
+            }
+          },
+          _NOT_RESOLVED
+        )
+
+        return result === _NOT_RESOLVED ? value : result
+      }
+    }
     case TUPLE_TYPE: {
       const itemParamResolvers = expectedType.items.map((itemResolver) =>
         _syncParamResolver(itemResolver)

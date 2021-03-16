@@ -28,3 +28,19 @@ export const _evaluateDev = (evaluate, isExpression) => (
 
   return evaluate(context, expOrValue)
 }
+
+/**
+ * In case Symbol() is not available, all we need is an unique object instance
+ * to be used for reference identity comparison.
+ *
+ * @function _pseudoSymbol
+ * @private
+ */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const _pseudoSymbol = () => {
+  try {
+    return Symbol()
+  } catch (err) {
+    return {}
+  }
+}
