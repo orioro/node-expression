@@ -65,7 +65,7 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@orioro/typing": "^4.2.0",
+    "@orioro/typing": "^4.3.0",
     "lodash": "^4.17.20"
   },
   "config": {

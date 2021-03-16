@@ -1,5 +1,4 @@
 import { testCases, asyncResult } from '@orioro/jest-util'
-// import { validateType } from '@orioro/typing'
 
 import { ALL_EXPRESSIONS } from './'
 

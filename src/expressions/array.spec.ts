@@ -95,11 +95,7 @@ describe('$arrayLength', () => {
 describe('$arrayMap', () => {
   describe('basic usage', () => {
     _evTestCases([
-      [
-        [-10, 0, 10, 20],
-        ['$arrayMap', 'SOME_VALUE'],
-        ['SOME_VALUE', 'SOME_VALUE', 'SOME_VALUE', 'SOME_VALUE'],
-      ],
+      [[-10, 0, 10, 20], ['$arrayMap', 'SOME_VALUE'], TypeError],
       [
         [-10, 0, 10, 20],
         ['$arrayMap', ['$mathSum', 5]],
@@ -243,8 +239,8 @@ describe('$arraySort', () => {
       ],
       [
         ['9', '1', '12', '11'],
-        ['$arraySort', [SORT_NUMBERS]],
-        ['1', '9', '11', '12'],
+        ['$arraySort', [SORT_NUMBERS]], // invalid tuple
+        TypeError,
       ],
       [
         ['9', '1', '12', '11'],

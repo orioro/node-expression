@@ -1,4 +1,5 @@
-import { TypeSpec, validateType } from '@orioro/typing'
+import { TypeSpec } from '@orioro/typing'
+import { validateType } from './typing'
 
 import { Expression, InterpreterList, EvaluationContext } from './types'
 import { SyncModePromiseUnsupportedError } from './errors'

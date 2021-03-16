@@ -74,14 +74,14 @@ describe('anyType()', () => {
   )
 })
 
-describe('anyType({ delayEvaluation: true })', () => {
+describe('anyType({ skipEvaluation: true })', () => {
   _resolverTestCases(
     [
       [10, 'value-b', 'value-b'],
       [10, ['$value'], ['$value']],
       [10, ['$mathSum', 5], ['$mathSum', 5]],
     ],
-    anyType({ delayEvaluation: true })
+    anyType({ skipEvaluation: true })
   )
 })
 

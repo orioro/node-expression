@@ -1,5 +1,4 @@
 import {
-  validateType,
   castTypeSpec,
   ANY_TYPE,
   SINGLE_TYPE,
@@ -10,6 +9,8 @@ import {
   TUPLE_TYPE,
   OBJECT_TYPE,
 } from '@orioro/typing'
+
+import { validateType } from '../typing'
 
 import { ParamResolver, TypeSpec } from '../types'
 
@@ -30,9 +31,16 @@ export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
     throw new TypeError(`Invalid typeSpec: ${JSON.stringify(typeSpec)}`)
   }
 
+  if (expectedType.skipEvaluation) {
+    return (context, value) => {
+      validateType(expectedType, value)
+      return value
+    }
+  }
+
   switch (expectedType.specType) {
     case ANY_TYPE:
-      return expectedType.delayEvaluation ? (context, value) => value : evaluate
+      return evaluate
     case SINGLE_TYPE:
     case ONE_OF_TYPES:
     case ENUM_TYPE:
