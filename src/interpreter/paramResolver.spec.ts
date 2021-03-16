@@ -1,4 +1,4 @@
-import { testCases, asyncResult, valueLabel } from '@orioro/jest-util'
+import { testCases, asyncResult } from '@orioro/jest-util'
 
 import { ALL_EXPRESSIONS } from '../'
 import {
@@ -6,6 +6,7 @@ import {
   tupleType,
   indefiniteArrayOfType,
   indefiniteObjectOfType,
+  stringifyTypeSpec,
 } from '@orioro/typing'
 import { interpreterList } from './interpreter'
 import { syncParamResolver } from './syncParamResolver'
@@ -30,7 +31,7 @@ const _resolverTestCases = (cases, paramSpec) => {
         valueToResolve
       )
     },
-    () => `sync - ${valueLabel(paramSpec)}`
+    () => `sync - ${stringifyTypeSpec(paramSpec)}`
   )
 
   testCases(
@@ -51,7 +52,7 @@ const _resolverTestCases = (cases, paramSpec) => {
         valueToResolve
       )
     },
-    `async - ${valueLabel(paramSpec)}`
+    () => `async - ${stringifyTypeSpec(paramSpec)}`
   )
 }
 
@@ -105,6 +106,18 @@ describe('oneOfTypes([string, number])', () => {
       ['some-str', true, TypeError],
     ],
     ['string', 'number']
+  )
+})
+
+describe('oneOfTypes([string, tupleType([string, number]))', () => {
+  _resolverTestCases(
+    [
+      ['some-str', 'value-b', 'value-b'],
+      ['some-str', ['$value'], 'some-str'],
+      ['some-str', [['$value'], 7], ['some-str', 7]],
+      ['some-str', true, TypeError],
+    ],
+    ['string', tupleType(['string', 'number'])]
   )
 })
 

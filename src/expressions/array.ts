@@ -77,9 +77,6 @@ export const $arrayLength: InterpreterSpec = [
 ]
 
 /**
- * @todo array Substitute anyType({ delaytEvaluation }) for some type that better
- *             expresses that the value is an expression whose evaluation
- *             has been delayed
  * @function $arrayReduce
  * @param {Expression} reduceExp An expression that returns the
  *                               result of reduction. Has access to:

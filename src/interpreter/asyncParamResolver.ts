@@ -10,12 +10,16 @@ import {
   OBJECT_TYPE,
 } from '@orioro/typing'
 
-import { validateType } from '../typing'
+import { validateType, isType } from '../typing'
 
 import { TypeSpec, ParamResolver } from '../types'
 
 import { evaluate, evaluateTypedAsync } from '../evaluate'
 import { promiseResolveObject } from '../util/promiseResolveObject'
+
+import { _pseudoSymbol } from '../util/misc'
+
+const _NOT_RESOLVED = _pseudoSymbol()
 
 const _asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   const expectedType = castTypeSpec(typeSpec)
@@ -31,9 +35,32 @@ const _asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   switch (expectedType.specType) {
     case ANY_TYPE:
     case SINGLE_TYPE:
-    case ONE_OF_TYPES:
     case ENUM_TYPE:
       return (context, value) => Promise.resolve(evaluate(context, value))
+    case ONE_OF_TYPES: {
+      // This resolver is quite costly: it attempts to resolve
+      // against each of the listed possible types
+      const candidateResolverPairs: [
+        TypeSpec,
+        ParamResolver
+      ][] = expectedType.types.map((type) => [type, _asyncParamResolver(type)])
+
+      return (context, value) => {
+        return candidateResolverPairs
+          .reduce((accPromise, [candidateType, candidateResolver]) => {
+            return accPromise.then((acc) => {
+              if (acc !== _NOT_RESOLVED) {
+                return acc
+              } else {
+                return candidateResolver(context, value).then((result) => {
+                  return isType(candidateType, result) ? result : _NOT_RESOLVED
+                })
+              }
+            })
+          }, Promise.resolve(_NOT_RESOLVED))
+          .then((result) => (result === _NOT_RESOLVED ? value : result))
+      }
+    }
     case TUPLE_TYPE: {
       const itemParamResolvers = expectedType.items.map((itemResolver) =>
         _asyncParamResolver(itemResolver)
@@ -94,9 +121,8 @@ const _asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
 }
 
 /**
+ * @todo paramResolver Study paramResolver memoization
  * @function asyncParamResolver
- * @todo asyncParamResolver ONE_OF_TYPES: handle complex cases, e.g.
-                         oneOfTypes(['string', objectType({ key1: 'string', key2: 'number '})]) (src/interpreter/asyncParamResolver.ts)
  */
 export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   // `_asyncParamResolver` (private) contains the logic for the resolution itself
