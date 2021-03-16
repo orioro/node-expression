@@ -3,7 +3,6 @@ import { InterpreterSpecSingle, InterpreterFunction } from '../types'
 import { syncParamResolver } from './syncParamResolver'
 
 /**
- * @todo syncInterpreter Update Interpreter type: remove function
  * @function syncInterpreter
  * @returns {Interpreter}
  */
@@ -38,14 +37,3 @@ export const syncInterpreter = (
       context
     )
 }
-
-// export const syncInterpreterList = (
-//   specs: InterpreterList
-// ): InterpreterFunctionList =>
-//   Object.keys(specs).reduce(
-//     (acc, interperterId) => ({
-//       ...acc,
-//       [interperterId]: syncInterpreter(specs[interperterId]),
-//     }),
-//     {}
-//   )

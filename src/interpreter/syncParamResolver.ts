@@ -18,7 +18,6 @@ import { evaluate, evaluateTyped } from '../evaluate'
 /**
  * @todo syncInterpreter Study better ways at validating evlauation results for
  *                       tupleType and indefiniteArrayOfType. Currently validation is highly redundant.
- * @todo syncInterpreter Handle nested object param typeSpec
  * @function syncParamResolver
  * @private
  * @param {TypeSpec} typeSpec
