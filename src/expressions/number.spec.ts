@@ -12,7 +12,7 @@ const _evTestCases = _prepareEvaluateTestCases(EXP)
 describe('$numberInt', () => {
   _evTestCases([
     ['10.50', ['$numberInt'], 10],
-    [10.5, ['$numberInt'], 10.5],
+    [10.5, ['$numberInt'], 10],
     [true, ['$numberInt'], TypeError],
   ])
 })
