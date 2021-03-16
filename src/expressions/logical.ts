@@ -91,7 +91,6 @@ export const $if: InterpreterSpec = [
 type Case = [Expression, Expression]
 
 /**
- * @todo logical Write test to ensure delayed evaluation
  * @function $switch
  * @param {Array} cases
  * @param {Expression} defaultExp
