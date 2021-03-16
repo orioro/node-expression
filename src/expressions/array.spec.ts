@@ -430,6 +430,30 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
       ],
     ])
   })
+
+  describe('async expression', () => {
+    const list = [1, 3, 5]
+    const SYNC_IS_IN_LIST = ['$in', list]
+    const ASYNC_IS_IN_LIST = ['$in', ['$asyncEcho', list]]
+
+    _evTestCases.testSyncCases([
+      [[1, 3], ['$arrayEvery', SYNC_IS_IN_LIST], true],
+      [[1, 3], ['$arrayEvery', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [[1, 2, 3], ['$arrayEvery', SYNC_IS_IN_LIST], false],
+      [[1, 2, 3], ['$arrayEvery', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [[2, 4], ['$arrayEvery', SYNC_IS_IN_LIST], false],
+      [[2, 4], ['$arrayEvery', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+    ])
+
+    _evTestCases.testAsyncCases([
+      [[1, 3], ['$arrayEvery', SYNC_IS_IN_LIST], true],
+      [[1, 3], ['$arrayEvery', ASYNC_IS_IN_LIST], true],
+      [[1, 2, 3], ['$arrayEvery', SYNC_IS_IN_LIST], false],
+      [[1, 2, 3], ['$arrayEvery', ASYNC_IS_IN_LIST], false],
+      [[2, 4], ['$arrayEvery', SYNC_IS_IN_LIST], false],
+      [[2, 4], ['$arrayEvery', ASYNC_IS_IN_LIST], false],
+    ])
+  })
 })
 
 describe('$arraySome', () => {
@@ -437,4 +461,28 @@ describe('$arraySome', () => {
     [[1, 2, 3, 4], ['$arraySome', ['$eq', 0, ['$mathMod', 2]]], true],
     [[1, 3, 5, 7], ['$arraySome', ['$eq', 0, ['$mathMod', 2]]], false],
   ])
+
+  describe('async expression', () => {
+    const list = [1, 3, 5]
+    const SYNC_IS_IN_LIST = ['$in', list]
+    const ASYNC_IS_IN_LIST = ['$in', ['$asyncEcho', list]]
+
+    _evTestCases.testSyncCases([
+      [[1, 3], ['$arraySome', SYNC_IS_IN_LIST], true],
+      [[1, 3], ['$arraySome', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [[1, 2, 3], ['$arraySome', SYNC_IS_IN_LIST], true],
+      [[1, 2, 3], ['$arraySome', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [[2, 4], ['$arraySome', SYNC_IS_IN_LIST], false],
+      [[2, 4], ['$arraySome', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+    ])
+
+    _evTestCases.testAsyncCases([
+      [[1, 3], ['$arraySome', SYNC_IS_IN_LIST], true],
+      [[1, 3], ['$arraySome', ASYNC_IS_IN_LIST], true],
+      [[1, 2, 3], ['$arraySome', SYNC_IS_IN_LIST], true],
+      [[1, 2, 3], ['$arraySome', ASYNC_IS_IN_LIST], true],
+      [[2, 4], ['$arraySome', SYNC_IS_IN_LIST], false],
+      [[2, 4], ['$arraySome', ASYNC_IS_IN_LIST], false],
+    ])
+  })
 })

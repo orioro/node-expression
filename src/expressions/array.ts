@@ -16,8 +16,6 @@ export const $$SORT_A = ['$value', '$$SORT_A']
 export const $$SORT_B = ['$value', '$$SORT_B']
 
 /**
- * @todo array Substitute all param resolvers from 'array' to indefiniteArrayOfType('any')
- *             to allow for array items to be evaluated themselves.
  * Equivalent of `Array.prototype.includes`.
  *
  * @function $arrayIncludes
@@ -168,7 +166,6 @@ export const $arrayMap: InterpreterSpec = {
  * $arrayEvery exposes array iteration variables:
  * `$$PARENT_SCOPE`, `$$VALUE`, `$$INDEX`, `$$ARRAY`
  *
- * @todo array $arrayEvery write tests with async conditions
  * @function $arrayEvery
  * @param {Expression} testExp
  * @param {Array} [array=$$VALUE]
@@ -200,7 +197,6 @@ export const $arrayEvery: InterpreterSpec = {
 /**
  * `Array.prototype.some`
  *
- * @todo array $arraySome write tests with async conditions
  * @function $arraySome
  * @param {Expression} someExp
  * @param {Array} [array=$$VALUE]
@@ -344,9 +340,6 @@ const _sortDefault = (a, b) => {
 }
 
 /**
- * @todo array Make it possible for the same set of expression interpreters
- *             to be called synchronously or asynchronously. E.g. sort comparator
- *             expression should only support Synchronous
  * @function $arraySort
  * @param {String | Expression | [Expression, string]} sort
  * @param {Array} [array=$$VALUE]
