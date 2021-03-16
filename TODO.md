@@ -1,4 +1,5 @@
 - $and               | Add 'strict' mode option (src/expressions/logical.ts)
+- $arrayFind         | Async version!!! (src/expressions/array.ts)
 - array              | Substitute anyType({ delaytEvaluation }) for some type that better
             expresses that the value is an expression whose evaluation
             has been delayed (src/expressions/array.ts)
