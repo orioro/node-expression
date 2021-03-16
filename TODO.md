@@ -1,5 +1,4 @@
 - $and               | Add 'strict' mode option (src/expressions/logical.ts)
-- $numberInt         | Apply rounding to result to ensure it is an integer (src/expressions/number.ts)
 - array              | Substitute anyType({ delaytEvaluation }) for some type that better
             expresses that the value is an expression whose evaluation
             has been delayed (src/expressions/array.ts)

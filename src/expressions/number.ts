@@ -1,7 +1,6 @@
 import { InterpreterSpec } from '../types'
 
 /**
- * @todo $numberInt Apply rounding to result to ensure it is an integer
  * @function $numberInt
  * @param {Number} radix
  * @param {*} value
@@ -9,16 +8,11 @@ import { InterpreterSpec } from '../types'
  */
 export const $numberInt: InterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  (radix: number = 10, value: any): number => {
-    if (typeof value === 'number') {
-      return value
-    } else if (typeof value === 'string') {
-      return parseInt(value, radix)
-    } else {
-      throw new TypeError(`Invalid value ${JSON.stringify(value)}`)
-    }
-  },
-  [['number', 'undefined'], 'any'],
+  (radix: number = 10, value: any): number => parseInt(value, radix),
+  [
+    ['number', 'undefined'],
+    ['string', 'number'],
+  ],
 ]
 
 /**

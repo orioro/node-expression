@@ -438,11 +438,23 @@ describe('$arrayEvery vs $and (logical) - example: check for array item uniquene
 
     _evTestCases.testSyncCases([
       [[1, 3], ['$arrayEvery', SYNC_IS_IN_LIST], true],
-      [[1, 3], ['$arrayEvery', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [
+        [1, 3],
+        ['$arrayEvery', ASYNC_IS_IN_LIST],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
       [[1, 2, 3], ['$arrayEvery', SYNC_IS_IN_LIST], false],
-      [[1, 2, 3], ['$arrayEvery', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [
+        [1, 2, 3],
+        ['$arrayEvery', ASYNC_IS_IN_LIST],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
       [[2, 4], ['$arrayEvery', SYNC_IS_IN_LIST], false],
-      [[2, 4], ['$arrayEvery', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [
+        [2, 4],
+        ['$arrayEvery', ASYNC_IS_IN_LIST],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
     ])
 
     _evTestCases.testAsyncCases([
@@ -469,11 +481,23 @@ describe('$arraySome', () => {
 
     _evTestCases.testSyncCases([
       [[1, 3], ['$arraySome', SYNC_IS_IN_LIST], true],
-      [[1, 3], ['$arraySome', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [
+        [1, 3],
+        ['$arraySome', ASYNC_IS_IN_LIST],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
       [[1, 2, 3], ['$arraySome', SYNC_IS_IN_LIST], true],
-      [[1, 2, 3], ['$arraySome', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [
+        [1, 2, 3],
+        ['$arraySome', ASYNC_IS_IN_LIST],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
       [[2, 4], ['$arraySome', SYNC_IS_IN_LIST], false],
-      [[2, 4], ['$arraySome', ASYNC_IS_IN_LIST], new SyncModeUnsupportedError('$asyncEcho')],
+      [
+        [2, 4],
+        ['$arraySome', ASYNC_IS_IN_LIST],
+        new SyncModeUnsupportedError('$asyncEcho'),
+      ],
     ])
 
     _evTestCases.testAsyncCases([
