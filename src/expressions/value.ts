@@ -36,7 +36,7 @@ export const $value: InterpreterSpec = [
       ? evaluate(context, defaultExp)
       : value
   },
-  [['string', 'undefined'], anyType({ delayEvaluation: true })],
+  [['string', 'undefined'], anyType({ skipEvaluation: true })],
   {
     defaultParam: -1,
   },
@@ -50,7 +50,7 @@ export const $value: InterpreterSpec = [
 export const $literal: InterpreterSpec = [
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   (value: any): any => value,
-  [anyType({ delayEvaluation: true })],
+  [anyType({ skipEvaluation: true })],
   { defaultParam: -1 },
 ]
 
@@ -75,7 +75,7 @@ export const $evaluate: InterpreterSpec = [
       },
       expression
     ),
-  ['any', 'object'],
+  ['expression', 'object'],
   { defaultParam: -1 },
 ]
 

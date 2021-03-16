@@ -83,8 +83,8 @@ export const $if: InterpreterSpec = [
     condition ? evaluate(context, thenExp) : evaluate(context, elseExp),
   [
     'any',
-    anyType({ delayEvaluation: true }), // Only evaluate if condition is satisfied
-    anyType({ delayEvaluation: true }), // Only evaluate if condition is not satisfied
+    anyType({ skipEvaluation: true }), // Only evaluate if condition is satisfied
+    anyType({ skipEvaluation: true }), // Only evaluate if condition is not satisfied
   ],
 ]
 
@@ -106,9 +106,9 @@ export const $switch: InterpreterSpec = [
   },
   [
     indefiniteArrayOfType(
-      tupleType(['any', anyType({ delayEvaluation: true })])
+      tupleType(['any', anyType({ skipEvaluation: true })])
     ),
-    anyType({ delayEvaluation: true }),
+    anyType({ skipEvaluation: true }),
   ],
   {
     defaultParam: -1,
@@ -137,7 +137,7 @@ export const $switchKey: InterpreterSpec = [
       ? evaluate(context, correspondingCase)
       : evaluate(context, defaultExp)
   },
-  ['object', anyType({ delayEvaluation: true }), 'any'],
+  ['object', anyType({ skipEvaluation: true }), 'any'],
 ]
 
 export const LOGICAL_EXPRESSIONS = {

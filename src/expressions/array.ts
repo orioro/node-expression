@@ -7,7 +7,14 @@ import {
   InterpreterSpec,
   InterpreterSpecSingle,
 } from '../types'
-import { validateType, anyType, indefiniteArrayOfType } from '@orioro/typing'
+import {
+  singleType,
+  oneOfTypes,
+  indefiniteArrayOfType,
+  enumType,
+  tupleType,
+} from '@orioro/typing'
+import { validateType } from '../typing'
 
 export const $$INDEX = ['$value', '$$INDEX']
 export const $$ARRAY = ['$value', '$$ARRAY']
@@ -100,7 +107,11 @@ export const $arrayReduce: InterpreterSpec = [
         ),
       start
     ),
-  [anyType({ delayEvaluation: true }), 'any', indefiniteArrayOfType('any')],
+  [
+    singleType('expression', { skipEvaluation: true }),
+    'any',
+    indefiniteArrayOfType('any'),
+  ],
 ]
 
 const _iteratorContext = (
@@ -126,7 +137,10 @@ const _arraySyncIterator = (method: string): InterpreterSpecSingle => [
         iteratorExp
       )
     ),
-  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+  [
+    singleType('expression', { skipEvaluation: true }),
+    indefiniteArrayOfType('any'),
+  ],
 ]
 
 /**
@@ -154,7 +168,10 @@ export const $arrayMap: InterpreterSpec = {
           )
         )
       ),
-    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+    [
+      singleType('expression', { skipEvaluation: true }),
+      indefiniteArrayOfType('any'),
+    ],
   ],
 }
 
@@ -190,7 +207,10 @@ export const $arrayEvery: InterpreterSpec = {
           ),
         Promise.resolve(true)
       ),
-    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+    [
+      singleType('expression', { skipEvaluation: true }),
+      indefiniteArrayOfType('any'),
+    ],
   ],
 }
 
@@ -221,7 +241,10 @@ export const $arraySome: InterpreterSpec = {
           ),
         Promise.resolve(false)
       ),
-    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+    [
+      singleType('expression', { skipEvaluation: true }),
+      indefiniteArrayOfType('any'),
+    ],
   ],
 }
 
@@ -240,7 +263,10 @@ export const $arrayFilterAsyncParallel: InterpreterSpecSingle = [
         []
       )
     ),
-  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+  [
+    singleType('expression', { skipEvaluation: true }),
+    indefiniteArrayOfType('any'),
+  ],
 ]
 
 export const $arrayFilterAsyncSerial: InterpreterSpecSingle = [
@@ -257,7 +283,10 @@ export const $arrayFilterAsyncSerial: InterpreterSpecSingle = [
         ),
       Promise.resolve([])
     ),
-  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+  [
+    singleType('expression', { skipEvaluation: true }),
+    indefiniteArrayOfType('any'),
+  ],
 ]
 
 /**
@@ -293,7 +322,10 @@ export const $arrayFindIndex: InterpreterSpec = {
           }
         })
       }, Promise.resolve(undefined)),
-    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+    [
+      singleType('expression', { skipEvaluation: true }),
+      indefiniteArrayOfType('any'),
+    ],
   ],
 }
 
@@ -308,6 +340,7 @@ export const $arrayIndexOf: InterpreterSpec = [
 ]
 
 /**
+ * @todo $arrayFind Async version!!!
  * @function $arrayFind
  * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
@@ -346,7 +379,7 @@ const _sortDefault = (a, b) => {
  */
 export const $arraySort: InterpreterSpec = [
   (
-    sort: string | Expression | [Expression, string] = 'ASC',
+    sort: 'ASC' | 'DESC' | Expression | [Expression, 'ASC' | 'DESC'] = 'ASC',
     array: any[],
     context: EvaluationContext
   ): any => {
@@ -376,7 +409,18 @@ export const $arraySort: InterpreterSpec = [
       .slice()
       .sort(order === 'DESC' ? (a, b) => -1 * sortFn(a, b) : sortFn)
   },
-  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
+  [
+    oneOfTypes(
+      [
+        enumType(['ASC', 'DESC']),
+        'expression',
+        tupleType(['expression', enumType(['ASC', 'DESC'])]),
+        'undefined',
+      ],
+      { skipEvaluation: true }
+    ),
+    indefiniteArrayOfType('any'),
+  ],
 ]
 
 /**

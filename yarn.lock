@@ -1271,10 +1271,10 @@
     vinyl-fs "^3.0.3"
     yargs "^16.2.0"
 
-"@orioro/typing@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@orioro/typing/-/typing-4.2.0.tgz#f7cb7d2707775f64424471362c8f7bcc213038ff"
-  integrity sha512-tRw6jSqIqlyAtDUHPWKa+s2p4IOVOvt4JWYyyk0uv8kA8R8KcRmhgG+EiRy1wdOOIUmPhXWR19zn+ABUeT3p5A==
+"@orioro/typing@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@orioro/typing/-/typing-4.3.0.tgz#c704bba696a5ecf987dc3b8d3e178c811ba86a15"
+  integrity sha512-Qnq+f4MkpGX0pfGNcs3WzXQfslZ4ovwfkzERf1kdb8XPUXd90m7Of5nS5fmYhWw1RkwLXfSEAvsvjh8HfVjVSg==
   dependencies:
     "@orioro/cascade" "^3.0.0"
     deep-equal "^2.0.5"

@@ -62,6 +62,12 @@ describe('$evaluate', () => {
     [11, EXP, ['>10', '-', 'ODD']],
     [12, EXP, ['>10', 'EVEN', '-']],
   ])
+
+  describe('invalid expressions to be evaluated', () => {
+    _evTestCases([
+      ['any-value', ['$evaluate', 10, {}], TypeError], // 10 is not an expression
+    ])
+  })
 })
 
 describe('$literal', () => {
