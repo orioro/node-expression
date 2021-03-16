@@ -1,4 +1,5 @@
 import { InterpreterSpec } from '../types'
+import { indefiniteArrayOfType } from '@orioro/typing'
 
 /**
  * @function $mathSum
@@ -87,7 +88,7 @@ export const $mathMax: InterpreterSpec = [
     Array.isArray(otherValue)
       ? Math.max(value, ...otherValue)
       : Math.max(value, otherValue),
-  [['number', 'array'], 'number'],
+  [['number', indefiniteArrayOfType('number')], 'number'],
 ]
 
 /**
@@ -101,7 +102,7 @@ export const $mathMin: InterpreterSpec = [
     Array.isArray(otherValue)
       ? Math.min(value, ...otherValue)
       : Math.min(value, otherValue),
-  [['number', 'array'], 'number'],
+  [['number', indefiniteArrayOfType('number')], 'number'],
 ]
 
 /**

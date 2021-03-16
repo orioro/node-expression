@@ -7,7 +7,7 @@ import {
   InterpreterSpec,
   InterpreterSpecSingle,
 } from '../types'
-import { validateType, anyType } from '@orioro/typing'
+import { validateType, anyType, indefiniteArrayOfType } from '@orioro/typing'
 
 export const $$INDEX = ['$value', '$$INDEX']
 export const $$ARRAY = ['$value', '$$ARRAY']
@@ -27,7 +27,7 @@ export const $$SORT_B = ['$value', '$$SORT_B']
  */
 export const $arrayIncludes: InterpreterSpec = [
   (search: any, array: any[]): boolean => array.includes(search),
-  ['any', 'array'],
+  ['any', indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -43,7 +43,7 @@ export const $arrayIncludes: InterpreterSpec = [
 export const $arrayIncludesAll: InterpreterSpec = [
   (search: any[], array: any[]): boolean =>
     search.every((value) => array.includes(value)),
-  ['array', 'array'],
+  [indefiniteArrayOfType('any'), indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -58,7 +58,7 @@ export const $arrayIncludesAll: InterpreterSpec = [
 export const $arrayIncludesAny: InterpreterSpec = [
   (search: any[], array: any[]): boolean =>
     search.some((value) => array.includes(value)),
-  ['array', 'array'],
+  [indefiniteArrayOfType('any'), indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -102,7 +102,7 @@ export const $arrayReduce: InterpreterSpec = [
         ),
       start
     ),
-  [anyType({ delayEvaluation: true }), 'any', 'array'],
+  [anyType({ delayEvaluation: true }), 'any', indefiniteArrayOfType('any')],
 ]
 
 const _iteratorContext = (
@@ -128,7 +128,7 @@ const _arraySyncIterator = (method: string): InterpreterSpecSingle => [
         iteratorExp
       )
     ),
-  [anyType({ delayEvaluation: true }), 'array'],
+  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -156,7 +156,7 @@ export const $arrayMap: InterpreterSpec = {
           )
         )
       ),
-    [anyType({ delayEvaluation: true }), 'array'],
+    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
   ],
 }
 
@@ -193,7 +193,7 @@ export const $arrayEvery: InterpreterSpec = {
           ),
         Promise.resolve(true)
       ),
-    [anyType({ delayEvaluation: true }), 'array'],
+    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
   ],
 }
 
@@ -225,7 +225,7 @@ export const $arraySome: InterpreterSpec = {
           ),
         Promise.resolve(false)
       ),
-    [anyType({ delayEvaluation: true }), 'array'],
+    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
   ],
 }
 
@@ -244,7 +244,7 @@ export const $arrayFilterAsyncParallel: InterpreterSpecSingle = [
         []
       )
     ),
-  [anyType({ delayEvaluation: true }), 'array'],
+  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
 ]
 
 export const $arrayFilterAsyncSerial: InterpreterSpecSingle = [
@@ -261,7 +261,7 @@ export const $arrayFilterAsyncSerial: InterpreterSpecSingle = [
         ),
       Promise.resolve([])
     ),
-  [anyType({ delayEvaluation: true }), 'array'],
+  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -297,7 +297,7 @@ export const $arrayFindIndex: InterpreterSpec = {
           }
         })
       }, Promise.resolve(undefined)),
-    [anyType({ delayEvaluation: true }), 'array'],
+    [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
   ],
 }
 
@@ -308,7 +308,7 @@ export const $arrayFindIndex: InterpreterSpec = {
  */
 export const $arrayIndexOf: InterpreterSpec = [
   (value: any, array: any[]): number => array.indexOf(value),
-  ['any', 'array'],
+  ['any', indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -383,7 +383,7 @@ export const $arraySort: InterpreterSpec = [
       .slice()
       .sort(order === 'DESC' ? (a, b) => -1 * sortFn(a, b) : sortFn)
   },
-  [anyType({ delayEvaluation: true }), 'array'],
+  [anyType({ delayEvaluation: true }), indefiniteArrayOfType('any')],
 ]
 
 /**
@@ -507,7 +507,7 @@ export const $arrayRemoveAt: InterpreterSpec = [
  */
 export const $arrayJoin: InterpreterSpec = [
   (separator: string = '', array: any[]): string => array.join(separator),
-  [['string', 'undefined'], 'array'],
+  [['string', 'undefined'], indefiniteArrayOfType('string')],
 ]
 
 /**

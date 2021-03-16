@@ -5,6 +5,7 @@ import { isEqual } from 'lodash'
 import { evaluate } from '../evaluate'
 
 import { EvaluationContext, PlainObject, InterpreterSpec } from '../types'
+import { indefiniteArrayOfType, indefiniteObjectOfType } from '@orioro/typing'
 
 /**
  * Checks if the two values
@@ -41,7 +42,7 @@ export const $notEq: InterpreterSpec = [
 export const $in: InterpreterSpec = [
   (array: any[], value: any): boolean =>
     array.some((item) => isEqual(item, value)),
-  ['array', 'any'],
+  [indefiniteArrayOfType('any'), 'any'],
 ]
 
 /**
@@ -55,7 +56,7 @@ export const $in: InterpreterSpec = [
 export const $notIn: InterpreterSpec = [
   (array: any[], value: any): boolean =>
     array.every((item) => !isEqual(item, value)),
-  ['array', 'any'],
+  [indefiniteArrayOfType('any'), 'any'],
 ]
 
 /**
@@ -135,7 +136,7 @@ export const $matches: InterpreterSpec = [
       ]),
     ])
   },
-  ['object', 'any'],
+  [indefiniteObjectOfType('any'), 'any'],
 ]
 
 export const COMPARISON_EXPRESSIONS = {

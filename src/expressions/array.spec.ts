@@ -32,6 +32,40 @@ describe('$arrayIncludes', () => {
   _evTestCases([
     [['A', 'B', 'C', 'D'], ['$arrayIncludes', 'A'], true],
     [['A', 'B', 'C', 'D'], ['$arrayIncludes', 'Z'], false],
+    [
+      {
+        key1: 'A',
+        key2: 'B',
+        key3: 'C',
+      },
+      [
+        '$arrayIncludes',
+        'B',
+        [
+          ['$value', 'key1'],
+          ['$value', 'key2'],
+          ['$value', 'key3'],
+        ],
+      ],
+      true,
+    ],
+    [
+      {
+        key1: 'A',
+        key2: 'B',
+        key3: 'C',
+      },
+      [
+        '$arrayIncludes',
+        'D',
+        [
+          ['$value', 'key1'],
+          ['$value', 'key2'],
+          ['$value', 'key3'],
+        ],
+      ],
+      false,
+    ],
   ])
 })
 

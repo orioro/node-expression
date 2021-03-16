@@ -9,6 +9,8 @@ import { objectDeepAssign } from '../util/deepAssign'
 
 import { EvaluationContext, PlainObject, InterpreterSpec } from '../types'
 
+import { indefiniteObjectOfType } from '@orioro/typing'
+
 /**
  * @function $objectMatches
  * @param {Object} criteriaByPath
@@ -39,27 +41,8 @@ export const $objectMatches: InterpreterSpec = [
         get(value, path),
       ]),
     ])
-
-    // return paths.every((path) => {
-    //   //
-    //   // pathCriteria is either:
-    //   // - a literal value to be compared against (array, string, number)
-    //   // - or an expression to be evaluated against the value
-    //   //
-    //   const pathCriteria = isPlainObject(criteriaByPath[path])
-    //     ? criteriaByPath[path]
-    //     : { $eq: criteriaByPath[path] }
-
-    //   return evaluate(
-    //     {
-    //       ...context,
-    //       scope: { $$VALUE: get(value, path) },
-    //     },
-    //     ['$matches', pathCriteria]
-    //   )
-    // })
   },
-  ['object', 'object'],
+  [indefiniteObjectOfType('any'), indefiniteObjectOfType('any')],
 ]
 
 /**
@@ -82,7 +65,7 @@ export const $objectFormat = {
 export const $objectDefaults: InterpreterSpec = [
   (defaultValues: PlainObject, base: PlainObject): PlainObject =>
     objectDeepApplyDefaults(base, defaultValues),
-  ['object', 'object'],
+  [indefiniteObjectOfType('any'), indefiniteObjectOfType('any')],
 ]
 
 /**
@@ -94,7 +77,7 @@ export const $objectDefaults: InterpreterSpec = [
 export const $objectAssign: InterpreterSpec = [
   (values: PlainObject, base: PlainObject): PlainObject =>
     objectDeepAssign(base, values),
-  ['object', 'object'],
+  [indefiniteObjectOfType('any'), indefiniteObjectOfType('any')],
 ]
 
 /**
