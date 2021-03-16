@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import { PlainObject, InterpreterSpec } from '../types'
 
-import { getType } from '@orioro/typing'
+import { getType, indefiniteArrayOfType } from '@orioro/typing'
 
 const stringifyValue = (value) => {
   switch (getType(value)) {
@@ -93,7 +93,7 @@ export const $stringSubstr: InterpreterSpec = [
 export const $stringConcat: InterpreterSpec = [
   (concat: string | string[], base: string): string =>
     Array.isArray(concat) ? base.concat(concat.join('')) : base.concat(concat),
-  [['string', 'array'], 'string'],
+  [['string', indefiniteArrayOfType('string')], 'string'],
 ]
 
 /**

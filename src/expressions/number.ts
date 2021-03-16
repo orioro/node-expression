@@ -1,6 +1,7 @@
 import { InterpreterSpec } from '../types'
 
 /**
+ * @todo $numberInt Apply rounding to result to ensure it is an integer
  * @function $numberInt
  * @param {Number} radix
  * @param {*} value
