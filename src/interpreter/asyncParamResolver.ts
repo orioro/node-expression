@@ -17,12 +17,7 @@ import { TypeSpec, ParamResolver } from '../types'
 import { evaluate, evaluateTypedAsync } from '../evaluate'
 import { promiseResolveObject } from '../util/promiseResolveObject'
 
-/**
- * @function asyncParamResolver
- * @todo asyncParamResolver ONE_OF_TYPES: handle complex cases, e.g.
- *                          oneOfTypes(['string', objectType({ key1: 'string', key2: 'number '})])
- */
-export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
+const _asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   const expectedType = castTypeSpec(typeSpec)
 
   if (expectedType === null) {
@@ -30,26 +25,18 @@ export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   }
 
   if (expectedType.skipEvaluation) {
-    return (context, value) => {
-      try {
-        validateType(expectedType, value)
-        return Promise.resolve(value)
-      } catch (err) {
-        return Promise.reject(err)
-      }
-    }
+    return (context, value) => Promise.resolve(value)
   }
 
   switch (expectedType.specType) {
     case ANY_TYPE:
-      return (context, value) => Promise.resolve(evaluate(context, value))
     case SINGLE_TYPE:
     case ONE_OF_TYPES:
     case ENUM_TYPE:
-      return evaluateTypedAsync.bind(null, expectedType)
+      return (context, value) => Promise.resolve(evaluate(context, value))
     case TUPLE_TYPE: {
       const itemParamResolvers = expectedType.items.map((itemResolver) =>
-        asyncParamResolver(itemResolver)
+        _asyncParamResolver(itemResolver)
       )
 
       return (context, value) => {
@@ -63,7 +50,7 @@ export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
       }
     }
     case INDEFINITE_ARRAY_OF_TYPE: {
-      const itemParamResolver = asyncParamResolver(expectedType.itemType)
+      const itemParamResolver = _asyncParamResolver(expectedType.itemType)
 
       return (context, value) => {
         return evaluateTypedAsync('array', context, value).then((array) => {
@@ -79,43 +66,48 @@ export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
       ).reduce(
         (acc, key) => ({
           ...acc,
-          [key]: asyncParamResolver(expectedType.properties[key]),
+          [key]: _asyncParamResolver(expectedType.properties[key]),
         }),
         {}
       )
 
       return (context, value) =>
-        evaluateTypedAsync('object', context, value)
-          .then((unresolvedObject) =>
-            promiseResolveObject(
-              unresolvedObject,
-              (propertyValue, propertyKey) =>
-                propertyParamResolvers[propertyKey](context, propertyValue)
-            )
+        evaluateTypedAsync('object', context, value).then((unresolvedObject) =>
+          promiseResolveObject(unresolvedObject, (propertyValue, propertyKey) =>
+            propertyParamResolvers[propertyKey](context, propertyValue)
           )
-          .then((resolvedObject) => {
-            validateType(expectedType, resolvedObject)
-
-            return resolvedObject
-          })
+        )
     }
     case INDEFINITE_OBJECT_OF_TYPE: {
-      const propertyParamResolver = asyncParamResolver(
+      const propertyParamResolver = _asyncParamResolver(
         expectedType.propertyType
       )
 
       return (context, value) =>
-        evaluateTypedAsync('object', context, value)
-          .then((object) =>
-            promiseResolveObject(object, (propertyValue) =>
-              propertyParamResolver(context, propertyValue)
-            )
+        evaluateTypedAsync('object', context, value).then((object) =>
+          promiseResolveObject(object, (propertyValue) =>
+            propertyParamResolver(context, propertyValue)
           )
-          .then((finalObject) => {
-            validateType(expectedType, finalObject)
-
-            return finalObject
-          })
+        )
     }
   }
+}
+
+/**
+ * @function asyncParamResolver
+ * @todo asyncParamResolver ONE_OF_TYPES: handle complex cases, e.g.
+                         oneOfTypes(['string', objectType({ key1: 'string', key2: 'number '})]) (src/interpreter/asyncParamResolver.ts)
+ */
+export const asyncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
+  // `_asyncParamResolver` (private) contains the logic for the resolution itself
+  // but does not run any kind of validation
+  // validation is executed at `asyncParamResolver` (public)
+  const _paramResolver = _asyncParamResolver(typeSpec)
+
+  return (context, value) =>
+    _paramResolver(context, value).then((param) => {
+      validateType(typeSpec, param)
+
+      return param
+    })
 }

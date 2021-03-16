@@ -102,6 +102,7 @@ describe('oneOfTypes([string, number])', () => {
       ['some-str', 'value-b', 'value-b'],
       ['some-str', ['$value'], 'some-str'],
       ['some-str', 7, 7],
+      ['some-str', true, TypeError],
     ],
     ['string', 'number']
   )
@@ -169,6 +170,8 @@ describe('objectType(obj)', () => {
         { key1: ['$value'], key2: [['$value'], 'LITERAL-STR-1'] },
         { key1: 'some-str', key2: ['some-str', 'LITERAL-STR-1'] },
       ],
+      ['some-str', { key1: ['$value'], key2: ['$value'] }, TypeError],
+      ['some-str', ['$value'], TypeError],
     ],
     type
   )

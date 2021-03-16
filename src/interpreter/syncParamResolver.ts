@@ -16,15 +16,7 @@ import { ParamResolver, TypeSpec } from '../types'
 
 import { evaluate, evaluateTyped } from '../evaluate'
 
-/**
- * @todo syncInterpreter Study better ways at validating evlauation results for
- *                       tupleType and indefiniteArrayOfType. Currently validation is highly redundant.
- * @function syncParamResolver
- * @private
- * @param {TypeSpec} typeSpec
- * @returns {ParamResolver}
- */
-export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
+const _syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   const expectedType = castTypeSpec(typeSpec)
 
   if (expectedType === null) {
@@ -32,22 +24,18 @@ export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
   }
 
   if (expectedType.skipEvaluation) {
-    return (context, value) => {
-      validateType(expectedType, value)
-      return value
-    }
+    return (context, value) => value
   }
 
   switch (expectedType.specType) {
     case ANY_TYPE:
-      return evaluate
     case SINGLE_TYPE:
     case ONE_OF_TYPES:
     case ENUM_TYPE:
-      return evaluateTyped.bind(null, expectedType)
+      return evaluate
     case TUPLE_TYPE: {
       const itemParamResolvers = expectedType.items.map((itemResolver) =>
-        syncParamResolver(itemResolver)
+        _syncParamResolver(itemResolver)
       )
 
       return (context, value) => {
@@ -57,20 +45,16 @@ export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
           value
         ).map((item, index) => itemParamResolvers[index](context, item))
 
-        validateType(expectedType, array)
-
         return array
       }
     }
     case INDEFINITE_ARRAY_OF_TYPE: {
-      const itemParamResolver = syncParamResolver(expectedType.itemType)
+      const itemParamResolver = _syncParamResolver(expectedType.itemType)
 
       return (context, value) => {
         const array = evaluateTyped('array', context, value).map((item) =>
           itemParamResolver(context, item)
         )
-
-        validateType(expectedType, array)
 
         return array
       }
@@ -81,7 +65,7 @@ export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
       ).reduce(
         (acc, key) => ({
           ...acc,
-          [key]: syncParamResolver(expectedType.properties[key]),
+          [key]: _syncParamResolver(expectedType.properties[key]),
         }),
         {}
       )
@@ -96,14 +80,12 @@ export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
           {}
         )
 
-        validateType(expectedType, object)
-
         return object
       }
     }
     case INDEFINITE_OBJECT_OF_TYPE:
       return (context, value) => {
-        const propertyParamResolver = syncParamResolver(
+        const propertyParamResolver = _syncParamResolver(
           expectedType.propertyType
         )
 
@@ -116,9 +98,25 @@ export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
           {}
         )
 
-        validateType(expectedType, object)
-
         return object
       }
+  }
+}
+
+/**
+ * @function syncParamResolver
+ * @private
+ * @param {TypeSpec} typeSpec
+ * @returns {ParamResolver}
+ */
+export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
+  const _paramResolver = _syncParamResolver(typeSpec)
+
+  return (context, value) => {
+    const param = _paramResolver(context, value)
+
+    validateType(typeSpec, param)
+
+    return param
   }
 }
