@@ -2,6 +2,7 @@ import { testCases, asyncResult } from '@orioro/jest-util'
 
 import { ALL_EXPRESSIONS } from '../'
 import {
+  castTypeSpec,
   anyType,
   tupleType,
   indefiniteArrayOfType,
@@ -15,6 +16,8 @@ import { asyncParamResolver } from './asyncParamResolver'
 const interpreters = interpreterList(ALL_EXPRESSIONS)
 
 const _resolverTestCases = (cases, paramSpec) => {
+  paramSpec = castTypeSpec(paramSpec)
+
   const syncResolver = syncParamResolver(paramSpec)
   const asyncResolver = asyncParamResolver(paramSpec)
 
@@ -55,14 +58,6 @@ const _resolverTestCases = (cases, paramSpec) => {
     () => `async - ${stringifyTypeSpec(paramSpec)}`
   )
 }
-
-test('invalid type', () => {
-  expect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    syncParamResolver(10)
-  }).toThrow('Invalid typeSpec')
-})
 
 describe('anyType()', () => {
   _resolverTestCases(

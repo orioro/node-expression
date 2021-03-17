@@ -1,5 +1,6 @@
+import memoize from 'memoizee/weak'
+
 import {
-  castTypeSpec,
   ANY_TYPE,
   SINGLE_TYPE,
   ONE_OF_TYPES,
@@ -8,11 +9,12 @@ import {
   INDEFINITE_OBJECT_OF_TYPE,
   TUPLE_TYPE,
   OBJECT_TYPE,
+  NonShorthandTypeSpec,
 } from '@orioro/typing'
 
 import { validateType, isType } from '../typing'
 
-import { ParamResolver, TypeSpec } from '../types'
+import { ParamResolver } from '../types'
 
 import { evaluate, evaluateTyped } from '../evaluate'
 
@@ -20,114 +22,107 @@ import { _pseudoSymbol } from '../util/misc'
 
 const _NOT_RESOLVED = _pseudoSymbol()
 
-const _syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
-  const expectedType = castTypeSpec(typeSpec)
+const _syncParamResolver = memoize(
+  (typeSpec: NonShorthandTypeSpec): ParamResolver => {
+    if (typeSpec.skipEvaluation) {
+      return (context, value) => value
+    }
 
-  if (expectedType === null) {
-    throw new TypeError(`Invalid typeSpec: ${JSON.stringify(typeSpec)}`)
-  }
+    switch (typeSpec.specType) {
+      case ANY_TYPE:
+      case SINGLE_TYPE:
+      case ENUM_TYPE:
+        return evaluate
+      case ONE_OF_TYPES: {
+        const candidateResolverPairs: [
+          NonShorthandTypeSpec,
+          ParamResolver
+        ][] = typeSpec.types.map((type) => [type, _syncParamResolver(type)])
 
-  if (expectedType.skipEvaluation) {
-    return (context, value) => value
-  }
+        return (context, value) => {
+          const result = candidateResolverPairs.reduce(
+            (acc, [candidateType, candidateResolver]) => {
+              if (acc !== _NOT_RESOLVED) {
+                return acc
+              } else {
+                const result = candidateResolver(context, value)
 
-  switch (expectedType.specType) {
-    case ANY_TYPE:
-    case SINGLE_TYPE:
-    case ENUM_TYPE:
-      return evaluate
-    case ONE_OF_TYPES: {
-      const candidateResolverPairs: [
-        TypeSpec,
-        ParamResolver
-      ][] = expectedType.types.map((type) => [type, _syncParamResolver(type)])
+                return isType(candidateType, result) ? result : _NOT_RESOLVED
+              }
+            },
+            _NOT_RESOLVED
+          )
 
-      return (context, value) => {
-        const result = candidateResolverPairs.reduce(
-          (acc, [candidateType, candidateResolver]) => {
-            if (acc !== _NOT_RESOLVED) {
-              return acc
-            } else {
-              const result = candidateResolver(context, value)
-
-              return isType(candidateType, result) ? result : _NOT_RESOLVED
-            }
-          },
-          _NOT_RESOLVED
+          return result === _NOT_RESOLVED ? value : result
+        }
+      }
+      case TUPLE_TYPE: {
+        const itemParamResolvers = typeSpec.items.map((itemResolver) =>
+          _syncParamResolver(itemResolver)
         )
 
-        return result === _NOT_RESOLVED ? value : result
+        return (context, value) => {
+          const array = evaluateTyped(
+            'array',
+            context,
+            value
+          ).map((item, index) => itemParamResolvers[index](context, item))
+
+          return array
+        }
       }
-    }
-    case TUPLE_TYPE: {
-      const itemParamResolvers = expectedType.items.map((itemResolver) =>
-        _syncParamResolver(itemResolver)
-      )
+      case INDEFINITE_ARRAY_OF_TYPE: {
+        const itemParamResolver = _syncParamResolver(typeSpec.itemType)
 
-      return (context, value) => {
-        const array = evaluateTyped(
-          'array',
-          context,
-          value
-        ).map((item, index) => itemParamResolvers[index](context, item))
+        return (context, value) => {
+          const array = evaluateTyped('array', context, value).map((item) =>
+            itemParamResolver(context, item)
+          )
 
-        return array
+          return array
+        }
       }
-    }
-    case INDEFINITE_ARRAY_OF_TYPE: {
-      const itemParamResolver = _syncParamResolver(expectedType.itemType)
-
-      return (context, value) => {
-        const array = evaluateTyped('array', context, value).map((item) =>
-          itemParamResolver(context, item)
-        )
-
-        return array
-      }
-    }
-    case OBJECT_TYPE: {
-      const propertyParamResolvers = Object.keys(
-        expectedType.properties
-      ).reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: _syncParamResolver(expectedType.properties[key]),
-        }),
-        {}
-      )
-
-      return (context, value) => {
-        const _object = evaluateTyped('object', context, value)
-        const object = Object.keys(_object).reduce(
+      case OBJECT_TYPE: {
+        const propertyParamResolvers = Object.keys(typeSpec.properties).reduce(
           (acc, key) => ({
             ...acc,
-            [key]: propertyParamResolvers[key](context, _object[key]),
+            [key]: _syncParamResolver(typeSpec.properties[key]),
           }),
           {}
         )
 
-        return object
+        return (context, value) => {
+          const _object = evaluateTyped('object', context, value)
+          const object = Object.keys(_object).reduce(
+            (acc, key) => ({
+              ...acc,
+              [key]: propertyParamResolvers[key](context, _object[key]),
+            }),
+            {}
+          )
+
+          return object
+        }
+      }
+      case INDEFINITE_OBJECT_OF_TYPE: {
+        const propertyParamResolver = _syncParamResolver(typeSpec.propertyType)
+
+        return (context, value) => {
+          const _object = evaluateTyped('object', context, value)
+          const object = Object.keys(_object).reduce(
+            (acc, key) => ({
+              ...acc,
+              [key]: propertyParamResolver(context, _object[key]),
+            }),
+            {}
+          )
+
+          return object
+        }
       }
     }
-    case INDEFINITE_OBJECT_OF_TYPE:
-      return (context, value) => {
-        const propertyParamResolver = _syncParamResolver(
-          expectedType.propertyType
-        )
-
-        const _object = evaluateTyped('object', context, value)
-        const object = Object.keys(_object).reduce(
-          (acc, key) => ({
-            ...acc,
-            [key]: propertyParamResolver(context, _object[key]),
-          }),
-          {}
-        )
-
-        return object
-      }
   }
-}
+)
 
 /**
  * @function syncParamResolver
@@ -135,7 +130,9 @@ const _syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
  * @param {TypeSpec} typeSpec
  * @returns {ParamResolver}
  */
-export const syncParamResolver = (typeSpec: TypeSpec): ParamResolver => {
+export const syncParamResolver = (
+  typeSpec: NonShorthandTypeSpec
+): ParamResolver => {
   const _paramResolver = _syncParamResolver(typeSpec)
 
   return (context, value) => {

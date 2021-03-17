@@ -65,8 +65,9 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "@orioro/typing": "^4.3.0",
-    "lodash": "^4.17.20"
+    "@orioro/typing": "^4.4.0",
+    "lodash": "^4.17.20",
+    "memoizee": "^0.4.15"
   },
   "config": {
     "commitizen": {

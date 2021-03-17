@@ -2,13 +2,15 @@ import { InterpreterSpecSingle, InterpreterFunction } from '../types'
 
 import { asyncParamResolver } from './asyncParamResolver'
 
+import { castTypeSpec } from '@orioro/typing'
+
 export const asyncInterpreter = (
   spec: InterpreterSpecSingle
 ): InterpreterFunction => {
   const [
     fn,
-    paramResolvers,
-    { defaultParam = paramResolvers.length - 1 } = {},
+    paramTypeSpecs,
+    { defaultParam = paramTypeSpecs.length - 1 } = {},
   ] = spec
 
   //
@@ -16,8 +18,8 @@ export const asyncInterpreter = (
   // to outside the returned interperter wrapper function
   // in order to minimize expression evaluation performance
   //
-  const asyncParamResolvers = paramResolvers.map((resolver) =>
-    asyncParamResolver(resolver)
+  const asyncParamResolvers = paramTypeSpecs.map((typeSpec) =>
+    asyncParamResolver(castTypeSpec(typeSpec))
   )
 
   return (context, ...args) =>

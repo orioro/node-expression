@@ -1,2 +1,1 @@
-- $and          | Add 'strict' mode option (src/expressions/logical.ts)
-- paramResolver | Study paramResolver memoization (src/interpreter/asyncParamResolver.ts)
+
