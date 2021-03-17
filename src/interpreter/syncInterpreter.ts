@@ -2,6 +2,8 @@ import { InterpreterSpecSingle, InterpreterFunction } from '../types'
 
 import { syncParamResolver } from './syncParamResolver'
 
+import { castTypeSpec } from '@orioro/typing'
+
 /**
  * @function syncInterpreter
  * @returns {Interpreter}
@@ -21,7 +23,7 @@ export const syncInterpreter = (
   // in order to minimize expression evaluation performance
   //
   const syncParamResolvers = paramTypeSpecs.map((typeSpec) =>
-    syncParamResolver(typeSpec)
+    syncParamResolver(castTypeSpec(typeSpec))
   )
 
   return (context, ...args) =>
