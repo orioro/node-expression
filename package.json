@@ -67,7 +67,7 @@
   "dependencies": {
     "@orioro/typing": "^4.4.0",
     "lodash": "^4.17.20",
-    "memoizee": "^0.4.15"
+    "mem": "^8.0.0"
   },
   "config": {
     "commitizen": {

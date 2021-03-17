@@ -1,4 +1,4 @@
-import memoize from 'memoizee/weak'
+const mem = require('mem') // eslint-disable-line @typescript-eslint/no-var-requires
 
 import {
   ANY_TYPE,
@@ -23,7 +23,9 @@ import { _pseudoSymbol } from '../util/misc'
 
 const _NOT_RESOLVED = _pseudoSymbol()
 
-const _asyncParamResolver = memoize(
+const _asyncParamResolverMemoCache = new WeakMap()
+
+const _asyncParamResolver = mem(
   (typeSpec: NonShorthandTypeSpec): ParamResolver => {
     if (typeSpec.skipEvaluation) {
       return (context, value) => Promise.resolve(value)
@@ -119,7 +121,8 @@ const _asyncParamResolver = memoize(
           )
       }
     }
-  }
+  },
+  { cache: _asyncParamResolverMemoCache }
 )
 
 /**
