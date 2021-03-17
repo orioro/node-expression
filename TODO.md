@@ -1,3 +1,2 @@
 - $and          | Add 'strict' mode option (src/expressions/logical.ts)
-- $arrayFind    | Async version!!! (src/expressions/array.ts)
 - paramResolver | Study paramResolver memoization (src/interpreter/asyncParamResolver.ts)

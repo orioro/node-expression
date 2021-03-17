@@ -6,6 +6,7 @@ import { OBJECT_EXPRESSIONS } from './object'
 import { STRING_EXPRESSIONS } from './string'
 import { MATH_EXPRESSIONS } from './math'
 import { NUMBER_EXPRESSIONS } from './number'
+import { TYPE_EXPRESSIONS } from './type'
 
 import {
   SyncModePromiseUnsupportedError,
@@ -23,6 +24,7 @@ const EXPRESSIONS = {
   ...OBJECT_EXPRESSIONS,
   ...STRING_EXPRESSIONS,
   ...ARRAY_EXPRESSIONS,
+  ...TYPE_EXPRESSIONS,
   $asyncEcho,
 }
 
@@ -192,7 +194,10 @@ describe('$arrayIndexOf', () => {
 })
 
 describe('$arrayFindIndex', () => {
-  _evTestCases([[[0, 10, 20, 40], ['$arrayFindIndex', ['$eq', 20]], 2]])
+  _evTestCases([
+    [[0, 10, 20, 40], ['$arrayFindIndex', ['$eq', 20]], 2],
+    [[0, 10, 20, 40], ['$arrayFindIndex', ['$eq', 100]], -1],
+  ])
 })
 
 describe('$arrayReduce', () => {
@@ -202,6 +207,12 @@ describe('$arrayReduce', () => {
       ['$arrayReduce', ['$mathSum', ['$value', '$$ACC']], 0],
       70,
     ],
+  ])
+})
+
+describe('$arrayFind', () => {
+  _evTestCases([
+    [[1, 2, 3, 4, 5, 6, 7], ['$arrayFind', ['$eq', 0, ['$mathMod', 3]]], 3],
   ])
 })
 

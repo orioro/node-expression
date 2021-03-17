@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import { evaluate, evaluateTypedSync, isExpression } from '../evaluate'
+import { _pseudoSymbol } from '../util/misc'
 import {
   EvaluationContext,
   Expression,
@@ -21,6 +22,55 @@ export const $$ARRAY = ['$value', '$$ARRAY']
 export const $$ACC = ['$value', '$$ACC']
 export const $$SORT_A = ['$value', '$$SORT_A']
 export const $$SORT_B = ['$value', '$$SORT_B']
+
+const _iteratorContext = (
+  parentContext: EvaluationContext,
+  $$VALUE: any,
+  $$INDEX: number,
+  $$ARRAY: any[]
+): EvaluationContext => ({
+  ...parentContext,
+  scope: {
+    $$PARENT_SCOPE: parentContext.scope,
+    $$VALUE,
+    $$INDEX,
+    $$ARRAY,
+  },
+})
+
+const _arraySyncIterator = (method: string): InterpreterSpecSingle => [
+  (iteratorExp: Expression, array: any[], context: EvaluationContext): any =>
+    array[method](($$VALUE, $$INDEX, $$ARRAY) =>
+      evaluate(
+        _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+        iteratorExp
+      )
+    ),
+  [
+    singleType('expression', { skipEvaluation: true }),
+    indefiniteArrayOfType('any'),
+  ],
+]
+
+const _UNRESOLVED = _pseudoSymbol()
+
+const _asyncReduceLookup = (exp, array, context, resolveValue) =>
+  array.reduce(
+    (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
+      accPromise.then((acc) =>
+        acc !== _UNRESOLVED
+          ? acc
+          : Promise.resolve(
+              evaluate(
+                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
+                exp
+              )
+            ).then((expResult) =>
+              resolveValue(expResult, $$VALUE, $$INDEX, $$ARRAY)
+            )
+      ),
+    Promise.resolve(_UNRESOLVED)
+  )
 
 /**
  * Equivalent of `Array.prototype.includes`.
@@ -111,35 +161,6 @@ export const $arrayReduce: InterpreterSpec = [
   ],
 ]
 
-const _iteratorContext = (
-  parentContext: EvaluationContext,
-  $$VALUE: any,
-  $$INDEX: number,
-  $$ARRAY: any[]
-): EvaluationContext => ({
-  ...parentContext,
-  scope: {
-    $$PARENT_SCOPE: parentContext.scope,
-    $$VALUE,
-    $$INDEX,
-    $$ARRAY,
-  },
-})
-
-const _arraySyncIterator = (method: string): InterpreterSpecSingle => [
-  (iteratorExp: Expression, array: any[], context: EvaluationContext): any =>
-    array[method](($$VALUE, $$INDEX, $$ARRAY) =>
-      evaluate(
-        _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-        iteratorExp
-      )
-    ),
-  [
-    singleType('expression', { skipEvaluation: true }),
-    indefiniteArrayOfType('any'),
-  ],
-]
-
 /**
  * @function $arrayMap
  * @param {Expression} mapExp Expression to be evaluated for each
@@ -192,17 +213,8 @@ export const $arrayEvery: InterpreterSpec = {
       array: any[],
       context: EvaluationContext
     ): Promise<boolean> =>
-      array.reduce(
-        (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
-          accPromise.then((acc) =>
-            acc === true
-              ? evaluate(
-                  _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-                  testExp
-                ).then((result) => Boolean(result))
-              : false
-          ),
-        Promise.resolve(true)
+      _asyncReduceLookup(testExp, array, context, (result, $$VALUE, $$INDEX) =>
+        result ? ($$INDEX === array.length - 1 ? true : _UNRESOLVED) : false
       ),
     [
       singleType('expression', { skipEvaluation: true }),
@@ -226,17 +238,8 @@ export const $arraySome: InterpreterSpec = {
       array: any[],
       context: EvaluationContext
     ): Promise<boolean> =>
-      array.reduce(
-        (accPromise, $$VALUE, $$INDEX, $$ARRAY) =>
-          accPromise.then((acc) =>
-            acc === false
-              ? evaluate(
-                  _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-                  testExp
-                ).then((result) => Boolean(result))
-              : true
-          ),
-        Promise.resolve(false)
+      _asyncReduceLookup(testExp, array, context, (result, $$VALUE, $$INDEX) =>
+        result ? true : $$INDEX === array.length - 1 ? false : _UNRESOLVED
       ),
     [
       singleType('expression', { skipEvaluation: true }),
@@ -305,20 +308,13 @@ export const $arrayFindIndex: InterpreterSpec = {
   sync: _arraySyncIterator('findIndex'),
   async: [
     (queryExp: Expression, array: any[], context: EvaluationContext) =>
-      array.reduce((accPromise, $$VALUE, $$INDEX, $$ARRAY) => {
-        return accPromise.then((acc) => {
-          if (acc === undefined) {
-            return Promise.resolve(
-              evaluate(
-                _iteratorContext(context, $$VALUE, $$INDEX, $$ARRAY),
-                queryExp
-              )
-            ).then((matchesQuery) => (matchesQuery ? $$INDEX : undefined))
-          } else {
-            return acc
-          }
-        })
-      }, Promise.resolve(undefined)),
+      _asyncReduceLookup(
+        queryExp,
+        array,
+        context,
+        (expResult, $$VALUE, $$INDEX) =>
+          expResult ? $$INDEX : $$INDEX === array.length - 1 ? -1 : _UNRESOLVED
+      ),
     [
       singleType('expression', { skipEvaluation: true }),
       indefiniteArrayOfType('any'),
@@ -337,12 +333,23 @@ export const $arrayIndexOf: InterpreterSpec = [
 ]
 
 /**
- * @todo $arrayFind Async version!!!
  * @function $arrayFind
  * @param {Boolean} queryExp
  * @param {Array} [array=$$VALUE]
  */
-export const $arrayFind: InterpreterSpec = _arraySyncIterator('find')
+export const $arrayFind: InterpreterSpec = {
+  sync: _arraySyncIterator('find'),
+  async: [
+    (queryExp: Expression, array: any[], context: EvaluationContext) =>
+      _asyncReduceLookup(queryExp, array, context, (expResult, $$VALUE) =>
+        expResult ? $$VALUE : _UNRESOLVED
+      ),
+    [
+      singleType('expression', { skipEvaluation: true }),
+      indefiniteArrayOfType('any'),
+    ],
+  ],
+}
 
 /**
  * @function $arrayReverse
