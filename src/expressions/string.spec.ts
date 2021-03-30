@@ -49,6 +49,13 @@ describe('$stringStartsWith', () => {
   ])
 })
 
+describe('$stringEndsWith', () => {
+  _evTestCases([
+    ['some_string', ['$stringEndsWith', '_string'], true],
+    ['some_string', ['$stringEndsWith', 'somethingelse'], false],
+  ])
+})
+
 describe('$stringLength', () => {
   _evTestCases([
     ['some_string', ['$stringLength'], 11],

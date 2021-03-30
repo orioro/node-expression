@@ -74,6 +74,7 @@ Array [
   "$pipe",
   "$string",
   "$stringConcat",
+  "$stringEndsWith",
   "$stringInterpolate",
   "$stringLength",
   "$stringPadEnd",

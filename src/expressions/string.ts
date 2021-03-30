@@ -63,6 +63,17 @@ export const $stringStartsWith: InterpreterSpec = [
 ]
 
 /**
+ * @function $stringEndsWith
+ * @param {String} query
+ * @param {string} [str=$$VALUE]
+ * @returns {Boolean}
+ */
+export const $stringEndsWith: InterpreterSpec = [
+  (query: string, str: string): boolean => str.endsWith(query),
+  ['string', 'string'],
+]
+
+/**
  * @function $stringLength
  * @param {String} [str=$$VALUE]
  * @returns {Number}
@@ -200,6 +211,7 @@ export const $stringInterpolate: InterpreterSpec = [
 export const STRING_EXPRESSIONS = {
   $string,
   $stringStartsWith,
+  $stringEndsWith,
   $stringLength,
   $stringSubstr,
   $stringConcat,
