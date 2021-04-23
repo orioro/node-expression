@@ -86,6 +86,7 @@ Array [
   "$stringTrim",
   "$switch",
   "$switchKey",
+  "$try",
   "$type",
   "$value",
   "$xor",

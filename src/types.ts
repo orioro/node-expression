@@ -127,6 +127,7 @@ export type EvaluationScope = {
   $$ACC?: any
   $$SORT_A?: any
   $$SORT_B?: any
+  $$ERROR?: PlainObject
   [key: string]: any
 }
 
