@@ -376,12 +376,18 @@ Checks if the value matches the set of criteria.
 ## Functional
 
 - [`$pipe(expressions)`](#pipeexpressions)
+- [`$try(expressionOrValue, catchExpressionOrValue)`](#tryexpressionorvalue-catchexpressionorvalue)
 
 
 ##### `$pipe(expressions)`
 
 - `expressions` {[Expression](#expression)[]}
 - Returns: `pipeResult` {*} 
+
+##### `$try(expressionOrValue, catchExpressionOrValue)`
+
+- `expressionOrValue` {[Expression](#expression) | *}
+- `catchExpressionOrValue` {[Expression](#expression) | *}
 
 
 ## Logical
@@ -591,6 +597,7 @@ Checks if the value matches the set of criteria.
 
 - [`$string(value)`](#stringvalue)
 - [`$stringStartsWith(query, str)`](#stringstartswithquery-str)
+- [`$stringEndsWith(query, str)`](#stringendswithquery-str)
 - [`$stringLength(str)`](#stringlengthstr)
 - [`$stringSubstr(start, end, str)`](#stringsubstrstart-end-str)
 - [`$stringConcat(concat, base)`](#stringconcatconcat-base)
@@ -612,6 +619,12 @@ Checks if the value matches the set of criteria.
 
 - `query` {String}
 - `str` {String}
+- Returns: {Boolean} 
+
+##### `$stringEndsWith(query, str)`
+
+- `query` {String}
+- `str` {string}
 - Returns: {Boolean} 
 
 ##### `$stringLength(str)`
