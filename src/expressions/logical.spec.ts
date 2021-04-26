@@ -1,4 +1,4 @@
-import { evaluate } from '../evaluate'
+import { evaluate, evaluateAsync } from '../evaluate'
 import { interpreterList } from '../interpreter/interpreter'
 import { VALUE_EXPRESSIONS } from './value'
 import { BOOLEAN_EXPRESSIONS } from './boolean'
@@ -18,6 +18,8 @@ import {
   delay,
   $asyncEcho,
 } from '../../spec/specUtil'
+
+import { InterpreterSpec } from '../types'
 
 const EXP = {
   ...VALUE_EXPRESSIONS,
@@ -359,8 +361,8 @@ describe('$if', () => {
   })
 
   test('then and else expressions should be evaluated only after condition evaluation', () => {
-    const $expA = jest.fn(() => 'expA-result')
-    const $expB = jest.fn(() => 'expB-result')
+    const $expA: InterpreterSpec = jest.fn(() => 'expA-result')
+    const $expB: InterpreterSpec = jest.fn(() => 'expB-result')
 
     expect(
       evaluate(
@@ -445,6 +447,78 @@ describe('$switch', () => {
       [25, $switchExpr, 500],
       [30, $switchExpr, -30],
     ])
+  })
+
+  test('sync - condition expressions evaluated sequentially', () => {
+    const $expA: InterpreterSpec = jest.fn(() => false)
+    const $expB: InterpreterSpec = jest.fn(() => true)
+    const $expC: InterpreterSpec = jest.fn(() => true)
+
+    expect(
+      evaluate(
+        {
+          interpreters: interpreterList({
+            ...EXP,
+            $expA,
+            $expB,
+            $expC,
+          }),
+          scope: { $$VALUE: 'any-value' },
+        },
+        [
+          '$switch',
+          [
+            [['$expA'], 'VALUE_A'],
+            [['$expB'], 'VALUE_B'],
+            [['$expC'], 'VALUE_C'],
+          ],
+        ]
+      )
+    ).toEqual('VALUE_B')
+
+    expect($expA).toHaveBeenCalledTimes(1)
+    expect($expB).toHaveBeenCalledTimes(1)
+    expect($expC).not.toHaveBeenCalled()
+  })
+
+  test('async - condition expressions evaluated sequentially', () => {
+    const $expA: InterpreterSpec = {
+      sync: null,
+      async: jest.fn(() => delay(false)),
+    }
+    const $expB: InterpreterSpec = {
+      sync: null,
+      async: jest.fn(() => delay(true)),
+    }
+    const $expC: InterpreterSpec = {
+      sync: null,
+      async: jest.fn(() => delay(true)),
+    }
+
+    return evaluateAsync(
+      {
+        interpreters: interpreterList({
+          ...EXP,
+          $expA,
+          $expB,
+          $expC,
+        }),
+        scope: { $$VALUE: 'any-value' },
+      },
+      [
+        '$switch',
+        [
+          [['$expA'], 'VALUE_A'],
+          [['$expB'], 'VALUE_B'],
+          [['$expC'], 'VALUE_C'],
+        ],
+      ]
+    ).then((result) => {
+      expect(result).toEqual('VALUE_B')
+      expect($expA.async).toHaveBeenCalledTimes(1)
+      expect($expB.async).toHaveBeenCalledTimes(1)
+      expect($expC.async).not.toHaveBeenCalled()
+    })
   })
 })
 

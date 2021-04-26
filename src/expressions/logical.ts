@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { indefiniteArrayOfType, tupleType, anyType } from '@orioro/typing'
-import { evaluate } from '../evaluate'
+import { evaluate, evaluateSync } from '../evaluate'
 import {
   Expression,
   EvaluationContext,
   PlainObject,
+  InterpreterSpecSingle,
   InterpreterSpec,
 } from '../types'
+import { _pseudoSymbol } from '../util/misc'
+
+const _UNRESOLVED = _pseudoSymbol()
 
 /**
  * @function $and
@@ -89,23 +93,22 @@ export const $if: InterpreterSpec = [
 
 type Case = [Expression, Expression]
 
-/**
- * @function $switch
- * @param {Array} cases
- * @param {Expression} defaultExp
- * @returns {*} result
- */
-export const $switch: InterpreterSpec = [
+const _switchSync: InterpreterSpecSingle = [
   (cases: Case[], defaultExp: Expression, context: EvaluationContext): any => {
-    const correspondingCase = cases.find(([condition]) => Boolean(condition))
+    const correspondingCase = cases.find(([condition]) =>
+      Boolean(evaluateSync(context, condition))
+    )
 
     return correspondingCase
-      ? evaluate(context, correspondingCase[1])
-      : evaluate(context, defaultExp)
+      ? evaluateSync(context, correspondingCase[1])
+      : evaluateSync(context, defaultExp)
   },
   [
     indefiniteArrayOfType(
-      tupleType(['any', anyType({ skipEvaluation: true })])
+      tupleType([
+        anyType({ skipEvaluation: true }),
+        anyType({ skipEvaluation: true }),
+      ])
     ),
     anyType({ skipEvaluation: true }),
   ],
@@ -113,6 +116,50 @@ export const $switch: InterpreterSpec = [
     defaultParam: -1,
   },
 ]
+
+const _switchAsync: InterpreterSpecSingle = [
+  (cases: Case[], defaultExp: Expression, context: EvaluationContext): any =>
+    cases
+      .reduce(
+        (accPromise, [conditionExp, valueExp]) =>
+          accPromise.then((acc) =>
+            acc !== _UNRESOLVED
+              ? acc
+              : Promise.resolve(
+                  evaluate(context, conditionExp)
+                ).then((condition) =>
+                  condition ? evaluate(context, valueExp) : _UNRESOLVED
+                )
+          ),
+        Promise.resolve(_UNRESOLVED)
+      )
+      .then((result) =>
+        result === _UNRESOLVED ? evaluate(context, defaultExp) : result
+      ),
+  [
+    indefiniteArrayOfType(
+      tupleType([
+        anyType({ skipEvaluation: true }),
+        anyType({ skipEvaluation: true }),
+      ])
+    ),
+    anyType({ skipEvaluation: true }),
+  ],
+  {
+    defaultParam: -1,
+  },
+]
+
+/**
+ * @function $switch
+ * @param {Array} cases
+ * @param {Expression} defaultExp
+ * @returns {*} result
+ */
+export const $switch: InterpreterSpec = {
+  sync: _switchSync,
+  async: _switchAsync,
+}
 
 /**
  * @function $switchKey
