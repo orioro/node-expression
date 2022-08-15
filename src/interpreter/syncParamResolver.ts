@@ -1,14 +1,14 @@
 const mem = require('mem') // eslint-disable-line @typescript-eslint/no-var-requires
 
 import {
-  ANY_TYPE,
-  SINGLE_TYPE,
-  ONE_OF_TYPES,
-  ENUM_TYPE,
-  INDEFINITE_ARRAY_OF_TYPE,
-  INDEFINITE_OBJECT_OF_TYPE,
-  TUPLE_TYPE,
-  OBJECT_TYPE,
+  ANY_TYPE_SPEC,
+  SINGLE_TYPE_SPEC,
+  ONE_OF_TYPES_SPEC,
+  ENUM_TYPE_SPEC,
+  INDEFINITE_ARRAY_OF_TYPE_SPEC,
+  INDEFINITE_OBJECT_OF_TYPE_SPEC,
+  TUPLE_TYPE_SPEC,
+  OBJECT_TYPE_SPEC,
   NonShorthandTypeSpec,
 } from '@orioro/typing'
 
@@ -31,11 +31,11 @@ const _syncParamResolver = mem(
     }
 
     switch (typeSpec.specType) {
-      case ANY_TYPE:
-      case SINGLE_TYPE:
-      case ENUM_TYPE:
+      case ANY_TYPE_SPEC:
+      case SINGLE_TYPE_SPEC:
+      case ENUM_TYPE_SPEC:
         return evaluate
-      case ONE_OF_TYPES: {
+      case ONE_OF_TYPES_SPEC: {
         const candidateResolverPairs: [
           NonShorthandTypeSpec,
           ParamResolver
@@ -58,7 +58,7 @@ const _syncParamResolver = mem(
           return result === _NOT_RESOLVED ? value : result
         }
       }
-      case TUPLE_TYPE: {
+      case TUPLE_TYPE_SPEC: {
         const itemParamResolvers = typeSpec.items.map((itemResolver) =>
           _syncParamResolver(itemResolver)
         )
@@ -73,7 +73,7 @@ const _syncParamResolver = mem(
           return array
         }
       }
-      case INDEFINITE_ARRAY_OF_TYPE: {
+      case INDEFINITE_ARRAY_OF_TYPE_SPEC: {
         const itemParamResolver = _syncParamResolver(typeSpec.itemType)
 
         return (context, value) => {
@@ -84,7 +84,7 @@ const _syncParamResolver = mem(
           return array
         }
       }
-      case OBJECT_TYPE: {
+      case OBJECT_TYPE_SPEC: {
         const propertyParamResolvers = Object.keys(typeSpec.properties).reduce(
           (acc, key) => ({
             ...acc,
@@ -106,7 +106,7 @@ const _syncParamResolver = mem(
           return object
         }
       }
-      case INDEFINITE_OBJECT_OF_TYPE: {
+      case INDEFINITE_OBJECT_OF_TYPE_SPEC: {
         const propertyParamResolver = _syncParamResolver(typeSpec.propertyType)
 
         return (context, value) => {
